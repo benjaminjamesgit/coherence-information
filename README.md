@@ -23,11 +23,11 @@ Weights can be user-supplied for direct use of `H_w` and `I_w`, or **induced fro
 
 | Version | Contents |
 |---------|----------|
-| **v0.3** *(current)* | Compression-delta proxy (form A / K₁) via zstd; cross-proxy validation invariants (Spearman ρ ≥ 0.7 across form B and K₁ per Metacoherence §3.1); 69 tests |
+| **v0.4** *(current)* | Shapley ablation (A₂, k=64, cohort-mean centered); cross-ablation convergence invariants (per-symbol sign agreement + Spearman ρ ≥ 0.7 across A₁ and A₂, Metacoherence §3.1 R2 at the ablation axis); 77 tests |
+| v0.3 | Compression-delta proxy (form A / K₁) via zstd; cross-proxy validation invariants (Spearman ρ ≥ 0.7 across form B and K₁); 69 tests |
 | v0.2 | Predictive log-loss proxy (form B); replace-with-uniform leave-one-out ablation (A₁); induction pipeline `stream → Ĉ → ρ → w`; labeled synthetic substrate; 57 tests |
 | v0.1 | Formal quantities `H`, `H_w`, `I_w`; synthetic test substrate; Shannon-recovery spine test; 27 tests |
-| v0.4 *(planned)* | Shapley ablation (A₂, k=64); correlation-cluster ablation (A₃); cross-ablation convergence tests |
-| v0.5 *(planned)* | K₂ (n-gram MDL), K₃ (transformer prequential), K₄ (MDL-HMM), K₅ (Lempel parsing, non-coding registrant); full {K} × {A} robustness harness |
+| v0.5 *(planned)* | K₂ (n-gram MDL), K₃ (transformer prequential), K₄ (MDL-HMM), K₅ (Lempel parsing, non-coding registrant); A₃ correlation-cluster ablation; multi-feature synthetic substrate; full {K} × {A} robustness harness |
 | v0.6 *(planned)* | Coherence capacity estimator `C_C = max_{p(x)} I_w(X;Y)`; weighted typical-set coder + Selective Compression empirics |
 | v0.7 *(planned)* | Cross-domain validation architecture (Metacoherence); M5 admissibility gate |
 

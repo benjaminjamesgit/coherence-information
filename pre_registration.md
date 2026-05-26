@@ -144,9 +144,43 @@ The R2 threshold from Metacoherence §3.1 is operationalized in v0.3.0 as a **cr
 
 ---
 
-## v0.4 — cross-domain validation (not yet implemented)
+## v0.4 — cross-ablation validation (A₂ locked v0.4.0; A₃ deferred to v0.5)
 
-The cross-domain validation architecture from Metacoherence Appendix A. Domain specifications D₁, D₂, D₃ will be pre-registered in an amendment to this file before v0.4 implementation begins. The eight-cell outcome interpretation matrix from Metacoherence §8.3–8.4 will be reproduced verbatim and bound to outcomes in advance.
+Locks the ablation axis of the Metacoherence §3.1 robustness grid. Cross-philosophy convergence between A₁ (leave-one-out) and A₂ (Shapley) is the symmetric pair to v0.3's cross-proxy R2 invariant (form B vs K₁). Agreement at the rank-correlation level demonstrates that the ρ signal is not an artifact of the ablation strategy.
+
+### A₂ implementation (locked v0.4.0)
+
+| Item | Value |
+|------|-------|
+| Implementation | `cit.ablations.shapley.shapley_ablation` |
+| Coalitions sampled per feature | `k = 64` |
+| Ablation operator | Replace-with-uniform from kept set (same form as A₁ — isolates ablation strategy from operator drift) |
+| Centering | `center = True` by default; subtracts cohort-mean raw ρ |
+| Centering rationale | Adding any symbol to the kept set enlarges the replacement alphabet at ablated positions, raising entropy and depressing the proxy. The dilution penalty pushes all marginals negative regardless of structural relevance; rank order survives but absolute LOO-style signs do not. Cohort-mean centering is the standard normalization in cooperative-game Shapley when the operator's absolute baseline is operator-dependent. |
+| Seed | `ABLATION_SEED = 123` (reused from A₁) |
+| Return dict | Includes `"centered": bool` key alongside `"rho"` and `"c_ablated"` |
+
+### Cross-ablation convergence (locked v0.4.0)
+
+Operationalizes the Metacoherence §3.1 R2 threshold at the ablation axis. v0.3 closed the proxy axis (form B vs K₁); v0.4 closes the symmetric pair.
+
+| Test | Threshold | Rationale |
+|------|-----------|-----------|
+| Per-symbol sign agreement: `sign(ρ_A₁(x)) == sign(ρ_A₂(x))` for all `x` | strict | Stricter than rank correlation: requires both operators to agree on the structural-vs-noise classification of every symbol, not just their relative ordering. |
+| Spearman rank correlation of ρ vectors across A₁ and A₂ | `≥ 0.7` | R2 threshold from Metacoherence §3.1, operationalized at the ablation axis. Same threshold v0.3 locked at the proxy axis — keeps the robustness grid symmetric across the (proxy, ablation) pair. |
+| `induce_weights` under A₂: `w(coherent) > 0.5`, `w(noise) < 0.5`, `|w − 0.5| < 0.2` | locked | Same locked invariant as A₁ (v0.2). Confirms the swappable-ablation contract: same stream → same class separation under the same locked β = 4.0, independent of ablation operator. |
+
+### A₃ (correlation-cluster) deferral
+
+Pre-registered for v0.5. Metacoherence §3.2 specifies A₃ as feature-stream Pearson clustering — grouping features by correlation and ablating cluster-wise. The v0.4 substrate is single-symbol streams where each "feature" is a symbol indicator vector. Indicator-vector clustering on single-symbol streams does not reliably group coherence-bearing symbols: the dependency structure A₃ is designed to exploit (cross-feature correlation under shared latent structure) is not exposed by the substrate. Implementing A₃ on this substrate would produce a no-op or near-no-op operator and fail to falsify anything meaningful.
+
+A₃ is therefore deferred to v0.5, where it lands alongside the K₂–K₅ estimators and a multi-feature synthetic substrate that exposes the required correlation geometry. v0.5 closes the full {K} × {A} robustness grid within-domain; v0.4's grid is the (A₁, A₂) pair at the form B / K₁ proxy slice.
+
+---
+
+## v0.7 — cross-domain validation (not yet implemented)
+
+The cross-domain validation architecture from Metacoherence Appendix A. Domain specifications D₁, D₂, D₃ will be pre-registered in an amendment to this file before v0.5 implementation begins. The eight-cell outcome interpretation matrix from Metacoherence §8.3–8.4 will be reproduced verbatim and bound to outcomes in advance.
 
 ---
 
