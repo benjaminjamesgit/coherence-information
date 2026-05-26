@@ -1,0 +1,56 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both this implementation and the underlying theory papers."
+type: software
+title: coherence-information
+abstract: >-
+  Open-source Python implementation of Coherence-Weighted Entropy and the
+  Coherence Information Theory (CIT) pipeline. Provides Shannon entropy
+  (H), coherence-weighted entropy (H_w), coherence-weighted mutual
+  information (I_w), and a synthetic test substrate that empirically
+  verifies the Shannon-recovery boundary condition at w ≡ 1.
+authors:
+  - family-names: James
+    given-names: Benjamin
+version: 0.1.0
+date-released: "2026-05-26"
+url: "https://github.com/benjaminjamesgit/coherence-information"
+repository-code: "https://github.com/benjaminjamesgit/coherence-information"
+license: Apache-2.0
+keywords:
+  - coherence
+  - information-theory
+  - entropy
+  - coherence-weighted-entropy
+  - selective-compression
+  - recursive-coherence
+  - shannon
+preferred-citation:
+  type: article
+  title: "Formal Foundations of Coherence Information Theory: Capacity and Compression Theorems"
+  authors:
+    - family-names: James
+      given-names: Benjamin
+  year: 2025
+  url: "https://philpapers.org/rec/JAMFFO-2"
+references:
+  - type: article
+    title: "Beyond Shannon: Coherence Information Theory and the Future of Communication"
+    authors:
+      - family-names: James
+        given-names: Benjamin
+    year: 2025
+    url: "https://philpapers.org/rec/JAMBSC"
+  - type: article
+    title: "Engineering Induced Coherence Weights for Coherence Information Theory"
+    authors:
+      - family-names: James
+        given-names: Benjamin
+    year: 2026
+    url: "https://philpapers.org/rec/JAMEIC-2"
+  - type: article
+    title: "Formal Foundation of Induced Coherence Weights: Compression-based Coherence and Operational Information Measures"
+    authors:
+      - family-names: James
+        given-names: Benjamin
+    year: 2026
+    url: "https://philpapers.org/rec/JAMFFO3"
