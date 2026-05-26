@@ -94,7 +94,7 @@ Leave-one-out is instantiated as **replace-with-uniform**: for each occurrence o
 
 ---
 
-## v0.3 — robustness harness (pre-registered, not yet implemented)
+## v0.3 — robustness harness (K₁ locked v0.3.0; K₂–K₅ pending)
 
 ### Estimator classes (per Metacoherence §3.1)
 
@@ -119,6 +119,28 @@ Leave-one-out is instantiated as **replace-with-uniform**: for each occurrence o
 |-----------|-------|
 | M (replicate streams per domain) | `20` |
 | Shapley coalitions sampled per feature | `64` |
+
+### K₁ implementation (locked v0.3.0)
+
+| Item | Value |
+|------|-------|
+| Implementation | `cit.proxies.compression_delta.compression_delta_proxy` |
+| Encoding | Smallest unsigned-int dtype: uint8 for K ≤ 256, uint16 for K ≤ 65 536, uint32 for K ≤ 2³² |
+| Compressor | zstandard at level 3 |
+| Mapping to [0, 1] | `Ĉ = 1 − len(compressed) / len(uncompressed)` |
+| Clipping | Result clipped to [0, 1] for very-short-stream regimes where zstd frame-header overhead pushes the ratio above 1 |
+
+### Cross-proxy convergence (locked v0.3.0)
+
+The R2 threshold from Metacoherence §3.1 is operationalized in v0.3.0 as a **cross-proxy** test: Spearman rank correlation of ρ vectors between form B (predictive log-loss) and K₁ (compression-delta) `≥ 0.7`. This is the first empirical instance in this codebase of cross-philosophy convergence at the within-domain level — different epistemic bases (predictive vs coding) agreeing on which symbols carry coherence-bearing structure.
+
+| Test invariant | Threshold | Justification |
+|----------------|-----------|---------------|
+| Canonical signs under K₁: ρ > 0 for coherence-bearing, ρ < 0 for noise | strict | Replace-with-uniform destroys structure x participates in; signal direction is invariant to estimator class |
+| `min ρ(coherent) > max ρ(noise)` under K₁ | strict | Class separation under K₁ |
+| `w(coherent) > 0.5` and `w(noise) < 0.5` under K₁ via `induce_weights` | strict | Sigmoid inherits sign |
+| Sign agreement on every symbol between form B and K₁ | strict | Cross-philosophy convergence at the per-symbol sign level |
+| Spearman ρ rank correlation between form B and K₁ ρ vectors | `≥ 0.7` | R2 threshold (Metacoherence §3.1 and Appendix B.4) |
 
 ---
 

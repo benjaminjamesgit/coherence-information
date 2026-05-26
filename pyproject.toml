@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coherence-information"
-version = "0.2.0"
+version = "0.3.0"
 description = "Open-source implementation of Coherence-Weighted Entropy and the Coherence Information Theory pipeline."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -32,6 +32,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.26",
+    "zstandard>=0.22",
 ]
 
 [project.optional-dependencies]
