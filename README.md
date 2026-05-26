@@ -1,6 +1,7 @@
 # coherence-information
 
 [![tests](https://github.com/benjaminjamesgit/coherence-information/actions/workflows/test.yml/badge.svg)](https://github.com/benjaminjamesgit/coherence-information/actions/workflows/test.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20399413.svg)](https://doi.org/10.5281/zenodo.20399413)
 
 Open-source Python implementation of **Coherence-Weighted Entropy** and the **Coherence Information Theory (CIT)** pipeline.
 
