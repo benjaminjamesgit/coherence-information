@@ -15,18 +15,18 @@ When `w(x) = 1` for all x, every coherence-weighted quantity collapses exactly t
 
 The Shannon-recovery test in `tests/test_shannon_recovery.py` enforces this collapse empirically across uniform, skewed, near-deterministic, and sample-based distributions, plus the analogous collapse for mutual information.
 
-### Where w(x) comes from (planned)
+### Where w(x) comes from
 
-In v0.1 weights are user-supplied. The induction pipeline (`stream → Ĉ → ρ(x) → w(x)`) from James (2026) — proxy coherence via compression-delta or predictive log-loss, symbol relevance by ablation, monotone bounded mapping to `[0, 1]` — lands in v0.2.
+Weights can be user-supplied for direct use of `H_w` and `I_w`, or **induced from data** via the v0.2 pipeline from James (2026):stream → Ĉ (predictive log-loss proxy) → ρ(x) (leave-one-out ablation) → w(x) = σ(β · ρ(x)) `cit.induce.induce_weights` orchestrates the full pipeline with the pre-registered β = 4.0. Proxy and ablation operators are deliberately swappable; the v0.3 roadmap adds compression-delta proxies (form A), Shapley ablation (k=64 coalitions), and the K₁–K₅ estimator robustness harness.
 
 ## Status
 
 | Version | Contents |
 |---------|----------|
-| **v0.1** *(current)* | Formal quantities `H`, `H_w`, `I_w`; synthetic test substrate; Shannon-recovery spine test |
-| v0.2 *(planned)* | Coherence proxies (compression-delta, predictive log-loss); leave-one-out ablation; induced-weight derivation pipeline |
-| v0.3 *(planned)* | Coherence capacity estimator; weighted typical-set coder (Selective Compression empirics); robustness harness across estimator classes K₁–K₅ and ablation operators A₁–A₃ |
-| v0.4 *(planned)* | Cross-domain validation architecture (Metacoherence), M5 admissibility gate |
+| **v0.2** *(current)* | Predictive log-loss proxy (form B); replace-with-uniform leave-one-out ablation (A₁); induction pipeline `stream → Ĉ → ρ → w`; labeled synthetic substrate; 57 tests including class-separation invariants |
+| v0.1 | Formal quantities `H`, `H_w`, `I_w`; synthetic test substrate; Shannon-recovery spine test (27 tests) |
+| v0.3 *(planned)* | Compression-delta proxy (form A); Shapley ablation (k=64); correlation-cluster ablation; coherence capacity estimator `C_C = max_{p(x)} I_w(X;Y)`; weighted typical-set coder; robustness harness across estimator classes K₁–K₅ |
+| v0.4 *(planned)* | Cross-domain validation architecture (Metacoherence); M5 admissibility gate; eight-cell outcome matrix |
 
 ## Quick start
 
@@ -51,6 +51,31 @@ w = np.array([1.0, 0.8, 0.5, 0.1])
 print(H(p))                          # Shannon entropy in bits
 print(H_w(p, w))                     # Coherence-weighted entropy
 print(H_w(p, np.ones(4)) == H(p))    # True — the boundary condition
+```
+
+Induce weights from data (v0.2):
+
+```python
+import numpy as np
+from cit.data.synthetic import labeled_coherence_stream
+from cit.induce import induce_weights
+
+# Stream where symbols {0, 1} are coherence-bearing (sticky Markov)
+# and symbols {2, 3, 4} are i.i.d. noise.
+stream, labels = labeled_coherence_stream(
+    n_steps=20_000, n_coherent=2, n_noise=3,
+    rng=np.random.default_rng(42),
+)
+
+result = induce_weights(
+    stream, alphabet_size=5,
+    rng=np.random.default_rng(123),
+)
+
+for x in sorted(result["w"]):
+    kind = "coherent" if x in labels["coherence_bearing"] else "noise"
+    print(f"w({x}) = {result['w'][x]:.3f}   rho({x}) = {result['rho'][x]:+.4f}   ({kind})")
+# Coherent symbols → w > 0.5, noise symbols → w < 0.5.
 ```
 
 ## Theoretical references

@@ -62,6 +62,36 @@ Per cit_engineering.pdf: "Start with B for synthetic benchmarks (clean signal), 
 | v0.2 primary | A₁ (leave-one-out) |
 | v0.3 additions | A₂ (Shapley, `k = 64` sampled coalitions), A₃ (correlation-cluster group ablation, Pearson threshold `0.5`) |
 
+### Test seeds (locked for v0.2 test suite)
+
+| Seed | Variable name | Use |
+|------|---------------|-----|
+| `42`  | `STREAM_SEED`   | Synthetic-stream generation in `tests/test_induction_pipeline.py` |
+| `123` | `ABLATION_SEED` | Replace-with-uniform RNG in `tests/test_induction_pipeline.py` |
+
+### Synthetic-stream parameters (locked for v0.2 test suite)
+
+| Parameter | Value |
+|-----------|-------|
+| `n_steps` | `20_000` |
+| `n_coherent` | `2` |
+| `n_noise` | `3` |
+| `self_transition_prob` | `0.9` |
+| `noise_injection_prob` | `0.2` |
+
+### Test invariants (locked for v0.2 test suite)
+
+| Invariant | Threshold | Justification |
+|-----------|-----------|---------------|
+| `w(x) > 0.5` for x in `labels['coherence_bearing']` | strict | Structural: w(x) = σ(β·ρ), ρ > 0 ⇒ w > 0.5 |
+| `w(x) < 0.5` for x in `labels['noise']` | strict | Structural: ρ < 0 ⇒ w < 0.5 |
+| `min w(coherent) > max w(noise)` | strict | Class separation |
+| `|w(x) - 0.5| < 0.2` on uniform i.i.d. streams | loose | At N=20,000 and β=4 the plug-in proxy std + replacement-noise std propagate to ~0.05–0.10 in w; the 0.2 bound is ~3σ above that |
+
+### Ablation operator form
+
+Leave-one-out is instantiated as **replace-with-uniform**: for each occurrence of the target symbol x, substitute a uniformly drawn symbol from the alphabet excluding x. Removal-based ablation was considered and rejected because it biases the proxy upward on shrinking alphabets, inverting the canonical sign convention.
+
 ---
 
 ## v0.3 — robustness harness (pre-registered, not yet implemented)
