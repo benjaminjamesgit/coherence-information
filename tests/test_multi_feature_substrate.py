@@ -23,6 +23,7 @@ from cit.data.multi_feature import (
 )
 from cit.proxies.predictive_logloss_multi import predictive_logloss_proxy_multi
 from cit.proxies.compression_delta_multi import compression_delta_proxy_multi
+from cit.proxies.ngram_mdl import ngram_mdl_proxy
 from cit.ablations.loo_multi import leave_one_out_ablation_multi
 from cit.ablations.shapley_multi import shapley_ablation_multi
 from cit.ablations.correlation_cluster import correlation_cluster_ablation
@@ -121,6 +122,9 @@ corrclust_FB  = _make_fixture(predictive_logloss_proxy_multi, correlation_cluste
 loo_K1        = _make_fixture(compression_delta_proxy_multi, leave_one_out_ablation_multi)
 shapley_K1    = _make_fixture(compression_delta_proxy_multi, shapley_ablation_multi)
 corrclust_K1  = _make_fixture(compression_delta_proxy_multi, correlation_cluster_ablation)
+loo_K2        = _make_fixture(ngram_mdl_proxy, leave_one_out_ablation_multi)
+shapley_K2    = _make_fixture(ngram_mdl_proxy, shapley_ablation_multi)
+corrclust_K2  = _make_fixture(ngram_mdl_proxy, correlation_cluster_ablation)
 
 
 # --- substrate tests ---
@@ -180,6 +184,32 @@ class TestProxiesBasicProperties:
         assert C_s > C_n
 
 
+class TestNgramMdl:
+    """K_2 n-gram MDL proxy-level invariants."""
+
+    def test_bounded(self, stream):
+        c = ngram_mdl_proxy(stream)
+        assert 0.0 <= c <= 1.0
+
+    def test_constant_stream_near_one(self):
+        const_stream = np.zeros((N_STEPS, N_FEATURES_TOTAL), dtype=np.int8)
+        c = ngram_mdl_proxy(const_stream)
+        assert c > 0.99, f"C_K2(constant) = {c:.4f} should be near 1.0"
+
+    def test_structured_gt_noise(self, stream):
+        n = noise_only_multi_feature_stream(
+            n_steps=N_STEPS, rng=np.random.default_rng(STREAM_SEED + 1000)
+        )
+        c_s = ngram_mdl_proxy(stream)
+        c_n = ngram_mdl_proxy(n)
+        assert c_s > c_n, f"C_K2(structured)={c_s:.4f} not > C_K2(noise)={c_n:.4f}"
+
+    def test_deterministic(self, stream):
+        c1 = ngram_mdl_proxy(stream)
+        c2 = ngram_mdl_proxy(stream)
+        assert c1 == c2
+
+
 # --- canonical signs and class separation ---
 
 def _assert_canonical(result, coh, noi, name):
@@ -198,6 +228,9 @@ class TestCanonicalSigns:
     def test_A1_K1(self, loo_K1, coh, noi):          _assert_canonical(loo_K1, coh, noi, "A_1 K_1")
     def test_A2_K1(self, shapley_K1, coh, noi):      _assert_canonical(shapley_K1, coh, noi, "A_2 K_1")
     def test_A3_K1(self, corrclust_K1, coh, noi):    _assert_canonical(corrclust_K1, coh, noi, "A_3 K_1")
+    def test_A1_K2(self, loo_K2, coh, noi):          _assert_canonical(loo_K2, coh, noi, "A_1 K_2")
+    def test_A2_K2(self, shapley_K2, coh, noi):      _assert_canonical(shapley_K2, coh, noi, "A_2 K_2")
+    def test_A3_K2(self, corrclust_K2, coh, noi):    _assert_canonical(corrclust_K2, coh, noi, "A_3 K_2")
 
 
 # --- induce_weights_multi invariants (sigmoid on cached rho) ---
@@ -222,6 +255,9 @@ class TestInduceWeightsInvariants:
     def test_A1_K1(self, loo_K1, coh, noi):          _assert_weight_invariants(loo_K1["rho"], coh, noi, "A_1 K_1")
     def test_A2_K1(self, shapley_K1, coh, noi):      _assert_weight_invariants(shapley_K1["rho"], coh, noi, "A_2 K_1")
     def test_A3_K1(self, corrclust_K1, coh, noi):    _assert_weight_invariants(corrclust_K1["rho"], coh, noi, "A_3 K_1")
+    def test_A1_K2(self, loo_K2, coh, noi):          _assert_weight_invariants(loo_K2["rho"], coh, noi, "A_1 K_2")
+    def test_A2_K2(self, shapley_K2, coh, noi):      _assert_weight_invariants(shapley_K2["rho"], coh, noi, "A_2 K_2")
+    def test_A3_K2(self, corrclust_K2, coh, noi):    _assert_weight_invariants(corrclust_K2["rho"], coh, noi, "A_3 K_2")
 
 
 # --- v0.4 carry: per-feature sign agreement A_1 vs A_2 ---
@@ -242,18 +278,29 @@ class TestPerFeatureSignAgreement:
 
 # --- v0.5.0 multi-feature cross-proxy R2 (Q4 + Q7 lock) ---
 
-def _spearman_check(result_FB, result_K1, name):
-    syms = sorted(result_FB["rho"])
-    v_FB = np.array([result_FB["rho"][s] for s in syms])
-    v_K1 = np.array([result_K1["rho"][s] for s in syms])
-    rho = _spearman_corr(v_FB, v_K1)
-    assert rho >= R2_THRESHOLD, f"{name}: Spearman(form B, K_1) = {rho:.3f} < {R2_THRESHOLD}"
+def _spearman_check_pair(result_a, result_b, label_a, label_b, ablation):
+    syms = sorted(result_a["rho"])
+    v_a = np.array([result_a["rho"][s] for s in syms])
+    v_b = np.array([result_b["rho"][s] for s in syms])
+    rho = _spearman_corr(v_a, v_b)
+    assert rho >= R2_THRESHOLD, (
+        f"{ablation}: Spearman({label_a}, {label_b}) = {rho:.3f} < {R2_THRESHOLD}"
+    )
 
 
 class TestCrossProxyConvergenceMulti:
-    def test_under_A1(self, loo_FB, loo_K1):              _spearman_check(loo_FB, loo_K1, "A_1")
-    def test_under_A2(self, shapley_FB, shapley_K1):      _spearman_check(shapley_FB, shapley_K1, "A_2")
-    def test_under_A3(self, corrclust_FB, corrclust_K1):  _spearman_check(corrclust_FB, corrclust_K1, "A_3")
+    # form B vs K_1 (v0.5.0 baseline)
+    def test_under_A1(self, loo_FB, loo_K1):              _spearman_check_pair(loo_FB, loo_K1, "form B", "K_1", "A_1")
+    def test_under_A2(self, shapley_FB, shapley_K1):      _spearman_check_pair(shapley_FB, shapley_K1, "form B", "K_1", "A_2")
+    def test_under_A3(self, corrclust_FB, corrclust_K1):  _spearman_check_pair(corrclust_FB, corrclust_K1, "form B", "K_1", "A_3")
+    # K_2 vs form B (v0.5.1)
+    def test_K2_vs_FB_under_A1(self, loo_K2, loo_FB):             _spearman_check_pair(loo_K2, loo_FB, "K_2", "form B", "A_1")
+    def test_K2_vs_FB_under_A2(self, shapley_K2, shapley_FB):     _spearman_check_pair(shapley_K2, shapley_FB, "K_2", "form B", "A_2")
+    def test_K2_vs_FB_under_A3(self, corrclust_K2, corrclust_FB): _spearman_check_pair(corrclust_K2, corrclust_FB, "K_2", "form B", "A_3")
+    # K_2 vs K_1 (v0.5.1)
+    def test_K2_vs_K1_under_A1(self, loo_K2, loo_K1):             _spearman_check_pair(loo_K2, loo_K1, "K_2", "K_1", "A_1")
+    def test_K2_vs_K1_under_A2(self, shapley_K2, shapley_K1):     _spearman_check_pair(shapley_K2, shapley_K1, "K_2", "K_1", "A_2")
+    def test_K2_vs_K1_under_A3(self, corrclust_K2, corrclust_K1): _spearman_check_pair(corrclust_K2, corrclust_K1, "K_2", "K_1", "A_3")
 
 
 # --- A_3 cluster recovery (Q3 Option Z: discovers the structure, ARI not yet asserted) ---

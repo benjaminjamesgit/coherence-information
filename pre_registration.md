@@ -231,6 +231,7 @@ labels = {
 |-----------|----------|-------------------|
 | form B multi | `cit.proxies.predictive_logloss_multi.predictive_logloss_proxy_multi` | autoregressive joint factorization, first-order context, Laplace smoothing, 10,240-cell parameter space |
 | K_1 multi | `cit.proxies.compression_delta_multi.compression_delta_proxy_multi` | 2-byte fixed-width encoding (10 active + 6 padding zeros), zstd level 3 |
+| K_2 multi | `cit.proxies.ngram_mdl.ngram_mdl_proxy` | per-feature factorized bigram, 2-part MDL (Rissanen prior `0.5 * 2 * n_features * log2(T)`), Laplace smoothing, `C_K2 = 1 - (L_data + L_model) / L_iid` clipped to `[0, 1]` (locked v0.5.1; see K_2 factorization amendment) |
 | A_1 multi | `cit.ablations.loo_multi.leave_one_out_ablation_multi` | feature-level LOO, replace-with-uniform Bernoulli(0.5), `center=True` default |
 | A_2 multi | `cit.ablations.shapley_multi.shapley_ablation_multi` | feature-level Shapley, `k=64` coalitions, `center=True` default |
 | A_3 | `cit.ablations.correlation_cluster.correlation_cluster_ablation` | Pearson signed correlation `> 0.15` for cluster edges, connected components, replace-with-uniform per cluster, `center=True` default |
@@ -256,7 +257,7 @@ labels = {
 | Sub-version | New asserted pairs |
 |-------------|---------------------|
 | **v0.5.0** | `(form B multi, K_1 multi)` per ablation A_1, A_2, A_3 |
-| v0.5.1 | add `(K_2, *)` for each of `{form B multi, K_1 multi}` |
+| **v0.5.1** | `(K_2, form B multi)` and `(K_2, K_1 multi)` per ablation A_1, A_2, A_3 |
 | v0.5.2 | add `(K_5, *)` for each of `{form B multi, K_1 multi, K_2}` |
 | v0.5.3 | add `(K_3, *)` for each of `{form B multi, K_1 multi, K_2, K_5}` |
 | v0.5.4 | add `(K_4, *)` for each of `{form B multi, K_1 multi, K_2, K_5, K_3}` |
@@ -320,3 +321,36 @@ The calibrated 0.5 threshold sits above the random baseline (~0.0 for fully-inde
 **Lock exclusion**: v0.3 single-symbol cross-proxy R2 tests retain the 0.7 threshold. Different substrate, different signal structure, different threshold.
 
 **Future tightening path**: If empirical evidence at v0.5.5 shows pairs systematically clearing thresholds higher than 0.5, a further amendment can tighten the multi-feature threshold post-hoc -- but only after observation, not before.
+
+
+### 2026-05-26 — K_2 (n-gram MDL) factorization amendment
+
+**Change.** The K_2 multi-feature proxy is amended from joint feature-vector bigram (as locked in `design/multi_feature_substrate.md` Q5) to per-feature factorized bigram. Conditioning context changes from `v_{t-1}` (1024-state joint vector) to `v_{t-1}^j` (2 states per feature). All other elements preserved: 2-part MDL coding, Rissanen universal prior `L(model) = (1/2) * num_params * log(T)`, Laplace smoothing, `C_K2 = 1 - L_total / L_iid_uniform` clipped to `[0, 1]`.
+
+**Rationale.** Pre-implementation analytical analysis showed the joint-bigram formulation produces `C_K2 = 0` (clipped) on both structured and noise streams of the v0.5 substrate. The substrate's signal (form B multi saturates at `C_hat ≈ 0.09`) cannot overcome the joint-bigram model's parameter penalty: ~7,500 active cells × `0.5 * log2(20,000) ≈ 7.15` bits/param = ~53,600 bits model cost vs ~18,000 bits data savings (in the structured-vs-iid differential). MDL correctly says "joint bigram on 1024-state space isn't worth fitting on this data" -- but this collapses K_2's per-feature rho differential to zero, defeating cross-proxy convergence testing entirely.
+
+The factorized formulation `p(v_t^j | v_{t-1}^j)` reduces the parameter count to `2 * n_features = 20` total (one Bernoulli emission per (previous_value, feature)) and reads each feature's lag-1 temporal autocorrelation (analytically ~0.29 for coherent features per the locked Q2 emission matrix, ~0 for noise). Expected `C_K2 ≈ 0.02-0.05` on structured stream, ~0 on noise -- meaningful per-feature differential restored.
+
+**K_2 family identity (preserved across amendment).** K_2 remains the "explicit MDL with model penalty" family, structurally distinct from:
+- form B (joint conditioning `p(v_t^j | v_{t-1})`, no penalty)
+- K_1 (universal compression on byte stream, implicit model)
+- K_3 (neural online prediction, no penalty)
+- K_4 (HMM with explicit model selection)
+- K_5 (non-coding pattern counting)
+
+The factorization itself becomes a structural feature of K_2: per-feature marginal temporal predictability, ignoring the cross-feature joint structure that form B captures. The lens difference between K_2 and form B is preserved -- if anything, sharpened by the amendment.
+
+**Lock scope.** v0.5.1+ K_2 implementations and cross-proxy R2 tests involving K_2. Supersedes the K_2 protocol specification in `design/multi_feature_substrate.md` Q5; the design memo is updated to reflect the amended spec in the same commit (see updated Q5 and Q7 entries).
+
+**Implementation locked v0.5.1.**
+
+| Parameter | Value |
+|-----------|-------|
+| Function | `cit.proxies.ngram_mdl.ngram_mdl_proxy` |
+| Conditioning context | `v_{t-1}^j` per feature (per-feature factorized bigram) |
+| Parameter count | `2 * n_features` (one Bernoulli per (previous_value, feature)) |
+| Smoothing | Laplace (matches v0.2 form B and v0.5.0 form B multi) |
+| Model cost | Rissanen prior: `L(model) = (1/2) * num_params * log2(T)` bits |
+| Data cost | Plug-in negative log-likelihood under Laplace-smoothed bigram, summed and converted to bits |
+| Baseline | `L_iid_uniform = T * n_features * log2(2) = T * n_features` bits |
+| Coherence | `C_K2 = 1 - (L_data + L_model) / L_iid_uniform`, clipped to `[0, 1]` |

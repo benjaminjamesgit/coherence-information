@@ -160,14 +160,17 @@ Each new estimator needs an explicit multi-feature consumption protocol:
 
 **Locked 2026-05-26**: per-estimator protocols below. All four are native multi-feature; no `_multi` suffix since they have no 1-D analog (K_2-K_5 are introduced at v0.5).
 
-**K_2 (n-gram MDL) protocol**:
-- Order-1 bigram over feature vectors `v_t in {0,1}^10`.
-- 2-part MDL code: `L(data) = -log P(data | model) + L(model)`.
-- Model description length: Rissanen universal prior, `L(model) = (1/2) * num_params * log(T)` where `num_params` = number of bigram cells with non-zero count.
-- Data description length: plug-in negative log-likelihood with Laplace smoothing (matches v0.2 form B smoothing).
-- Coherence: `C_K2 = 1 - L(data) / L_iid_uniform`, clipped to `[0, 1]`.
+**K_2 (n-gram MDL) protocol** (amended 2026-05-26 -- see `pre_registration.md`):
+- Per-feature factorized bigram: condition each feature on its own previous value, `p(v_t^j | v_{t-1}^j)`. No cross-feature conditioning.
+- 2-part MDL code: `L(total) = L(data | model) + L(model)`.
+- Model: `2 * n_features` parameters (one Bernoulli emission per (previous_value, feature)).
+- Model description length: Rissanen universal prior, `L(model) = (1/2) * num_params * log2(T)` bits.
+- Data description length: plug-in negative log-likelihood under Laplace-smoothed bigram, converted to bits.
+- Baseline: `L_iid_uniform = T * n_features * log2(2) = T * n_features` bits.
+- Coherence: `C_K2 = 1 - L(total) / L_iid_uniform`, clipped to `[0, 1]`.
 - Aggregation: scalar (single MDL number for the whole stream).
-- Family identity: explicit MDL. Distinct from K_1 (universal compression, no explicit model) and from form B (prediction-only, no model penalty).
+- Family identity: per-feature marginal temporal predictability with explicit MDL penalty. Distinct from form B (joint conditioning `p(v_t^j | v_{t-1})`, no penalty) and K_1 (universal compression on byte stream, implicit model).
+- Amendment rationale: the original joint-bigram formulation produced `C_K2 = 0` (clipped) on the locked substrate because the model penalty (~53,600 bits at ~7,500 active cells) dwarfed the data savings (~18,000 bits at form B saturation ~0.09). Factorization restores per-feature differential signal while preserving K_2's MDL family identity.
 
 **K_3 (transformer prequential) protocol**:
 - Architecture: 2-layer transformer, 32 hidden dim, 4 attention heads, GELU activation.
@@ -294,7 +297,7 @@ labels = {
 |-----------|----------|-------------------|
 | form B multi | `predictive_logloss_proxy_multi` | autoregressive joint factorization `p(v_t^j | v_{t-1})`, first-order, Laplace smoothing, 10,240-cell parameter space |
 | K_1 multi | `compression_delta_proxy_multi` | 2-byte fixed-width encoding (10 active + 6 padding), zstd level 3 |
-| K_2 | `ngram_mdl_proxy` | order-1 bigram, 2-part MDL with Rissanen prior `(1/2)*num_params*log(T)`, Laplace smoothing |
+| K_2 | `ngram_mdl_proxy` | per-feature factorized bigram `p(v_t^j | v_{t-1}^j)`, 2-part MDL with Rissanen prior `(1/2)*num_params*log2(T)` bits, Laplace smoothing (amended 2026-05-26) |
 | K_3 | `transformer_prequential_proxy` | 2-layer transformer, 32 hidden, 4 heads, GELU, 1024-class softmax, 32-dim vector embedding, single SGD step per `t` |
 | K_4 | `mdl_hmm_proxy` | factorized Bernoulli HMM, `H in [1, 8]`, Baum-Welch with 5 restarts x 50 EM iter, MDL `L(H) = -log P(data) + (1/2)*(H^2 + n*H)*log(T)` |
 | K_5 | `lempel_parsing_proxy` | LZ76 parse on K_1 byte encoding, `c_iid = T_bytes / log_2(T_bytes)` baseline |
