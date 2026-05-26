@@ -186,4 +186,25 @@ The cross-domain validation architecture from Metacoherence Appendix A. Domain s
 
 ## Amendment history
 
-No amendments yet. Initial registration committed in the v0.1 first commit.
+Amendments are listed chronologically, most recent last. Each entry records the change, the rationale, and (where applicable) the structural convention being locked so future maintainers do not undo the change.
+
+### 2026-05-26 — v0.4 roadmap repositioning
+
+**Change.** The original v0.1 pre-registration placed cross-domain validation (Metacoherence Appendix A; D₁, D₂, D₃; eight-cell outcome matrix) at v0.4. With v0.4 actually shipping as cross-ablation validation (A₂ Shapley + cross-ablation R2), the public roadmap was resequenced:
+
+- v0.4 (shipped 2026-05-26): cross-ablation validation (A₂ locked; A₃ deferred).
+- v0.5 (planned): K₂–K₅ estimators + A₃ correlation-cluster ablation + multi-feature synthetic substrate; full within-domain `{K} × {A}` robustness grid.
+- v0.6 (planned): coherence capacity estimator + weighted typical-set coder + Selective Compression empirics.
+- v0.7 (planned): cross-domain validation per Metacoherence Appendix A; M5 admissibility gate; eight-cell outcome matrix.
+
+**Rationale.** The robustness axis (proxy × ablation) needed to close at the within-domain level before cross-domain validation became a meaningful test. Cross-domain convergence asserts that the same ρ signal recovers across domain substrates; that claim has empirical content only after the ρ signal has been shown to be operator-invariant on a single substrate. v0.3 (proxy axis) and v0.4 (ablation axis) anchor that operator-invariance; v0.5 fills out the full grid; v0.6 adds the formal-theorem operationalizations (capacity, Selective Compression); v0.7 then tests the whole pipeline across domains. The repositioning preserves all original commitments — none are dropped — and sequences them by epistemic dependency rather than by initial enthusiasm.
+
+**A₃ deferral.** Originally co-located with A₂ in v0.4. Pushed to v0.5 because the v0.4 substrate is single-symbol streams where indicator-vector clustering does not reliably group coherence-bearing symbols. A₃ requires the multi-feature substrate that v0.5 introduces.
+
+### 2026-05-26 — DOI badge convention (concept DOI, not version DOI)
+
+**Change.** The README DOI badge was pinned to the v0.1.0 version DOI (`10.5281/zenodo.20399413`) — an immutable snapshot citation. Repointed to the concept DOI (`10.5281/zenodo.20399412`), which Zenodo assigns to the record as a whole and which auto-resolves to the latest version.
+
+**Rationale.** Version DOIs and the concept DOI serve different purposes. Version DOIs are immutable snapshots — what you cite when you want to pin to a specific release for reproducibility. The concept DOI is the parent record identifier — what you cite when you mean "this software" rather than "this specific version of this software." A README badge advertising the project's DOI should track the concept (auto-updating), not a specific snapshot. The original v0.1.0 setup used the version DOI by default because no other DOI existed at that point; the divergence between concept DOI and latest-version DOI only became visible at v0.2.0+.
+
+**Convention locked.** Future releases must not modify the README DOI badge. The concept DOI does not change across versions. Each new release will get its own version DOI on Zenodo automatically — those remain accessible from the concept-DOI landing page's "Versions" sidebar. Citers wanting to pin to a specific release follow the version DOI from Zenodo; citers wanting "the software" follow the badge. CITATION.cff intentionally does not pin a `doi:` field, deferring DOI semantics to Zenodo and the README badge.
