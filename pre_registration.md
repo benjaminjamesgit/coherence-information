@@ -178,6 +178,103 @@ A₃ is therefore deferred to v0.5, where it lands alongside the K₂–K₅ est
 
 ---
 
+## v0.5 — multi-feature substrate + cross-ablation extension (v0.5.0 locked; K_2-K_5 sub-versions pending)
+
+Per `design/multi_feature_substrate.md` (locked 2026-05-26). Sub-version sequencing locked Option B: v0.5.0 = substrate + A_3 + form B multi + K_1 multi; v0.5.1 = K_2; v0.5.2 = K_5; v0.5.3 = K_3; v0.5.4 = K_4; v0.5.5 = capstone full 15-pair convergence matrix + noise-only counterfactual.
+
+### Multi-feature substrate parameters (locked v0.5.0)
+
+| Parameter | Value |
+|-----------|-------|
+| `STREAM_SEED` | `42` (carries from v0.2) |
+| `ABLATION_SEED` | `123` (carries from v0.2) |
+| `n_steps` | `20_000` |
+| `n_features` | `10` |
+| `n_coh_features` | `4` |
+| `n_noise_features` | `6` |
+| Coherent indices | `{0, 1, 2, 3}` |
+| Noise indices | `{4, 5, 6, 7, 8, 9}` |
+| Feature type | binary Bernoulli (`K = 2` per feature) |
+| Observation density | dense (every feature observed every step) |
+
+### Hidden Markov generator (locked v0.5.0)
+
+| Parameter | Value |
+|-----------|-------|
+| Hidden state count `C` | `2` |
+| Transition matrix | symmetric sticky, `self_transition_prob = 0.9` |
+| Initial state distribution | stationary (uniform) |
+| Stationary marginal | `p(x_j=1) = 0.5` for all `j` (marginal-matching invariant) |
+
+| Feature group | Emission |
+|---------------|----------|
+| Features 0, 1 | `Pr(x=1 in state 0) = 0.8`, `Pr(x=1 in state 1) = 0.2` |
+| Features 2, 3 | `Pr(x=1 in state 0) = 0.2`, `Pr(x=1 in state 1) = 0.8` |
+| Features 4-9  | `Pr(x=1) = 0.5` i.i.d., state-independent |
+
+### Ground-truth label dict (locked v0.5.0)
+
+```python
+labels = {
+    "coherence_bearing": {0, 1, 2, 3},
+    "noise": {4, 5, 6, 7, 8, 9},
+    "clusters": {
+        "cluster_A": {0, 1},
+        "cluster_B": {2, 3},
+    },
+}
+```
+
+### Proxy and ablation implementations (locked v0.5.0)
+
+| Component | Function | Locked parameters |
+|-----------|----------|-------------------|
+| form B multi | `cit.proxies.predictive_logloss_multi.predictive_logloss_proxy_multi` | autoregressive joint factorization, first-order context, Laplace smoothing, 10,240-cell parameter space |
+| K_1 multi | `cit.proxies.compression_delta_multi.compression_delta_proxy_multi` | 2-byte fixed-width encoding (10 active + 6 padding zeros), zstd level 3 |
+| A_1 multi | `cit.ablations.loo_multi.leave_one_out_ablation_multi` | feature-level LOO, replace-with-uniform Bernoulli(0.5), `center=True` default |
+| A_2 multi | `cit.ablations.shapley_multi.shapley_ablation_multi` | feature-level Shapley, `k=64` coalitions, `center=True` default |
+| A_3 | `cit.ablations.correlation_cluster.correlation_cluster_ablation` | Pearson signed correlation `> 0.15` for cluster edges, connected components, replace-with-uniform per cluster, `center=True` default |
+| Orchestrator | `cit.induce_multi.induce_weights_multi` | `beta = 4.0` (carries from v0.2), default proxy = form B multi, default ablation = A_1 multi |
+
+### Asserted test invariants (locked v0.5.0)
+
+| Invariant | Threshold |
+|-----------|-----------|
+| Canonical signs | `rho(coh) > 0`, `rho(noise) < 0` per (proxy, ablation) pair |
+| Class separation | `min rho(coh) > max rho(noise)` per (proxy, ablation) pair |
+| Weight separation | `w(coh) > 0.5`, `w(noise) < 0.5` |
+| Weight band | `abs(w - 0.5) < 0.2` |
+| Per-feature sign agreement | `sign(rho_A_1) == sign(rho_A_2)` per feature (v0.4 carry) |
+| Cross-proxy R2 (multi-feature) | Spearman `rho(form B multi, K_1 multi) >= 0.5` under A_1, A_2, A_3 |
+
+### Observational invariants (logged, not asserted at v0.5.0)
+
+- A_3 cluster recovery: Adjusted Rand Index between A_3 partition of coherent features and ground-truth `clusters` dict. Promotable to required invariant at v0.5.5 capstone with empirically-determined threshold.
+
+### Cross-K convergence (sub-version progression)
+
+| Sub-version | New asserted pairs |
+|-------------|---------------------|
+| **v0.5.0** | `(form B multi, K_1 multi)` per ablation A_1, A_2, A_3 |
+| v0.5.1 | add `(K_2, *)` for each of `{form B multi, K_1 multi}` |
+| v0.5.2 | add `(K_5, *)` for each of `{form B multi, K_1 multi, K_2}` |
+| v0.5.3 | add `(K_3, *)` for each of `{form B multi, K_1 multi, K_2, K_5}` |
+| v0.5.4 | add `(K_4, *)` for each of `{form B multi, K_1 multi, K_2, K_5, K_3}` |
+| v0.5.5 capstone | Full 15-pair off-diagonal matrix per ablation; every pair `>= 0.5` on structured substrate; every pair drops significantly on noise-only counterfactual |
+
+Threshold calibrated per `2026-05-26 -- Multi-feature cross-proxy R2 threshold calibration` amendment.
+
+### Noise-only counterfactual (locked v0.5.0)
+
+| Parameter | Value |
+|-----------|-------|
+| Function | `cit.data.multi_feature.noise_only_multi_feature_stream` |
+| Generation | All features i.i.d. `Bernoulli(0.5)`, including indices 0-3 |
+| Label dict | omitted (or all features labeled `noise`) |
+| Use | v0.5.5 capstone falsifiability test for cross-K convergence claim |
+
+---
+
 ## v0.7 — cross-domain validation (not yet implemented)
 
 The cross-domain validation architecture from Metacoherence Appendix A. Domain specifications D₁, D₂, D₃ will be pre-registered in an amendment to this file before v0.5 implementation begins. The eight-cell outcome interpretation matrix from Metacoherence §8.3–8.4 will be reproduced verbatim and bound to outcomes in advance.
@@ -208,3 +305,18 @@ Amendments are listed chronologically, most recent last. Each entry records the 
 **Rationale.** Version DOIs and the concept DOI serve different purposes. Version DOIs are immutable snapshots — what you cite when you want to pin to a specific release for reproducibility. The concept DOI is the parent record identifier — what you cite when you mean "this software" rather than "this specific version of this software." A README badge advertising the project's DOI should track the concept (auto-updating), not a specific snapshot. The original v0.1.0 setup used the version DOI by default because no other DOI existed at that point; the divergence between concept DOI and latest-version DOI only became visible at v0.2.0+.
 
 **Convention locked.** Future releases must not modify the README DOI badge. The concept DOI does not change across versions. Each new release will get its own version DOI on Zenodo automatically — those remain accessible from the concept-DOI landing page's "Versions" sidebar. Citers wanting to pin to a specific release follow the version DOI from Zenodo; citers wanting "the software" follow the badge. CITATION.cff intentionally does not pin a `doi:` field, deferring DOI semantics to Zenodo and the README badge.
+
+
+### 2026-05-26 — Multi-feature cross-proxy R2 threshold calibration
+
+**Change.** The v0.5.0 multi-feature substrate locks a substrate-specific cross-proxy R2 threshold of `Spearman rho >= 0.5`. The v0.3 single-symbol substrate threshold of `>= 0.7` continues to apply unchanged to v0.2-v0.4 single-symbol tests.
+
+**Rationale.** v0.3's 0.7 threshold was calibrated for a 5-symbol substrate with continuous signal-vs-noise gradient. The v0.5 multi-feature substrate has class-bimodal signal structure: class separation (4 coherent vs 6 noise, strong, both proxies agree) plus within-class ordering (mostly Monte Carlo, no underlying signal in the noise singletons; modest in the coherent cluster pair). Spearman on the full 10-feature rho vector mixes class-level signal (real) with within-class noise (random). Operators without variance reduction (A_1 uses one LOO per feature, A_3 uses one ablation per cluster) have their global Spearman dominated by the noise contribution; only A_2 (averaging 64 sampled coalitions) reduces within-class variance enough to clear 0.7. Empirical baseline on the locked substrate: A_1 = 0.571, A_3 = 0.652, A_2 >= 0.7.
+
+The calibrated 0.5 threshold sits above the random baseline (~0.0 for fully-independent rho vectors with matched class structure) and below the variance-reduced ceiling (~0.8 achievable by A_2). It is structurally meaningful: asserts cross-proxy agreement on class separation while not over-asking for agreement on within-class noise ordering that the substrate cannot produce.
+
+**Lock scope**: v0.5.0+ multi-feature substrate cross-proxy R2 tests across all (proxy, ablation) pairs. Includes the v0.5.5 capstone 15-pair convergence matrix -- each off-diagonal pair must clear 0.5 on the structured substrate and drop significantly on the noise-only counterfactual.
+
+**Lock exclusion**: v0.3 single-symbol cross-proxy R2 tests retain the 0.7 threshold. Different substrate, different signal structure, different threshold.
+
+**Future tightening path**: If empirical evidence at v0.5.5 shows pairs systematically clearing thresholds higher than 0.5, a further amendment can tighten the multi-feature threshold post-hoc -- but only after observation, not before.

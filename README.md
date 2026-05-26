@@ -23,11 +23,13 @@ Weights can be user-supplied for direct use of `H_w` and `I_w`, or **induced fro
 
 | Version | Contents |
 |---------|----------|
-| **v0.4** *(current)* | Shapley ablation (A₂, k=64, cohort-mean centered); cross-ablation convergence invariants (per-symbol sign agreement + Spearman ρ ≥ 0.7 across A₁ and A₂, Metacoherence §3.1 R2 at the ablation axis); 77 tests |
+| **v0.5.0** *(current)* | Multi-feature substrate (shared HMM, C=2, marginal-matched, 4 coherent + 6 noise features); form B multi + K₁ multi proxies; feature-level A₁, A₂ + multi-feature-native A₃ (correlation-cluster); `induce_weights_multi` orchestrator; cross-proxy R2 invariant Spearman ρ ≥ 0.5 on multi-feature substrate; 105 tests |
+| v0.4 | Shapley ablation (A₂, k=64, cohort-mean centered); cross-ablation convergence invariants (per-symbol sign agreement + Spearman ρ ≥ 0.7 across A₁ and A₂); 77 tests |
 | v0.3 | Compression-delta proxy (form A / K₁) via zstd; cross-proxy validation invariants (Spearman ρ ≥ 0.7 across form B and K₁); 69 tests |
 | v0.2 | Predictive log-loss proxy (form B); replace-with-uniform leave-one-out ablation (A₁); induction pipeline `stream → Ĉ → ρ → w`; labeled synthetic substrate; 57 tests |
 | v0.1 | Formal quantities `H`, `H_w`, `I_w`; synthetic test substrate; Shannon-recovery spine test; 27 tests |
-| v0.5 *(planned)* | K₂ (n-gram MDL), K₃ (transformer prequential), K₄ (MDL-HMM), K₅ (Lempel parsing, non-coding registrant); A₃ correlation-cluster ablation; multi-feature synthetic substrate; full {K} × {A} robustness harness |
+| v0.5.1-v0.5.4 *(planned)* | K₂ (n-gram MDL), K₅ (Lempel parsing, non-coding registrant), K₃ (transformer prequential), K₄ (MDL-HMM) — one estimator per sub-version, each adding new cross-proxy pairs to the convergence matrix |
+| v0.5.5 *(planned)* | Capstone: full 15-pair {K} × {A} robustness matrix + noise-only counterfactual falsifiability test |
 | v0.6 *(planned)* | Coherence capacity estimator `C_C = max_{p(x)} I_w(X;Y)`; weighted typical-set coder + Selective Compression empirics |
 | v0.7 *(planned)* | Cross-domain validation architecture (Metacoherence); M5 admissibility gate |
 
