@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "coherence-information"
-version = "0.5.1"
+version = "0.5.2"
 description = "Open-source implementation of Coherence-Weighted Entropy and the Coherence Information Theory pipeline."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -33,6 +33,7 @@ classifiers = [
 dependencies = [
     "numpy>=1.26",
     "zstandard>=0.22",
+    "numba>=0.60",
 ]
 
 [project.optional-dependencies]
@@ -52,3 +53,8 @@ exclude = ["tests*", "benchmarks*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
+markers = [
+    "slow: marks tests as slow (LZ76 phrase counting on n=320k bit streams; deselect with -m 'not slow')",
+    "very_slow: K_5 LZ76 tests under Shapley (A_2) ablation (~90 min); runs on workflow_dispatch only; deselect with -m 'not very_slow'",
+]
+addopts = "-m 'not slow and not very_slow'"

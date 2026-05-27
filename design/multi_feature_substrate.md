@@ -191,13 +191,14 @@ Each new estimator needs an explicit multi-feature consumption protocol:
 - Coherence: `C_K4 = 1 - L(H*) / L_iid`, clipped to `[0, 1]`.
 - Family identity: hidden-state generative model with explicit MDL-based model selection. Structurally aligned with the substrate's true generator (C=2 HMM) but mitigated: K_4 must discover H, not receive it.
 
-**K_5 (Lempel parsing) protocol**:
+**K_5 (Lempel parsing) protocol** (amended 2026-05-26 -- see `pre_registration.md` "K_5 (Lempel parsing) bit-level parsing amendment"):
 - Encoding: same 2-byte-per-step encoding as K_1 multi (10 active bits + 6 padding zeros). Reuses the K_1 multi encoder.
-- Parser: LZ76 parsing on the byte sequence.
-- Phrase count: `c(byte_stream)` = number of distinct phrases in the LZ parse.
-- iid baseline: `c_iid = T_bytes / log_2(T_bytes)` (asymptotic Lempel complexity of uniform random sequences).
-- Coherence: `C_K5 = 1 - c(byte_stream) / c_iid`, clipped to `[0, 1]`.
-- Family identity: non-coding pattern counting. K_5 shares its byte encoding with K_1 multi but **never invokes zstd or any entropy coder** -- structurally distinct via the parsing/coding boundary. The shared encoder is intentional: it ensures K_1 and K_5 operate on the same byte representation so their structural differences trace to the parsing/coding distinction rather than to representation drift.
+- Unpack: byte stream -> bit stream via `numpy.unpackbits`. `T_bits = 8 * T_bytes = 16 * n_steps`.
+- Parser: LZ76 parsing on the bit sequence (binary alphabet).
+- Phrase count: `c(bit_stream)` = number of distinct phrases in the LZ parse.
+- iid baseline: `c_iid = T_bits / log_2(T_bits)` (binary uniform asymptotic, formula preserved from original spec).
+- Coherence: `C_K5 = 1 - c(bit_stream) / c_iid`, clipped to `[0, 1]`.
+- Family identity: non-coding pattern counting. K_5 shares its underlying encoded information with K_1 multi (same byte encoder, K_5 unpacks to bits) but **never invokes zstd or any entropy coder** -- structurally distinct via the parsing/coding boundary. The shared encoder is intentional: it ensures K_1 and K_5 operate on the same underlying bits so their structural differences trace to the parsing/coding distinction rather than to representation drift.
 
 **Cross-family distinctness summary**:
 
@@ -300,7 +301,7 @@ labels = {
 | K_2 | `ngram_mdl_proxy` | per-feature factorized bigram `p(v_t^j | v_{t-1}^j)`, 2-part MDL with Rissanen prior `(1/2)*num_params*log2(T)` bits, Laplace smoothing (amended 2026-05-26) |
 | K_3 | `transformer_prequential_proxy` | 2-layer transformer, 32 hidden, 4 heads, GELU, 1024-class softmax, 32-dim vector embedding, single SGD step per `t` |
 | K_4 | `mdl_hmm_proxy` | factorized Bernoulli HMM, `H in [1, 8]`, Baum-Welch with 5 restarts x 50 EM iter, MDL `L(H) = -log P(data) + (1/2)*(H^2 + n*H)*log(T)` |
-| K_5 | `lempel_parsing_proxy` | LZ76 parse on K_1 byte encoding, `c_iid = T_bytes / log_2(T_bytes)` baseline |
+| K_5 | `lempel_parsing_proxy` | LZ76 parse on bit stream (unpacked from K_1 byte encoding via `numpy.unpackbits`), `c_iid = T_bits / log_2(T_bits)` baseline (amended 2026-05-26) |
 
 All proxy outputs are scalars in `[0, 1]`. Coherence aggregation per Q5 specifications.
 
