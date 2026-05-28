@@ -18,7 +18,7 @@ This memo records substrate design decisions **before substrate code is written*
 - **v0.5.0**: multi-feature substrate + A₃ — closes the ablation axis at the multi-feature level.
 - **v0.5.1**: K₂ (n-gram MDL) — lowest-cost estimator extension.
 - **v0.5.2**: K₅ (Lempel parsing — non-coding registrant) — sequenced second so the structurally most distant convergence signal is established early.
-- **v0.5.3**: K₃ (transformer prequential).
+- **v0.5.3**: K₃ (neural prequential — GRU).
 - **v0.5.4**: K₄ (MDL-HMM).
 - **v0.5.5**: full `{K} × {A}` robustness harness — capstone publishing the 15-cell convergence matrix.
 
@@ -66,7 +66,7 @@ Trade-off: HMM is canonical but adds estimator complexity; latent-class mixture 
 
 **Marginal-matching property**. Under the stationary distribution `(0.5, 0.5)` over hidden states, each coherent feature has marginal `p(x_j=1) = 0.5 * 0.8 + 0.5 * 0.2 = 0.5`. Noise features have marginal `p(x_j=1) = 0.5` by construction. All ten features have identical marginal distributions; discrimination is purely structural (temporal coherence + cross-feature correlation), not marginal. No estimator can shortcut to the answer via per-feature marginal statistics; the v0.4 marginal-matching invariant carries forward unchanged.
 
-**K_4 structural-advantage mitigation**. K_4 (MDL-HMM) by construction matches the substrate's data-generating process. `C = 2` keeps the model class minimal -- K_4 gets a bounded representational advantage, but K_2 (n-gram), K_3 (transformer prequential), and K_5 (Lempel parsing) recover the temporal regularity through their own mechanisms. The cross-estimator R2 test then asks whether structurally different estimator families converge on the same rho signal despite their architectural differences -- that is the genuine empirical content. Substrates with no preferred model class are illusory; any generator has some preferred class. The test is whether non-matching estimators still converge.
+**K_4 structural-advantage mitigation**. K_4 (MDL-HMM) by construction matches the substrate's data-generating process. `C = 2` keeps the model class minimal -- K_4 gets a bounded representational advantage, but K_2 (n-gram), K_3 (neural prequential), and K_5 (Lempel parsing) recover the temporal regularity through their own mechanisms. The cross-estimator R2 test then asks whether structurally different estimator families converge on the same rho signal despite their architectural differences -- that is the genuine empirical content. Substrates with no preferred model class are illusory; any generator has some preferred class. The test is whether non-matching estimators still converge.
 
 **Ground-truth cluster geometry**. Features {0, 1} form one positively-correlated cluster (both biased toward state 0). Features {2, 3} form a second positively-correlated cluster (both biased toward state 1). Across clusters, features are anti-correlated (one biased to state 0, the other to state 1). Noise features {4, 5, 6, 7, 8, 9} are mutually uncorrelated and uncorrelated with any coherent feature. This geometry is the falsifiability target for A_3 (correlation-cluster ablation).
 
@@ -154,7 +154,7 @@ Affects how cross-proxy convergence is tested on multi-feature streams. Affects 
 Each new estimator needs an explicit multi-feature consumption protocol:
 
 - **K₂ (n-gram MDL)**: native input is a 1-D sequence. Either flatten the multi-feature step (concat + tokenize) or define a per-feature n-gram model with a combining rule.
-- **K₃ (transformer prequential)**: can natively consume feature vectors as input embeddings, but requires bounded vocabularies. Tokenization scheme needs specification.
+- **K₃ (neural prequential)**: consumes feature vectors directly as `float32` input. No tokenization or vocab needed (continuous-valued recurrent input). Output factorization (per-feature vs joint distribution) needs specification.
 - **K₄ (MDL-HMM)**: natural fit for multi-feature observations. HMM observation model needs explicit factorization (independent emissions per feature? joint emission over feature vector?).
 - **K₅ (Lempel parsing)**: byte-level operator. Encoding of each multi-feature step → bytes needs specification (canonical byte order, fixed-width per feature).
 
@@ -172,15 +172,17 @@ Each new estimator needs an explicit multi-feature consumption protocol:
 - Family identity: per-feature marginal temporal predictability with explicit MDL penalty. Distinct from form B (joint conditioning `p(v_t^j | v_{t-1})`, no penalty) and K_1 (universal compression on byte stream, implicit model).
 - Amendment rationale: the original joint-bigram formulation produced `C_K2 = 0` (clipped) on the locked substrate because the model penalty (~53,600 bits at ~7,500 active cells) dwarfed the data savings (~18,000 bits at form B saturation ~0.09). Factorization restores per-feature differential signal while preserving K_2's MDL family identity.
 
-**K_3 (transformer prequential) protocol**:
-- Architecture: 2-layer transformer, 32 hidden dim, 4 attention heads, GELU activation.
-- Input embedding: each feature-vector `v_t` mapped to a 32-dim embedding via a 1024-row lookup table (one row per possible vector).
-- Output head: softmax over 1024 outcomes (joint distribution over the next feature vector).
-- Training: prequential -- at step `t`, predict `v_{t+1}` from `(v_1, ..., v_t)`; accumulate cross-entropy; single SGD step per `t`.
-- Coherence: `C_K3 = 1 - mean_cross_entropy / log(1024)`, clipped to `[0, 1]`.
-- Family identity: neural online prediction. No model penalty, no model selection.
+**K_3 (neural prequential) protocol** (locked 2026-05-28 -- see `pre_registration.md` "K_3 (neural prequential cross-entropy) protocol lock"):
+- Input: 10-feature substrate stream, cast to `float32` in `[0, 1]`. No byte/bit packing, no vocab, no tokenization.
+- Architecture: single-layer GRU, hidden dim 64.
+- Init: PyTorch GRU default (`orthogonal_` recurrent weights, `xavier_uniform_` input weights, zero biases) under `torch.manual_seed(NEURAL_SEED=7)`.
+- Output head: `Linear(64, 10)` + `sigmoid` -- 10 independent binary predictors (per-feature factorization, matching K_2 bigram).
+- Training: strict online prequential. At step `t`: forward predict `x_t` from `h_{t-1}`, observe `x_t`, compute per-feature BCE in bits summed across 10 features, single SGD step (`lr=0.01`, `momentum=0`, `weight_decay=0`), advance hidden state. Each sample seen once; no epochs; no train/test split; no warmup.
+- T_steps: 20,000 (`= T_bytes / 2` from K_1 multi shared encoder step count).
+- Coherence: `C_K3 = 1 - H_pred / H_iid`, clipped to `[0, 1]`, where `H_pred = (1 / (T * 10)) * sum_t sum_i BCE_bits(x_{i,t}, P_{i,t})` and `H_iid = 1.0` bit/feature/step (binary uniform baseline).
+- Family identity: neural online cross-entropy. No codebook, no entropy coder, no MDL prior, no phrase dictionary. Determinism enforced via `torch.use_deterministic_algorithms(True)` and CPU-only execution.
 
-**K_3 runtime caveat**: K_3 is the heaviest of the five estimators. v0.5.3 implementation may need to reduce T or use a smaller transformer to keep the CI matrix job under 60s. Architectural lock stands; runtime tuning is a v0.5.3 implementation-time scope question, not a substrate-design question.
+**K_3 runtime profile**: substantially lighter than the originally-specced transformer (smallest parameter count among the four neural candidates considered: GRU, LSTM, transformer head, minimal attention). Empirical timing run pre-ship determines `slow` vs `very_slow` marker assignment; both tiers admissible. No runtime-driven hyperparameter reduction expected.
 
 **K_4 (MDL-HMM) protocol**:
 - Model class: factorized Bernoulli emission HMM. `p(v_t | h_t) = prod_j p(v_t^j | h_t)` -- emissions factorize per feature given hidden state.
@@ -299,7 +301,7 @@ labels = {
 | form B multi | `predictive_logloss_proxy_multi` | autoregressive joint factorization `p(v_t^j | v_{t-1})`, first-order, Laplace smoothing, 10,240-cell parameter space |
 | K_1 multi | `compression_delta_proxy_multi` | 2-byte fixed-width encoding (10 active + 6 padding), zstd level 3 |
 | K_2 | `ngram_mdl_proxy` | per-feature factorized bigram `p(v_t^j | v_{t-1}^j)`, 2-part MDL with Rissanen prior `(1/2)*num_params*log2(T)` bits, Laplace smoothing (amended 2026-05-26) |
-| K_3 | `transformer_prequential_proxy` | 2-layer transformer, 32 hidden, 4 heads, GELU, 1024-class softmax, 32-dim vector embedding, single SGD step per `t` |
+| K_3 | `neural_prequential_proxy` | single-layer GRU (`hidden=64`), per-feature sigmoid heads, strict online prequential SGD (`lr=0.01`, `momentum=0`), `NEURAL_SEED=7`, `T=20000` steps, `C_K3 = 1 - H_pred / H_iid` clipped to `[0, 1]` (locked 2026-05-28) |
 | K_4 | `mdl_hmm_proxy` | factorized Bernoulli HMM, `H in [1, 8]`, Baum-Welch with 5 restarts x 50 EM iter, MDL `L(H) = -log P(data) + (1/2)*(H^2 + n*H)*log(T)` |
 | K_5 | `lempel_parsing_proxy` | LZ76 parse on bit stream (unpacked from K_1 byte encoding via `numpy.unpackbits`), `c_iid = T_bits / log_2(T_bits)` baseline (amended 2026-05-26) |
 

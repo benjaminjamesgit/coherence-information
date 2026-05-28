@@ -233,6 +233,7 @@ labels = {
 | K_1 multi | `cit.proxies.compression_delta_multi.compression_delta_proxy_multi` | 2-byte fixed-width encoding (10 active + 6 padding zeros), zstd level 3 |
 | K_2 multi | `cit.proxies.ngram_mdl.ngram_mdl_proxy` | per-feature factorized bigram, 2-part MDL (Rissanen prior `0.5 * 2 * n_features * log2(T)`), Laplace smoothing, `C_K2 = 1 - (L_data + L_model) / L_iid` clipped to `[0, 1]` (locked v0.5.1; see K_2 factorization amendment) |
 | K_5 multi | `cit.proxies.lempel_parsing.lempel_parsing_proxy` | bit-level LZ76 phrase parsing on unpacked byte stream (shared K_1 multi encoder), `c_iid = T_bits / log_2(T_bits)` binary uniform asymptotic, `C_K5 = 1 - c(bit_stream) / c_iid` clipped to `[0, 1]`, numba `@njit` Kaspar-Schuster implementation (locked v0.5.2; see K_5 bit-level parsing amendment) |
+| K_3 multi | `cit.proxies.neural_prequential.neural_prequential_proxy` | single-layer GRU (hidden=64), per-feature sigmoid output heads, strict online prequential SGD (lr=0.01, momentum=0), `NEURAL_SEED=7`, `H_pred` = mean per-step per-feature BCE in bits over T=20000 steps, `H_iid = 1.0` bit/feature/step (binary uniform), `C_K3 = 1 - H_pred / H_iid` clipped to `[0, 1]` (locked v0.5.3; see K_3 neural prequential protocol lock) |
 | A_1 multi | `cit.ablations.loo_multi.leave_one_out_ablation_multi` | feature-level LOO, replace-with-uniform Bernoulli(0.5), `center=True` default |
 | A_2 multi | `cit.ablations.shapley_multi.shapley_ablation_multi` | feature-level Shapley, `k=64` coalitions, `center=True` default |
 | A_3 | `cit.ablations.correlation_cluster.correlation_cluster_ablation` | Pearson signed correlation `> 0.15` for cluster edges, connected components, replace-with-uniform per cluster, `center=True` default |
@@ -407,4 +408,43 @@ K_5's parsing/coding distinction is sharpened by the amendment: K_1 compresses b
 | Phrase count | `c(bit_stream)` = distinct phrases in parse |
 | iid baseline | `c_iid = T_bits / log_2(T_bits)` (binary uniform asymptotic) |
 | Coherence | `C_K5 = 1 - c(bit_stream) / c_iid`, clipped to `[0, 1]` |
+
+### 2026-05-28 — K_3 (neural prequential cross-entropy) protocol lock
+
+**Change.** K_3 multi-feature proxy locked for v0.5.3 implementation. Single-layer GRU consumes the 10-feature substrate stream as float32 input; per-feature factorized sigmoid output predicts each binary feature independently. Strict online prequential SGD: predict x_t given hidden state h_{t-1}, observe x_t, accumulate per-feature BCE, single SGD step on the per-step loss, advance hidden state. No offline training, no epochs, no train/test split, no warmup. Mean per-feature per-step cross-entropy in bits divided by binary uniform baseline (1.0 bit/feature/step) yields C_K3.
+
+**Rationale.** Pre-implementation analytical reasoning. The K_3 family slot is "neural online cross-entropy (no coding boundary)" per the v0.5 sequencing -- structurally distinct from K_1 (zstd entropy coding), K_2 (explicit MDL with model penalty), K_5 (LZ76 phrase parsing). Among neural classes (GRU / LSTM / transformer head / minimal attention), GRU was selected for: (a) narrowest pre-registration lock surface, (b) canonical CPU determinism via `torch.use_deterministic_algorithms(True)`, (c) substrate match -- the substrate's coherent features are bigram-order, so attention's long-range routing provides no expressivity payoff over gated recurrence, (d) lowest seam risk -- smallest parameter count among the four candidates minimizes random-init variance under NEURAL_SEED. Per-feature factorized output matches K_2's bigram factorization, so the K_3 vs K_2 cross-proxy R_2 isolates model-class structural difference rather than entangling it with a factorization shift.
+
+**K_3 family identity (locked).** K_3 is the "neural online cross-entropy" family, structurally distinct from:
+
+- K_1: universal compression via zstd, byte-level entropy coding
+- K_2: explicit MDL with model penalty, per-feature factorized bigram
+- K_4: HMM with model selection across H, explicit MDL
+- K_5: LZ76 bit-level phrase parsing, no entropy coder
+
+K_3's no-coding-boundary distinction is structural: no codebook, no entropy coder, no MDL prior, no phrase dictionary. The output is the mean negative log-likelihood under the GRU's online predictive distribution. Determinism is enforced by `torch.manual_seed(NEURAL_SEED)` + `torch.use_deterministic_algorithms(True)` and CPU-only execution.
+
+**Lock scope.** v0.5.3+ K_3 implementations and cross-proxy R_2 tests involving K_3. Marker assignment (`slow` vs `very_slow`) deferred to empirical timing run on the v0.5 substrate before v0.5.3 ship; both tiers admissible.
+
+**Implementation locked v0.5.3.**
+
+| Element | Locked value |
+|---------|--------------|
+| Input | 10-feature substrate stream (4 coherent + 6 noise), cast to `float32` in `[0, 1]`, no byte/bit packing |
+| Model class | Single-layer GRU |
+| Hidden dim | 64 |
+| Num layers | 1 |
+| Init | PyTorch GRU default (`orthogonal_` recurrent weights, `xavier_uniform_` input weights, zero biases) under `torch.manual_seed(NEURAL_SEED)` |
+| Output head | `Linear(64, 10)` + `sigmoid` (10 independent binary predictors) |
+| Factorization | Per-feature factorized, matching K_2 bigram factorization |
+| Loss | Per-feature binary cross-entropy in bits, summed over 10 features per step, accumulated over T_steps |
+| Optimizer | SGD, `lr=0.01`, `momentum=0`, `weight_decay=0` |
+| Training regime | Strict cumulative prequential; each sample seen exactly once; one SGD step per timestep on the per-step loss |
+| T_steps | 20,000 (`= T_bytes / 2` from K_1 multi shared step count) |
+| H_pred | `(1 / (T * 10)) * sum_t sum_i BCE_bits(x_{i,t}, P_{i,t})` |
+| H_iid | `1.0` bit per feature per step (binary uniform baseline) |
+| Coherence | `C_K3 = 1 - H_pred / H_iid`, clipped to `[0, 1]` |
+| Determinism | `torch.manual_seed(NEURAL_SEED)`, `torch.use_deterministic_algorithms(True)`, CPU-only execution |
+| NEURAL_SEED | `7` (new locked constant, distinct from `STREAM_SEED=42` and `ABLATION_SEED=123`) |
+
 
