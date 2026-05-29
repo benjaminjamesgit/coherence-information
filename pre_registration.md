@@ -261,7 +261,7 @@ labels = {
 | **v0.5.0** | `(form B multi, K_1 multi)` per ablation A_1, A_2, A_3 |
 | **v0.5.1** | `(K_2, form B multi)` and `(K_2, K_1 multi)` per ablation A_1, A_2, A_3 |
 | **v0.5.2** | `(K_5, form B multi)` and `(K_5, K_1 multi)` per ablation A_1, A_2, A_3; `(K_5, K_2)` per A_1, A_3 only (A_2 pair is xfail-marked seam, see Known seams) |
-| v0.5.3 | add `(K_3, *)` for each of `{form B multi, K_1 multi, K_2, K_5}` |
+| **v0.5.3** | `(K_3, *)` for each of `{form B multi, K_1 multi, K_2, K_5}` per ablation A_1, A_2, A_3; all 12 pairs clear Spearman >= 0.5 (no new seam) |
 | v0.5.4 | add `(K_4, *)` for each of `{form B multi, K_1 multi, K_2, K_5, K_3}` |
 | v0.5.5 capstone | Full 15-pair off-diagonal matrix per ablation; every pair `>= 0.5` on structured substrate; every pair drops significantly on noise-only counterfactual |
 
@@ -424,7 +424,7 @@ K_5's parsing/coding distinction is sharpened by the amendment: K_1 compresses b
 
 K_3's no-coding-boundary distinction is structural: no codebook, no entropy coder, no MDL prior, no phrase dictionary. The output is the mean negative log-likelihood under the GRU's online predictive distribution. Determinism is enforced by `torch.manual_seed(NEURAL_SEED)` + `torch.use_deterministic_algorithms(True)` and CPU-only execution.
 
-**Lock scope.** v0.5.3+ K_3 implementations and cross-proxy R_2 tests involving K_3. Marker assignment (`slow` vs `very_slow`) deferred to empirical timing run on the v0.5 substrate before v0.5.3 ship; both tiers admissible.
+**Lock scope.** v0.5.3+ K_3 implementations and cross-proxy R_2 tests involving K_3. Marker assignment resolved at v0.5.3 ship (2026-05-29): ~12s/call at T=20000; A_1 LOO, A_3 CorrCluster, and proxy invariants are `slow`; A_2 Shapley is `very_slow` at ~4.3h/fixture (1,280 proxy calls = 10 features x 64 coalitions x 2 marginal evaluations). K_3 Shapley exceeds the 6h hosted-runner hard ceiling, so it is local-gated: hosted `very_slow.yml` runs `-k "not K3"` (K_5 family only, ~135 min), while local `pytest -m very_slow` runs the full tier. Validated locally 2026-05-29: 10 passed, 1 xfailed (Seam 1), 6h33m.
 
 **Implementation locked v0.5.3.**
 
