@@ -234,6 +234,7 @@ labels = {
 | K_2 multi | `cit.proxies.ngram_mdl.ngram_mdl_proxy` | per-feature factorized bigram, 2-part MDL (Rissanen prior `0.5 * 2 * n_features * log2(T)`), Laplace smoothing, `C_K2 = 1 - (L_data + L_model) / L_iid` clipped to `[0, 1]` (locked v0.5.1; see K_2 factorization amendment) |
 | K_5 multi | `cit.proxies.lempel_parsing.lempel_parsing_proxy` | bit-level LZ76 phrase parsing on unpacked byte stream (shared K_1 multi encoder), `c_iid = T_bits / log_2(T_bits)` binary uniform asymptotic, `C_K5 = 1 - c(bit_stream) / c_iid` clipped to `[0, 1]`, numba `@njit` Kaspar-Schuster implementation (locked v0.5.2; see K_5 bit-level parsing amendment) |
 | K_3 multi | `cit.proxies.neural_prequential.neural_prequential_proxy` | single-layer GRU (hidden=64), per-feature sigmoid output heads, strict online prequential SGD (lr=0.01, momentum=0), `NEURAL_SEED=7`, `H_pred` = mean per-step per-feature BCE in bits over T=20000 steps, `H_iid = 1.0` bit/feature/step (binary uniform), `C_K3 = 1 - H_pred / H_iid` clipped to `[0, 1]` (locked v0.5.3; see K_3 neural prequential protocol lock) |
+| K_4 multi | `cit.proxies.mdl_hmm.mdl_hmm_proxy` | factorized Bernoulli HMM, MDL model selection over `H in {1,2,3,4}`, Baum-Welch EM (single deterministic init `HMM_SEED=0`, `max_iter=100`, `tol=1e-4`), `num_params(H) = H(H-1) + H*n_features + (H-1)`, `C_K4 = 1 - (L_data(H*) + L_model(H*)) / (T*n_features)` clipped to `[0, 1]` (locked v0.5.4; see K_4 MDL-HMM protocol lock) |
 | A_1 multi | `cit.ablations.loo_multi.leave_one_out_ablation_multi` | feature-level LOO, replace-with-uniform Bernoulli(0.5), `center=True` default |
 | A_2 multi | `cit.ablations.shapley_multi.shapley_ablation_multi` | feature-level Shapley, `k=64` coalitions, `center=True` default |
 | A_3 | `cit.ablations.correlation_cluster.correlation_cluster_ablation` | Pearson signed correlation `> 0.15` for cluster edges, connected components, replace-with-uniform per cluster, `center=True` default |
@@ -262,7 +263,7 @@ labels = {
 | **v0.5.1** | `(K_2, form B multi)` and `(K_2, K_1 multi)` per ablation A_1, A_2, A_3 |
 | **v0.5.2** | `(K_5, form B multi)` and `(K_5, K_1 multi)` per ablation A_1, A_2, A_3; `(K_5, K_2)` per A_1, A_3 only (A_2 pair is xfail-marked seam, see Known seams) |
 | **v0.5.3** | `(K_3, *)` for each of `{form B multi, K_1 multi, K_2, K_5}` per ablation A_1, A_2, A_3; all 12 pairs clear Spearman >= 0.5 (no new seam) |
-| v0.5.4 | add `(K_4, *)` for each of `{form B multi, K_1 multi, K_2, K_5, K_3}` |
+| **v0.5.4** | add `(K_4, *)` for each of `{form B multi, K_1 multi, K_2, K_5, K_3}` per ablation A_1, A_2, A_3 (15 pairs). 13 measured and clear Spearman >= 0.5; the 2 remaining A_2 pairs (vs K_5, vs K_3) gated to the full very_slow run (not seam-risk). `(K_4, K_2)` under A_2 -- the Seam 1 structural twin -- measured **0.830**: no new seam. `(K_4, form B)` = 0.733, `(K_4, K_1)` = 0.915 under A_2; all A_1/A_3 pairs clear (see 2026-06-22 amendment + Seam 1 record) |
 | v0.5.5 capstone | Full 15-pair off-diagonal matrix per ablation; every pair `>= 0.5` on structured substrate; every pair drops significantly on noise-only counterfactual |
 
 Threshold calibrated per `2026-05-26 -- Multi-feature cross-proxy R2 threshold calibration` amendment.
@@ -291,6 +292,7 @@ Pre-registered framework limitations surfaced by empirical execution. Each seam 
 | Resolution path | **v0.5.5 capstone**. Addition of K_3 (neural online cross-entropy) and K_4 (HMM with model selection) yields a 15-pair convergence matrix. If the pattern is K_5 vs K_2-specific, the seam remains marked. If it generalizes to "Shapley applied to any phrase-aware versus factorized proxy pair", the framework's operating envelope is restricted via formal amendment to the multi-feature R_2 threshold or the asserted pair set. |
 | Mechanical mark | `tests/test_multi_feature_substrate.py::TestCrossProxyConvergenceMulti::test_K5_vs_K2_under_A2` carries `@pytest.mark.xfail(strict=True)`. XPASS triggers strict-mode failure and forces seam re-evaluation. |
 | Cost at v0.5.2 | One pair removed from v0.5.2 asserted cross-K convergence: 9 pairs total (3 K_5 cross-proxy pairs across 3 ablations), 8 are asserted, 1 is xfail-marked. |
+| v0.5.4 evidence (2026-06-22) | `(K_4, K_2)` under A_2 measured **0.830** -- the structural twin (latent/coupled K_4 vs factorized K_2 under Shapley) CLEARS, while `(K_5, K_2)` sits at 0.491. Evidence that Seam 1 is `(K_5, K_2)`-specific (particular to K_5's LZ76 phrase dictionary), NOT a general "Shapley + coupled-versus-factorized" law. The generalization branch of the Resolution path is disfavored; seam remains marked pending v0.5.5 capstone. |
 
 ---
 
@@ -446,5 +448,67 @@ K_3's no-coding-boundary distinction is structural: no codebook, no entropy code
 | Coherence | `C_K3 = 1 - H_pred / H_iid`, clipped to `[0, 1]` |
 | Determinism | `torch.manual_seed(NEURAL_SEED)`, `torch.use_deterministic_algorithms(True)`, CPU-only execution |
 | NEURAL_SEED | `7` (new locked constant, distinct from `STREAM_SEED=42` and `ABLATION_SEED=123`) |
+
+### 2026-06-22 -- K_4 (MDL-HMM) protocol lock
+
+**Change.** K_4 multi-feature proxy locked for v0.5.4 implementation. A hidden Markov model with factorized Bernoulli emissions (each of the n_features binary features conditionally independent given the hidden state; one free Bernoulli parameter `p[h, j]` per (state h, feature j)) is fit by Baum-Welch EM at each hidden-state cardinality `H in {1, 2, 3, 4}`. Two-part MDL selects `H* = argmin_H [L_data(H) + L_model(H)]`; `C_K4 = 1 - (L_data(H*) + L_model(H*)) / L_iid`, clipped to `[0, 1]`. The emission family is FIXED (factorized Bernoulli) for all H; the MDL search ranges only over hidden-state cardinality, never over emission structure (see Emission-structure scope below).
+
+This supersedes the K_4 protocol sketch in `design/multi_feature_substrate.md` (K_4 protocol section + estimator table) in three respects, each justified below: (1) parameter count uses the rigorous free-parameter accounting `H(H-1) + H*n_features + (H-1)` rather than the memo's `H^2 + n*H`; (2) the cardinality grid is `{1, 2, 3, 4}` rather than `[1, 8]`; (3) EM is a single deterministic seeded initialization (`HMM_SEED`), `max_iter = 100`, `tol = 1e-4`, rather than 5 random restarts x 50 fixed iterations. The design memo is updated to the amended spec in the same commit.
+
+**Rationale.** Pre-implementation analytical reasoning plus an empirical due-diligence pass. Two independent throwaway Baum-Welch prototypes were measured on the locked substrate (STREAM_SEED=42, ABLATION_SEED=123); they agree to six significant figures on every decisive quantity.
+
+- *No clip-to-zero.* The K_2 and K_5 amendments exist because their first formulations clipped `C` to 0 on this substrate. K_4 does not: `C_K4(structured) = 0.0755` selecting `H* = 2`, recovering the ground-truth 2-state generator (fitted emissions ~ 0.8/0.2 on coherent features, ~ 0.5 on noise, self-transition ~ 0.9). `C_K4(noise-only) = 0.000` selecting `H* = 1`. The structured-vs-noise differential and the exact zero on the counterfactual are the desired falsifiability signature. The analytic upper bound under perfect state knowledge is `C = 0.110` (per-coherent-feature conditional entropy `H(0.8) = 0.722` bits vs `1.0` iid); the realized `0.0755` is lower because the sticky-0.9 chain caps state inference -- the value is structurally explained, not a free parameter.
+
+- *Canonical signs and class separation under ablation.* Centered LOO (A_1) gives `rho > 0` for all coherent features {0,1,2,3} (~ +0.0143) and `rho < 0` for all noise features {4..9} (~ -0.0098), a separation margin (~0.024) that dwarfs inter-run jitter (<= 2e-6). K_4's likelihood-based ablation gives ~50% larger |rho| on coherent features than K_2 because removing a column the shared latent state was jointly explaining costs more likelihood than K_2's per-feature lag-1 view.
+
+- *Cross-proxy convergence under A_1.* Spearman(rho_K4, rho_K2) = 0.818 under A_1, well clear of the multi-feature 0.5 threshold.
+
+- *Parameter-count convention.* The locked `num_params(H) = H(H-1) [transition rows sum to 1] + H*n_features [emissions] + (H-1) [initial sums to 1]` counts free parameters under the same convention K_2 uses (K_2 counts `2*n_features` free Bernoulli params, exploiting `p(0|.) = 1 - p(1|.)`). The memo's `H^2 + n*H` over-counts transitions as `H^2` and omits the initial distribution; the two differ by exactly one parameter (~7 bits at T=20000) and do not change H-selection, but the free-parameter count is the principled, K_2-consistent choice and is locked as such.
+
+- *Cardinality grid.* `{1, 2, 3, 4}` contains the true cardinality (2) with 2x headroom. Empirically the MDL penalty rejects `H >= 3` decisively (`H=3` total description length exceeds `H=2` by ~100 bits; `H=4` by more), so `H in {5,...,8}` would never be selected on this substrate and only ~double the compute. `{1, 2, 3, 4}` is locked as the narrowest grid containing the truth with headroom; the penalty, not the grid bound, excludes higher H, so this is not tuning to a result.
+
+- *Determinism.* A single deterministic seeded initialization (sticky-0.9 self-transition, uniform initial, emissions = per-feature global Bernoulli MLE perturbed by a fixed `HMM_SEED` jitter; H=1 closed-form) is locked instead of random restarts, mirroring the K_3 `NEURAL_SEED` discipline. On this substrate the two states are well separated (0.2 vs 0.8), EM converges to the global optimum in <= 17 iterations from the perturbed-MLE start across all ablations tested, and a single init is bit-exactly reproducible. Residual risk recorded honestly: if the A_2 Shapley sweep (1,280 proxy calls over random coalitions) surfaces a local-optimum instability, that is a structural finding to record, not to silently patch.
+
+**Emission-structure scope (deliberate, narrow).** "MDL search over hidden-state cardinality and emission structure" is locked under the narrow reading: emissions are a fixed factorized-Bernoulli family and the MDL two-part search ranges only over `H`. The rich reading -- letting MDL select, per feature, whether each emission is state-dependent -- is rejected because it performs feature attribution inside the proxy, which is precisely the role of the ablation operator A_m; convergence between a proxy and an ablation that share a feature-selection mechanism is not independent evidence. Recorded as a deliberate scope choice so a future emission-structure-search variant is a versioned amendment, not silent drift.
+
+**K_4 family identity (locked).** K_4 is the only proxy in the family with a latent variable AND an explicit MDL model-complexity penalty over a searched cardinality. Structurally distinct from:
+
+- form B: joint conditioning on the previous full feature vector, no latent state, no penalty.
+- K_1: zstd universal byte compression, implicit/amortized model, no explicit parameter count, no latent state.
+- K_2: per-feature factorized bigram MDL, observed lag-1 conditioning, no latent state, no cross-feature coupling.
+- K_3: neural online prequential cross-entropy, amortized via SGD, no explicit MDL prior and no discrete model selection.
+- K_5: LZ76 bit-level phrase parsing, combinatorial dictionary, no probability model, no penalty.
+
+K_4's unique axis is selected latent-state cardinality under a description-length penalty. Its emissions are factorized (matching K_2), so a K_4-vs-K_2 comparison isolates the latent-state / model-selection difference rather than entangling it with a factorization shift; the cross-feature coupling K_4 adds via the shared hidden state is exactly what K_2 lacks.
+
+**Cross-proxy convergence commitment (v0.5.4).** v0.5.4 asserts all 15 new pairs -- `(K_4, P)` for `P in {form B multi, K_1 multi, K_2, K_5, K_3}` under each of `A_1, A_2, A_3` -- at the multi-feature threshold Spearman `rho >= 0.5`. Pre-registered structural prediction: **`(K_4, K_2)` under A_2 (Shapley) is the most likely pair to fall short.** It is the structural twin of Seam 1 (`(K_5, K_2)` under A_2 = 0.491): a cross-feature-coupling proxy (here K_4's shared latent state) versus a purely factorized proxy (K_2), under Shapley's coalition-credit redistribution, where A_1 (single-feature LOO) and A_3 (correlation-cluster) do not surface the asymmetry. If `(K_4, K_2)` under A_2 measures below 0.5 with the locked seeds, it is recorded honestly as **Seam 2** (mechanically `@pytest.mark.xfail(strict=True)`, resolution deferred to the v0.5.5 capstone), exactly as Seam 1 was recorded post-measurement at v0.5.2 -- not pre-marked and not tuned over. Either outcome is a direct probe of Seam 1's generalization hypothesis (whether "Shapley applied to a coupled-versus-factorized proxy pair" is a one-off or a structural law): a `(K_4, K_2)` miss is evidence the pattern generalizes; a clear pass is evidence Seam 1 is `(K_5, K_2)`-specific.
+
+**Result (measured 2026-06-22).** `(K_4, K_2)` under A_2 = **0.830** -- clears; **no Seam 2**. `(K_4, form B)` = 0.733 and `(K_4, K_1)` = 0.915 under A_2; K_4's own A_2 invariants hold (canonical signs, class separation, `|w - 0.5|_max = 0.013`). All A_1 and A_3 cross-proxy pairs clear (slow suite green). The two remaining A_2 pairs `(K_4, K_5)` and `(K_4, K_3)` are gated to the full very_slow run and are not seam-risk. The clear pass is evidence Seam 1 is `(K_5, K_2)`-specific rather than a general "Shapley + coupled-versus-factorized" restriction; the generalization branch of Seam 1's resolution path is now disfavored, pending final v0.5.5 capstone confirmation. K_4 Shapley fixture measured ~2.1 h (1,280 proxy calls), under the 6 h hosted ceiling.
+
+**Lock scope.** v0.5.4+ K_4 implementations and cross-proxy R_2 tests involving K_4. Marker assignment (validated by the due-diligence prototypes at ~9 s/proxy call, ~100 s full LOO): A_1 LOO, A_3 correlation-cluster, and proxy-level invariants are `slow`; A_2 Shapley is `very_slow` at ~2.8-3.2 h/fixture (1,280 proxy calls = 10 features x 64 coalitions x 2 marginal evaluations). Unlike K_3 (~4.3 h, local-gated), K_4's Shapley fits under the 6 h hosted-runner ceiling, so hosted `very_slow.yml` can run the K_4 family. Pure-numpy vectorized EM is sufficient for the ceiling; numba acceleration is an optional implementation detail, not a locked element.
+
+**Implementation locked v0.5.4.**
+
+| Element | Locked value |
+|---------|--------------|
+| Input | 10-feature substrate stream (4 coherent + 6 noise), uint8 in {0,1}; no byte/bit packing |
+| Model class | Hidden Markov model, factorized Bernoulli emissions |
+| Emission | `p(v_t | h_t) = prod_j p(v_t^j | h_t)`; one free `p[h,j]` per (state, feature); fixed family, never searched |
+| Cardinality grid | `H in {1, 2, 3, 4}` (H=1 = independent per-feature Bernoulli, closed-form) |
+| Fit | Baum-Welch EM; scaled forward-backward; log-space emission likelihood with per-row max offset |
+| Init | sticky-0.9 self-transition; uniform initial; emissions = per-feature global Bernoulli MLE + fixed seeded jitter |
+| max_iter | 100 (observed convergence <= 17 iters) |
+| tol | 1e-4 on per-step mean log-likelihood improvement |
+| Numerical guards | emission probs clipped to [1e-6, 1-1e-6]; transition rows clipped [1e-12, .] and renormalized each M-step |
+| num_params(H) | `H(H-1) [transition] + H*n_features [emission] + (H-1) [initial]` |
+| L_model(H) | `0.5 * num_params(H) * log2(T)` bits |
+| L_data(H) | `-log2` marginal likelihood of the fitted HMM (independent forward pass on fitted params), bits |
+| L_iid | `T * n_features` bits (uniform Bernoulli baseline) |
+| Selection | `H* = argmin_H [L_data(H) + L_model(H)]` |
+| Coherence | `C_K4 = 1 - (L_data(H*) + L_model(H*)) / L_iid`, clipped to `[0, 1]` |
+| Determinism | fixed `HMM_SEED`, CPU/numpy, vectorized; bit-exact reproducible |
+| HMM_SEED | `0` (new locked constant, distinct from `STREAM_SEED=42`, `ABLATION_SEED=123`, `NEURAL_SEED=7`) |
+| Expected (structured) | `C_K4 ~ 0.075`, `H* = 2` |
+| Expected (noise-only) | `C_K4 = 0.0`, `H* = 1` |
 
 

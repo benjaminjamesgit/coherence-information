@@ -184,14 +184,15 @@ Each new estimator needs an explicit multi-feature consumption protocol:
 
 **K_3 runtime profile**: substantially lighter than the originally-specced transformer (smallest parameter count among the four neural candidates considered: GRU, LSTM, transformer head, minimal attention). Empirical timing run pre-ship determines `slow` vs `very_slow` marker assignment; both tiers admissible. No runtime-driven hyperparameter reduction expected.
 
-**K_4 (MDL-HMM) protocol**:
-- Model class: factorized Bernoulli emission HMM. `p(v_t | h_t) = prod_j p(v_t^j | h_t)` -- emissions factorize per feature given hidden state.
-- Hidden state count `H` searched over `[1, 8]`.
-- Fit method: Baum-Welch with 5 random restarts, 50 EM iterations each, best by data log-likelihood.
-- MDL: `L(H) = -log P(data | HMM_H) + (1/2) * (H^2 + n*H) * log(T)` where `n = 10`.
+**K_4 (MDL-HMM) protocol** (amended 2026-06-22 -- see `pre_registration.md` "K_4 (MDL-HMM) protocol lock"):
+- Model class: factorized Bernoulli emission HMM. `p(v_t | h_t) = prod_j p(v_t^j | h_t)` -- emissions factorize per feature given hidden state. Fixed family; the MDL search ranges only over hidden-state cardinality, never over emission structure (narrow scope, deliberate).
+- Hidden state count `H` searched over `{1, 2, 3, 4}` (contains the true `C = 2` with headroom; the penalty, not the bound, excludes higher H).
+- Fit method: Baum-Welch EM, single deterministic seeded init (`HMM_SEED = 0`; sticky-0.9 self-transition, uniform initial, emissions = per-feature Bernoulli MLE + fixed jitter), `max_iter = 100`, `tol = 1e-4`. H=1 is closed-form. Determinism mirrors K_3's `NEURAL_SEED` discipline (CPU/numpy, bit-exact).
+- MDL: `L(H) = -log2 P(data | HMM_H) + (1/2) * num_params(H) * log2(T)` with `num_params(H) = H(H-1) + H*n + (H-1)`, `n = 10` (free-parameter count, K_2-consistent).
 - Selected H: `H* = argmin_H L(H)`.
-- Coherence: `C_K4 = 1 - L(H*) / L_iid`, clipped to `[0, 1]`.
-- Family identity: hidden-state generative model with explicit MDL-based model selection. Structurally aligned with the substrate's true generator (C=2 HMM) but mitigated: K_4 must discover H, not receive it.
+- Coherence: `C_K4 = 1 - L(H*) / L_iid`, `L_iid = T * n`, clipped to `[0, 1]`.
+- Family identity: hidden-state generative model with explicit MDL-based model selection over cardinality. Structurally aligned with the substrate's true generator (C=2 HMM) but mitigated: K_4 must discover H, not receive it. The only proxy with both a latent variable and an explicit complexity penalty.
+- Empirical due-diligence (pre-ship, two independent prototypes): `C_K4(structured) = 0.0755` at `H* = 2`, `C_K4(noise) = 0` at `H* = 1`, canonical LOO signs with class separation, Spearman(rho_K4, rho_K2) = 0.818 under A_1.
 
 **K_5 (Lempel parsing) protocol** (amended 2026-05-26 -- see `pre_registration.md` "K_5 (Lempel parsing) bit-level parsing amendment"):
 - Encoding: same 2-byte-per-step encoding as K_1 multi (10 active bits + 6 padding zeros). Reuses the K_1 multi encoder.
@@ -302,7 +303,7 @@ labels = {
 | K_1 multi | `compression_delta_proxy_multi` | 2-byte fixed-width encoding (10 active + 6 padding), zstd level 3 |
 | K_2 | `ngram_mdl_proxy` | per-feature factorized bigram `p(v_t^j | v_{t-1}^j)`, 2-part MDL with Rissanen prior `(1/2)*num_params*log2(T)` bits, Laplace smoothing (amended 2026-05-26) |
 | K_3 | `neural_prequential_proxy` | single-layer GRU (`hidden=64`), per-feature sigmoid heads, strict online prequential SGD (`lr=0.01`, `momentum=0`), `NEURAL_SEED=7`, `T=20000` steps, `C_K3 = 1 - H_pred / H_iid` clipped to `[0, 1]` (locked 2026-05-28) |
-| K_4 | `mdl_hmm_proxy` | factorized Bernoulli HMM, `H in [1, 8]`, Baum-Welch with 5 restarts x 50 EM iter, MDL `L(H) = -log P(data) + (1/2)*(H^2 + n*H)*log(T)` |
+| K_4 | `mdl_hmm_proxy` | factorized Bernoulli HMM, MDL selection over `H in {1,2,3,4}`, Baum-Welch (single deterministic init `HMM_SEED=0`, `max_iter=100`, `tol=1e-4`), `num_params(H) = H(H-1) + H*n + (H-1)`, `C_K4 = 1 - L(H*)/(T*n)` clipped (amended 2026-06-22) |
 | K_5 | `lempel_parsing_proxy` | LZ76 parse on bit stream (unpacked from K_1 byte encoding via `numpy.unpackbits`), `c_iid = T_bits / log_2(T_bits)` baseline (amended 2026-05-26) |
 
 All proxy outputs are scalars in `[0, 1]`. Coherence aggregation per Q5 specifications.
