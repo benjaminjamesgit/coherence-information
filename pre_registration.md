@@ -297,7 +297,7 @@ Pre-registered framework limitations surfaced by empirical execution. Each seam 
 
 ---
 
-## v0.6 — operational theorems (capacity estimator v0.6.0 + selective coder v0.6.1 locked; Selective Compression empirics v0.6.2 pending)
+## v0.6 — operational theorems (COMPLETE: capacity v0.6.0 + selective coder v0.6.1 + Selective Compression empirics v0.6.2)
 
 Operationalizes the formal capacity/compression theorems from `cit formal.docx` (JAMFFO-2) on top of the v0.5-validated rho signal. v0.6.0 locks the coherence-capacity estimator; the weighted typical-set coder (v0.6.1) and Selective Compression empirics (v0.6.2) are pending. Full protocol rationale, due-diligence numbers, and the Sec 6 erratum are in the 2026-06-23 amendment-history entry below.
 
@@ -365,6 +365,20 @@ Repairs Selective Compression Theorem 5.1, which is unsound for non-constant w (
 | `H_w` | unchanged in `cit/information.py`; a MEASURE, not a rate |
 
 Asserted invariants: lossless on `S_delta` (strict); arithmetic rate `<= H(Z) + 0.02` bits/symbol at `N=200_000`; `H(Z) <= H(X)` (strict `<` when `>= 2` don't-cares merged); coherence saving (merged rate `<` weight-blind when `>= 2` don't-cares); boundary `S_delta=X => rate -> H(X)`; determinism (bit-identical). Fast tier; `tests/test_selective_coder.py`.
+
+### Selective Compression empirics (locked v0.6.2)
+
+The engineering payoff of the v0.6.1 coder as a falsifiable WIN-MARGIN: on coherence-structured sources the selective coder compresses below the weight-blind lossless rate at zero coherence-retention cost, and the saving vanishes at the boundary. Built on `cit/coders/selective.py`; no coder changes. Full record in the 2026-06-23 v0.6.2 amendment below.
+
+| Element | Locked value |
+|---------|--------------|
+| Win metric | `Delta_frac = (rate_blind - rate_selective) / rate_blind`, arithmetic coder (both lossless on `S_delta`); weight-blind = `delta` below all weights (no merge) |
+| Win margin | `WIN_MARGIN = 0.20` (structured floor measured 0.307; calibrated below it) |
+| Falsifiable claim | per structured substrate `Delta_frac >= 0.20` AND lossless on `S_delta`; at boundary `S_delta=X`, `Delta = 0` exactly |
+| Substrates (`N=100_000`) | iid (`default_rng(42)`); Gilbert-Elliott memory (`default_rng(1)`); TCUN toggle+noise (`default_rng(2)`); v0.5 multi-feature excluded (not a symbol stream) |
+| zstd saving | reported per substrate (observational; larger on memory sources) |
+
+Asserted invariants: arithmetic `Delta_frac >= 0.20` on iid/G-E/TCUN; lossless on `S_delta` each (strict); boundary `Delta = 0` at `S_delta=X` each (exact). Fast tier; `tests/test_selective_compression_empirics.py`. Completes the v0.6 operational-theorem program.
 
 ---
 
@@ -697,5 +711,43 @@ The Capacity Theorem (Sec 4) is UNAFFECTED (its coherence-joint typicality is a 
 **Lock scope.** v0.6.1+ selective coder and tests. New module `cit/coders/selective.py`; new test file `tests/test_selective_coder.py` (fast). v0.6.2 (Selective Compression empirics: win-margin vs weight-blind on richer substrates) is separate, pending its own amendment. Design memo `design/v06_v07_spec.md` Sec 7.3-7.4 updated to the corrected theorem in the same commit.
 
 **Known gaps / honest notes.** (a) `H(Z)` is partition-driven (depends on `S_delta` via `delta`, not the graded w values) -- a deliberate consequence of the threshold criterion; the graded weights live in the `H_w` measure, not the rate. (b) Corrected theorem is i.i.d.-source (Thm 5.1 scope); sources with memory are out of v0.6.1 scope. (c) `TOL_RATE`/`N` are engineering calibration, confirmed against the real coder at implementation.
+
+### 2026-06-23 -- v0.6.2 Selective Compression empirics (win-margin)
+
+**Change.** Operationalizes the engineering payoff of the corrected selective coder (v0.6.1, compress to `H(Z)`) as a falsifiable WIN-MARGIN: on coherence-structured sources the selective coder compresses strictly below the weight-blind lossless rate while reproducing every coherence-bearing symbol exactly, and the advantage VANISHES at the boundary (`S_delta = X`). Built on the v0.6.1 coder; no coder changes.
+
+**Win metric.** The selective coder (`delta`) and a weight-blind baseline (`delta` below all weights `=> S_delta = X =>` no merge `=>` full lossless coding) are run with the SAME coder; the win is the fractional bitrate saving `Delta_frac = (rate_blind - rate_selective) / rate_blind` (arithmetic coder). Both are lossless on `S_delta`, so the saving is at ZERO coherence-retention cost. The zstd coder's saving is reported alongside (observational; larger on memory sources, which zstd exploits).
+
+**Falsifiable claim (two-sided), locked.** For each pre-registered structured substrate: (i) `Delta_frac >= WIN_MARGIN = 0.20` (arithmetic), AND (ii) every symbol with `w(x) > delta` reproduced exactly; and at the boundary (`S_delta = X`, e.g. `w = 1`): (iii) `Delta = 0` (exactly). Falsified if any structured substrate's saving falls below 0.20, or the boundary saving is non-zero, or any coherence-bearing symbol is corrupted.
+
+**Substrates (locked params + seeds, `N = 100_000`).**
+
+| Substrate | Spec | weights / delta |
+|-----------|------|-----------------|
+| iid | `K=5`, `p=[0.5,0.18,0.14,0.1,0.08]`, `default_rng(42)` | `w=[1,0,0,0,0]`, `delta=0.5` |
+| Gilbert-Elliott (memory) | `K=6`, 2-state Markov self-transition 0.95; good -> `choice([0,1], p=[0.7,0.3])`; bad -> uniform`{2,3,4,5}`; `default_rng(1)` | `w=[1,1,0,0,0,0]`, `delta=0.5` |
+| TCUN (toggle + uniform noise) | `K=6`, toggle base `{0,1}` advanced each non-injection step; `injection_prob=0.35` -> uniform`{2,3,4,5}`; `default_rng(2)` | `w=[1,1,0,0,0,0]`, `delta=0.5` |
+
+The v0.5 multi-feature substrate is per-feature-binary, not a symbol stream; it does not map to the per-symbol selective coder and is deliberately excluded.
+
+**Margin calibration (pre-implementation, 2026-06-23).** Measured fractional saving (arithmetic) on the locked substrates:
+
+| Substrate | arith `Delta_frac` | arith `Delta` (bits/sym) | zstd `Delta_frac` | lossless on `S_delta` |
+|-----------|------|------|------|------|
+| iid | 0.492 | +0.972 | 0.497 | yes |
+| Gilbert-Elliott | 0.411 | +1.005 | 0.536 | yes |
+| TCUN | 0.307 | +0.702 | 0.441 | yes |
+| boundary `w=1` (iid) | 0.000 | +0.000 | 0.000 | yes |
+| boundary `w=1` (G-E) | 0.000 | +0.000 | 0.000 | yes |
+
+Structured floor = 0.307 (TCUN). `WIN_MARGIN = 0.20` sits ~35% below the floor with margin and above the boundary (0.000); it asserts a structurally meaningful ">= 20% bitrate saving at zero retention cost" without over-fitting to the observed values. Same calibrate-then-set-below-floor discipline as `T_NOISE` (v0.5.5).
+
+**Asserted invariants (locked v0.6.2).** (1) arithmetic `Delta_frac >= 0.20` on each structured substrate (iid, G-E, TCUN); (2) lossless retention: every `S_delta` symbol reproduced exactly on each substrate (strict); (3) boundary `Delta = 0` at `S_delta = X` on each substrate (exact); (4) zstd `Delta_frac` per substrate logged, not asserted.
+
+**Gating.** Fast (`N = 100_000`, arithmetic + zstd both quick). No slow tier.
+
+**Lock scope.** v0.6.2+ Selective Compression empirics. New test file `tests/test_selective_compression_empirics.py` (fast); substrate generators in `cit/data/` or the test module. No changes to `cit/coders/selective.py`. Design memo `design/v06_v07_spec.md` Sec 7.4 updated. This COMPLETES the v0.6 operational-theorem program (capacity v0.6.0, coder v0.6.1, empirics v0.6.2); v0.7 cross-domain is next.
+
+**Honest notes.** (a) On memory sources the arithmetic coder uses a static i.i.d. model, so it reaches the i.i.d. merged entropy, not the merged entropy RATE; the win-margin (a DIFFERENCE of blind vs selective under the same coder) is unaffected, and the zstd row confirms the saving grows when memory is exploited. (b) `WIN_MARGIN` is calibrated to the locked substrates; new substrates extend (not retune) the claim via a future amendment. (c) Both coders are fully lossless on `S_delta`, so this is an equal-retention/lower-rate demonstration; the dual equal-rate/higher-retention (lossy-baseline) framing is out of v0.6.2 scope.
 
 

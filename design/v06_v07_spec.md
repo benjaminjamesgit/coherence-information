@@ -365,26 +365,33 @@ corrected theorem instead.
 - **Invariants:** lossless on `S_delta`; arithmetic rate `<= H(Z)+0.02` at `N=200k`; `H(Z) <= H(X)`;
   coherence saving vs weight-blind when `>= 2` don't-cares; boundary collapse; determinism. Fast tier.
 
-### 7.4 v0.6.2 -- Selective Compression empirics
+### 7.4 v0.6.2 -- Selective Compression empirics (LOCKED 2026-06-23)
 
-- **The fundamental limit:** `H_w(X)` is the floor (Thm 5.1). Demonstrate a weighted coder
-  approaches it and a baseline (w-ignorant) cannot, when coherence-bearing structure must be preserved.
-- **Empirical/falsifiable form** (from `cit engineering.docx`): Selective Compression is the
-  primary engineering target. Win condition = coherence-retention advantage `C_CIT - C_Base`
-  above a PRE-REGISTERED margin (the docs give example margins `>0.10` / `>0.25` -- these are
-  NOT locked; we set them). The deliberate asymmetry: baseline wins raw fidelity, CIT wins
-  structure-retention at equal bitrate. Falsified if coherence-weighted coding yields no
-  systematic advantage.
-- **Benchmark substrates (named, not specified -- we author seeds/sizes):** TCUN
-  (toggle-cycle + uniform-noise), channel-drift / distribution-shift, Gilbert-Elliott (HMM
-  memory source). Reuse the v0.5 multi-feature substrate where it fits.
+Pre-registered in `pre_registration.md` (the v0.6 "Selective Compression empirics" subsection + the
+2026-06-23 v0.6.2 amendment). The win-margin demonstration of the corrected coder (Section 7.3), on
+the SOUND `H(Z)` footing (the floor is `H(Z)`, NOT `H_w`).
+
+- **Win metric:** fractional saving `Delta_frac = (rate_blind - rate_selective)/rate_blind`
+  (arithmetic coder), where weight-blind = `delta` below all weights (no merge, full lossless). Both
+  coders are lossless on `S_delta`, so the win is at ZERO coherence-retention cost (equal-retention,
+  lower-rate -- cleaner than the paper's equal-rate/higher-retention asymmetry).
+- **Falsifiable claim (two-sided):** per structured substrate `Delta_frac >= WIN_MARGIN = 0.20` AND
+  lossless on `S_delta`; at the boundary (`S_delta = X`) `Delta = 0` exactly. Falsified if the saving
+  falls below 0.20 on structure, is non-zero at the boundary, or any `S_delta` symbol is corrupted.
+- **Substrates (locked seeds, N=100k):** iid (`rng(42)`), Gilbert-Elliott memory (`rng(1)`), TCUN
+  toggle+noise (`rng(2)`). Calibration (arith `Delta_frac`): iid 0.492, G-E 0.411, TCUN 0.307;
+  boundary 0.000. Margin 0.20 sits below the 0.307 floor with headroom. The v0.5 multi-feature
+  substrate is per-feature-binary, not a symbol stream -- deliberately excluded.
+- **Gating:** fast. `tests/test_selective_compression_empirics.py`. Completes the v0.6 program.
 
 ### 7.5 KNOWN GAPS AND RISKS (carry these into the v0.6 pre-reg, honestly)
 
 1. **No capacity solver / no concavity result IN THE PAPERS.** Authored repo-side: solver LOCKED
    v0.6.0 (deterministic projected-gradient multi-start); concavity remains OPEN (multi-start
    agreement is the empirical stand-in). See Section 7.2.
-2. **The practical weighted coder is constructed nowhere** (Section 7.3). Author it at v0.6.1.
+2. **The practical weighted coder is constructed nowhere** -- RESOLVED at v0.6.1: the weighted
+   typical-set coder is unsound (Section 7.3); the corrected `merge -> entropy-code` selective coder
+   (`cit/coders/selective.py`) is built against `H(Z)` and demonstrated in v0.6.2.
 3. **App A.2 soundness flag -- RESOLVED-NEGATIVE at v0.6.1 (2026-06-23).** The typical-set
    cardinality bound `|T| <= 2^{n(H_w+eps)}` is false for `w != 1`: w-typicality controls the
    WEIGHTED log-prob `sum_i w(x_i)(-log p(x_i)) ~ H_w`, which does NOT bound the RAW
