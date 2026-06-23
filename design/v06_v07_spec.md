@@ -1,8 +1,12 @@
 # CIT Architecture & Design Spec -- v0.6-v0.7 reference
 
-**Status:** living design reference. Current through HEAD = `3b179bc` (2026-06-23): the v0.5
+**Status:** living design reference. Current through HEAD = `f1d1da3` (2026-06-23): the v0.5
 robustness program and the v0.6 operational-theorem program are SHIPPED; v0.7.0 (cross-domain D1)
-is PRE-REGISTERED, build pending.
+is BUILT (slices 1-3) and record-corrected. The D1 A1-column R2 outcome is an INSTRUMENT-VALIDITY
+finding -- coding philosophy and stream representation are confounded (the {K1,K5}|{K2,K3,K4} Spearman
+blocks split collinear with the encoder boundary), so R2>0.6 on D1 is NOT YET ADJUDICABLE, NOT a
+falsification; a decoupling control is pre-registered (pending, before D2/D3). See `pre_registration.md`
+(2026-06-23 amendments) for the authoritative outcome. Version remains 0.6.2 (v0.7.0 not yet shipped).
 
 **WHERE WE ARE (continuation pointer).** Shipped this line: v0.6.0 capacity estimator, v0.6.1
 selective coder (Thm 5.1 repaired), v0.6.2 win-margin empirics. v0.7.0 PRE-REGISTERED (D1 substrate
@@ -156,7 +160,7 @@ was found UNSOUND for non-constant w (Thm 5.1; Section 7.3).
 
 ### 3.7 Tests and gating
 
-Eight test files. Total **287 tests: 194 fast + 75 slow + 18 very_slow (1 xfail = Seam 1).**
+Twelve test files. Total **351 tests: 235 fast + 98 slow + 18 very_slow (1 xfail = Seam 1).**
 (v0.7 tests pending the build.)
 
 | File | Covers |
@@ -550,8 +554,10 @@ solver, the concavity result, and the practical streaming coder appear in NONE o
 - **Stale `pyproject.toml` markers docstring** -- names only "K_5 LZ76", predates K3/K4 and
   the noise tests. Cosmetic; left as-is.
 - **v0.6 program SHIPPED (v0.6.0 / 0.6.1 / 0.6.2, 2026-06-23)** -- all locked + released. **v0.7.0
-  PRE-REGISTERED** (D1 substrate + M5 partition + R2; the `## v0.7` section + the 2026-06-23 v0.7.0
-  amendment), build pending (Section 8.1). v0.7.1 (R1), v0.7.2 (R3), D2/D3, and the M5 + eight-cell
+  D1 BUILT + record-corrected** (slices 1-3, `823928a` + `f1d1da3`; D1 substrate + categorical K1-K5 +
+  A1/A2/A3 + R2/cross-tab; the `## v0.7` section + the 2026-06-23 amendments). D1 A1-column R2 outcome =
+  INSTRUMENT-VALIDITY (representation/philosophy confound), NOT a falsification; decoupling control
+  pre-registered (pending, before D2/D3). v0.7.1 (R1), v0.7.2 (R3), D2/D3, and the M5 + eight-cell
   capstone remain PLANNING until their own dated amendments.
 - **Sec 6 fixture erratum (2026-06-23)** -- `C_C(eps)=0.5(1+eps)` is the value at uniform input,
   not the capacity (true `C_C` is higher for eps<1; see Section 7.2). Author erratum flagged; does

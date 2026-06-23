@@ -57,19 +57,24 @@ Weights are either user-supplied or induced from data:
   lossless rate at zero retention cost on coherence-structured sources; saving = 0 at the boundary.
   arith Delta_frac >= WIN_MARGIN=0.20 on iid/Gilbert-Elliott/TCUN substrates (calibrated like T_NOISE).
 - v0.7 (IN PROGRESS, cross-domain / Metacoherence; version still `0.6.2`, not yet shipped): v0.7.0 D1
-  BUILT (slices 1-3, uncommitted at this note's writing). D1 generator `cit/data/hsmm_d1.py` (seeds
-  7000..7019); categorical marginal-relative K1-K5 `cit/proxies/categorical.py`; categorical A1/A2/A3
-  `cit/ablations/categorical.py`; `cit/induce_cat.py`; R2 + cross-tab `cit/metacoherence.py`;
-  CI verdict job `scripts/run_metacoherence_grid.py`. LOAD-BEARING lock HELD: coherence on D1 is
-  MARGINAL-RELATIVE (predictive `H_marg - H_pred`; compression via a TIME-SHUFFLE surrogate baseline,
-  `SHUFFLE_SEED=0`, feature-major bit encoding). **R2 SEAM (recorded, not tuned):** on D1's A1 column
-  the proxies recover COMPLEMENTARY properties (K5 {A,B,C,D}, K1 {A,C}, K2/K3/K4 {A,D}; agree on A,
-  diverge on B/C/D) -> cross-philosophy median Spearman ~ -0.08, FALSIFYING `R2>0.6`. The A2-Shapley
-  rescue (source expected convergence) is the decisive OPEN question, deferred to CI/very_slow (hours).
-  A3==A1 on D1 (Pearson finds only singletons). pre-reg line 791 corrected (K1/K5 were NOT
-  alphabet-agnostic). Sequenced next: v0.7.1 R1; v0.7.2 R3; then D2 (Pfam, CC0), D3 (FOMC), M5 + capstone.
-- Tests: 234 fast + ~95 slow + 18 very_slow (1 xfail). v0.7.0: 12 D1-structure + 24 categorical-proxy +
-  8 categorical-ablation + 7 R2/cross-tab. v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
+  BUILT + record-corrected (slices 1-3, committed `823928a` + `f1d1da3`). D1 generator `cit/data/hsmm_d1.py`
+  (seeds 7000..7019); categorical marginal-relative K1-K5 `cit/proxies/categorical.py`; categorical A1/A2/A3
+  `cit/ablations/categorical.py`; `cit/induce_cat.py`; R2 + cross-tab `cit/metacoherence.py` (incl.
+  `partition_diagnostic`, the +0.43 shared-top-k bound); CI verdict job `scripts/run_metacoherence_grid.py`.
+  LOAD-BEARING lock HELD: coherence on D1 is MARGINAL-RELATIVE (predictive `H_marg - H_pred`; compression via
+  a TIME-SHUFFLE surrogate baseline, `SHUFFLE_SEED=0`, feature-major bit encoding). **R2 result =
+  INSTRUMENT-VALIDITY, NOT a falsification (corrected at `f1d1da3`):** on D1's A1 column the proxies recover
+  COMPLEMENTARY properties (K5 {A,B,C,D}, K1 {A,C}, K2/K3/K4 {A,D}); the induced-w Spearman blocks {K1,K5}
+  (within +0.68) vs {K2,K3,K4} (within 0.71-0.93) split COLLINEAR with the encoder boundary (byte-stream vs
+  categorical-native), so philosophy and REPRESENTATION are CONFOUNDED -> `R2>0.6` NOT YET ADJUDICABLE (not
+  falsification, not vindication). PROVISIONAL (single seed 7000, T=8000=16% of locked 50k; C most
+  seed-variable). BANKED: property A converges across BOTH representations + all 5 proxies. Invariant (2)
+  SPLIT (substrate-MI holds / induced-w fails at A1). A representation-vs-philosophy DECOUPLING CONTROL is
+  PRE-REGISTERED (pending, before D2/D3). A3==A1 on D1 (Pearson singletons); pre-reg line 791 corrected
+  (K1/K5 were NOT alphabet-agnostic). Sequenced next: decoupling control; v0.7.1 R1; v0.7.2 R3; then D2
+  (Pfam, CC0), D3 (FOMC), M5 + capstone.
+- Tests: 235 fast + 98 slow + 18 very_slow (1 xfail). v0.7.0: 13 D1-structure + 35 categorical-proxy +
+  8 categorical-ablation + 8 R2/cross-tab. v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
   v0.5.5: noise-only counterfactual
   falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
   33 new noise tests on A1+A3 (all 15 pairs) + A2 sample. Seam 1 resolved `(K5, K2)`-specific.
@@ -95,11 +100,12 @@ Weights are either user-supplied or induced from data:
 - Selective coder (v0.6.1): `ZSTD_LEVEL = 19`; achievability test atol `0.02` bits/sym at `N=200_000`.
   In `cit/coders/selective.py`. v0.6.2 win-margin: `WIN_MARGIN = 0.20`, `N=100_000`, seeded substrates.
 - v0.7.0 categorical (`cit/proxies/categorical.py`, `cit/ablations/categorical.py`, `cit/metacoherence.py`):
-  `SHUFFLE_SEED = 0` (K1/K5 time-shuffle surrogate baseline); K1 `ZSTD_LEVEL = 3`; feature-major bit-tight
+  `SHUFFLE_SEED = 0` (K1/K5 time-shuffle surrogate baseline); K1 `_ZSTD_LEVEL_K1 = 3`; feature-major bit-tight
   encoding (`ceil(log2 A)` bits/feature, channel-grouped -- the post-audit correctness fix, do NOT revert
   to step-major); `GRID_ABLATION_SEED = 123`; K3 `NEURAL_SEED=7`, K4 `HMM_SEED=0` carried. R2 threshold
-  `0.6` / CI `0.4` LOCKED (currently a SEAM on D1's A1 column -- recorded, not adjusted).
-- D1 substrate (v0.7.0, pre-registered; build pending): 3-state HSMM, mean dwell 200, dispersion
+  `0.6` / CI `0.4` LOCKED (D1's A1 column is a representation-philosophy CONFOUND -- instrument-validity,
+  not a falsification; see pre-reg 2026-06-23 record correction).
+- D1 substrate (v0.7.0, pre-registered; BUILT): 3-state HSMM, mean dwell 200, dispersion
   `r=6`, `T=50_000`, `N_REPLICATES=20`; 8 alphabet-8 features (`F0_scale=1.7`; B lag `L=12`,
   `B_keep=0.35`; C additive mask; D drift `std=0.10`, `peak=1.0`); M5 partition coherence-bearing
   {f0..f4} / noise {f5..f7}. R2 threshold median Spearman `> 0.6` (CI `> 0.4`); bootstrap `B=1000`
