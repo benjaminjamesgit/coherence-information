@@ -39,8 +39,8 @@ Weights are either user-supplied or induced from data:
 
 ## Current state
 
-- Version `0.6.0` (pyproject + README). v0.6.0 = coherence capacity estimator (first operational
-  theorem); v0.5.5 = capstone (noise-only falsifiability + Seam 1 resolution).
+- Version `0.6.1` (pyproject + README). v0.6.1 = selective compression coder (Thm 5.1 repaired);
+  v0.6.0 = coherence capacity estimator (first operational theorem); v0.5.5 = capstone.
 - Proxies (K_n): K1 compression-delta (zstd), K2 n-gram MDL, K3 neural prequential
   (single-layer GRU), K4 MDL-HMM (factorized-Bernoulli HMM, two-part MDL selection over
   H in {1,2,3,4}, deterministic Baum-Welch, `HMM_SEED=0`), K5 Lempel parsing (bit-level LZ76, numba).
@@ -49,7 +49,11 @@ Weights are either user-supplied or induced from data:
   via deterministic projected-gradient multi-start (analytic gradient, no RNG, bit-exact); `w=1`
   recovers Shannon capacity (BSC/Z). Sec 6 fixture erratum recorded: paper's C_C(eps)=0.5(1+eps)
   is I_w@uniform, a lower bound, NOT the max (uniform not optimal for eps<1). Concavity OPEN.
-- Tests: 159 fast + 75 slow + 18 very_slow (1 xfail). v0.6.0: 32 capacity tests (all fast).
+- Coder (v0.6.1): `cit/coders/selective.py` — repairs Selective Compression Thm 5.1 (UNSOUND for
+  non-constant w; H_w demoted to a "bits that matter" MEASURE). Corrected floor = merged-source
+  entropy H(Z) (reproduce S_delta={x:w(x)>delta} exactly, collapse don't-cares). merge->entropy-code:
+  bit-exact arithmetic coder (rate -> H(Z)+eps) + zstd variant. Boundary S_delta=X collapses to Shannon.
+- Tests: 182 fast + 75 slow + 18 very_slow (1 xfail). v0.6.1: 23 coder tests (all fast). v0.6.0: 32 capacity tests (all fast).
   v0.5.5: noise-only counterfactual
   falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
   33 new noise tests on A1+A3 (all 15 pairs) + A2 sample. Seam 1 resolved `(K5, K2)`-specific.
@@ -114,5 +118,5 @@ near-miss; leave it xfail (a strict XPASS forces re-evaluation) unless Benjamin 
 
 ## Roadmap (next)
 
-v0.6.0 capacity estimator (C_C = max I_w(X;Y)) SHIPPED. Next: v0.6.1 weighted typical-set coder
-(cit/coders/) + v0.6.2 Selective Compression empirics -> v0.7 cross-domain (Metacoherence).
+v0.6.0 capacity + v0.6.1 selective coder (H(Z), Thm 5.1 repaired) SHIPPED. Next: v0.6.2 Selective
+Compression empirics (win-margin vs weight-blind on richer substrates) -> v0.7 cross-domain (Metacoherence).
