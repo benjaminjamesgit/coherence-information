@@ -38,6 +38,7 @@ ABLATION_SEED = 123
 N_STEPS = 20_000
 W_BAND = 0.2
 R2_THRESHOLD = 0.5  # multi-feature substrate calibration (amendment 2026-05-26)
+T_NOISE = 0.3       # noise-only falsifiability ceiling (v0.5.5 capstone, amendment 2026-06-23)
 
 
 def _pearson(x, y):
@@ -137,6 +138,44 @@ corrclust_K3  = _make_fixture(neural_prequential_proxy, correlation_cluster_abla
 loo_K4        = _make_fixture(mdl_hmm_proxy, leave_one_out_ablation_multi)
 shapley_K4    = _make_fixture(mdl_hmm_proxy, shapley_ablation_multi)
 corrclust_K4  = _make_fixture(mdl_hmm_proxy, correlation_cluster_ablation)
+
+
+# --- noise-only counterfactual fixtures (v0.5.5 capstone, amendment 2026-06-23) ---
+# Same ablations on the structure-free stream. Falsifiability requires
+# cross-proxy convergence to collapse here (noise Spearman < T_NOISE).
+
+@pytest.fixture(scope="module")
+def noise_stream():
+    return noise_only_multi_feature_stream(
+        n_steps=N_STEPS, rng=np.random.default_rng(STREAM_SEED)
+    )
+
+
+def _make_noise_fixture(proxy, ablation):
+    @pytest.fixture(scope="module")
+    def _fix(noise_stream):
+        return ablation(
+            noise_stream, proxy, n_features=N_FEATURES_TOTAL,
+            rng=np.random.default_rng(ABLATION_SEED),
+        )
+    return _fix
+
+
+loo_FB_noise        = _make_noise_fixture(predictive_logloss_proxy_multi, leave_one_out_ablation_multi)
+corrclust_FB_noise  = _make_noise_fixture(predictive_logloss_proxy_multi, correlation_cluster_ablation)
+shapley_FB_noise    = _make_noise_fixture(predictive_logloss_proxy_multi, shapley_ablation_multi)
+loo_K1_noise        = _make_noise_fixture(compression_delta_proxy_multi, leave_one_out_ablation_multi)
+corrclust_K1_noise  = _make_noise_fixture(compression_delta_proxy_multi, correlation_cluster_ablation)
+shapley_K1_noise    = _make_noise_fixture(compression_delta_proxy_multi, shapley_ablation_multi)
+loo_K2_noise        = _make_noise_fixture(ngram_mdl_proxy, leave_one_out_ablation_multi)
+corrclust_K2_noise  = _make_noise_fixture(ngram_mdl_proxy, correlation_cluster_ablation)
+shapley_K2_noise    = _make_noise_fixture(ngram_mdl_proxy, shapley_ablation_multi)
+loo_K3_noise        = _make_noise_fixture(neural_prequential_proxy, leave_one_out_ablation_multi)
+corrclust_K3_noise  = _make_noise_fixture(neural_prequential_proxy, correlation_cluster_ablation)
+loo_K4_noise        = _make_noise_fixture(mdl_hmm_proxy, leave_one_out_ablation_multi)
+corrclust_K4_noise  = _make_noise_fixture(mdl_hmm_proxy, correlation_cluster_ablation)
+loo_K5_noise        = _make_noise_fixture(lempel_parsing_proxy, leave_one_out_ablation_multi)
+corrclust_K5_noise  = _make_noise_fixture(lempel_parsing_proxy, correlation_cluster_ablation)
 
 
 # --- substrate tests ---
@@ -547,3 +586,92 @@ class TestA3ClusterRecovery:
         got = sorted([frozenset(c) for c in corrclust_K1["clusters"]],
                      key=lambda s: (len(s), sorted(s)))
         assert got == EXPECTED_CLUSTERS
+
+
+# --- v0.5.5 capstone: noise-only counterfactual falsifiability ---
+# pre_registration.md 2026-06-23 amendment. Convergence holds on the structured
+# substrate (>= R2_THRESHOLD, TestCrossProxyConvergenceMulti) and must be
+# DESTROYED on the structure-free stream (Spearman < T_NOISE here). The pairing
+# is the falsifiability spine: independent coherence proxies converge on real
+# structure and stop converging on noise. Asserted on A_1 + A_3 for all 15
+# pairs; A_2 (Shapley) sampled on the 3 cheap-proxy pairs. Calibration
+# (amendment): noise-only Spearman <= 0.000 across all ablations vs structured
+# >= 0.571.
+
+def _assert_noise_below(result_a, result_b, label_a, label_b, ablation):
+    syms = sorted(result_a["rho"])
+    v_a = np.array([result_a["rho"][s] for s in syms])
+    v_b = np.array([result_b["rho"][s] for s in syms])
+    rho = _spearman_corr(v_a, v_b)
+    assert rho < T_NOISE, (
+        f"{ablation} noise-only: Spearman({label_a}, {label_b}) = {rho:.3f} "
+        f">= {T_NOISE} -- convergence NOT destroyed on structure-free stream"
+    )
+
+
+class TestNoiseOnlyFalsifiability:
+    # Cheap-proxy pairs (form B / K_1 / K_2): A_1 + A_3 fast.
+    def test_FB_K1_A1(self, loo_FB_noise, loo_K1_noise):             _assert_noise_below(loo_FB_noise, loo_K1_noise, "form B", "K_1", "A_1")
+    def test_FB_K1_A3(self, corrclust_FB_noise, corrclust_K1_noise): _assert_noise_below(corrclust_FB_noise, corrclust_K1_noise, "form B", "K_1", "A_3")
+    def test_FB_K2_A1(self, loo_FB_noise, loo_K2_noise):             _assert_noise_below(loo_FB_noise, loo_K2_noise, "form B", "K_2", "A_1")
+    def test_FB_K2_A3(self, corrclust_FB_noise, corrclust_K2_noise): _assert_noise_below(corrclust_FB_noise, corrclust_K2_noise, "form B", "K_2", "A_3")
+    def test_K1_K2_A1(self, loo_K1_noise, loo_K2_noise):             _assert_noise_below(loo_K1_noise, loo_K2_noise, "K_1", "K_2", "A_1")
+    def test_K1_K2_A3(self, corrclust_K1_noise, corrclust_K2_noise): _assert_noise_below(corrclust_K1_noise, corrclust_K2_noise, "K_1", "K_2", "A_3")
+
+    # A_2 (Shapley) noise sample on the cheap-proxy pairs (slow per lock).
+    @pytest.mark.slow
+    def test_FB_K1_A2(self, shapley_FB_noise, shapley_K1_noise): _assert_noise_below(shapley_FB_noise, shapley_K1_noise, "form B", "K_1", "A_2")
+    @pytest.mark.slow
+    def test_FB_K2_A2(self, shapley_FB_noise, shapley_K2_noise): _assert_noise_below(shapley_FB_noise, shapley_K2_noise, "form B", "K_2", "A_2")
+    @pytest.mark.slow
+    def test_K1_K2_A2(self, shapley_K1_noise, shapley_K2_noise): _assert_noise_below(shapley_K1_noise, shapley_K2_noise, "K_1", "K_2", "A_2")
+
+    # Pairs involving K_3 / K_4 / K_5 (slow): A_1 + A_3.
+    @pytest.mark.slow
+    def test_FB_K3_A1(self, loo_FB_noise, loo_K3_noise):             _assert_noise_below(loo_FB_noise, loo_K3_noise, "form B", "K_3", "A_1")
+    @pytest.mark.slow
+    def test_FB_K3_A3(self, corrclust_FB_noise, corrclust_K3_noise): _assert_noise_below(corrclust_FB_noise, corrclust_K3_noise, "form B", "K_3", "A_3")
+    @pytest.mark.slow
+    def test_FB_K4_A1(self, loo_FB_noise, loo_K4_noise):             _assert_noise_below(loo_FB_noise, loo_K4_noise, "form B", "K_4", "A_1")
+    @pytest.mark.slow
+    def test_FB_K4_A3(self, corrclust_FB_noise, corrclust_K4_noise): _assert_noise_below(corrclust_FB_noise, corrclust_K4_noise, "form B", "K_4", "A_3")
+    @pytest.mark.slow
+    def test_FB_K5_A1(self, loo_FB_noise, loo_K5_noise):             _assert_noise_below(loo_FB_noise, loo_K5_noise, "form B", "K_5", "A_1")
+    @pytest.mark.slow
+    def test_FB_K5_A3(self, corrclust_FB_noise, corrclust_K5_noise): _assert_noise_below(corrclust_FB_noise, corrclust_K5_noise, "form B", "K_5", "A_3")
+    @pytest.mark.slow
+    def test_K1_K3_A1(self, loo_K1_noise, loo_K3_noise):             _assert_noise_below(loo_K1_noise, loo_K3_noise, "K_1", "K_3", "A_1")
+    @pytest.mark.slow
+    def test_K1_K3_A3(self, corrclust_K1_noise, corrclust_K3_noise): _assert_noise_below(corrclust_K1_noise, corrclust_K3_noise, "K_1", "K_3", "A_3")
+    @pytest.mark.slow
+    def test_K1_K4_A1(self, loo_K1_noise, loo_K4_noise):             _assert_noise_below(loo_K1_noise, loo_K4_noise, "K_1", "K_4", "A_1")
+    @pytest.mark.slow
+    def test_K1_K4_A3(self, corrclust_K1_noise, corrclust_K4_noise): _assert_noise_below(corrclust_K1_noise, corrclust_K4_noise, "K_1", "K_4", "A_3")
+    @pytest.mark.slow
+    def test_K1_K5_A1(self, loo_K1_noise, loo_K5_noise):             _assert_noise_below(loo_K1_noise, loo_K5_noise, "K_1", "K_5", "A_1")
+    @pytest.mark.slow
+    def test_K1_K5_A3(self, corrclust_K1_noise, corrclust_K5_noise): _assert_noise_below(corrclust_K1_noise, corrclust_K5_noise, "K_1", "K_5", "A_3")
+    @pytest.mark.slow
+    def test_K2_K3_A1(self, loo_K2_noise, loo_K3_noise):             _assert_noise_below(loo_K2_noise, loo_K3_noise, "K_2", "K_3", "A_1")
+    @pytest.mark.slow
+    def test_K2_K3_A3(self, corrclust_K2_noise, corrclust_K3_noise): _assert_noise_below(corrclust_K2_noise, corrclust_K3_noise, "K_2", "K_3", "A_3")
+    @pytest.mark.slow
+    def test_K2_K4_A1(self, loo_K2_noise, loo_K4_noise):             _assert_noise_below(loo_K2_noise, loo_K4_noise, "K_2", "K_4", "A_1")
+    @pytest.mark.slow
+    def test_K2_K4_A3(self, corrclust_K2_noise, corrclust_K4_noise): _assert_noise_below(corrclust_K2_noise, corrclust_K4_noise, "K_2", "K_4", "A_3")
+    @pytest.mark.slow
+    def test_K2_K5_A1(self, loo_K2_noise, loo_K5_noise):             _assert_noise_below(loo_K2_noise, loo_K5_noise, "K_2", "K_5", "A_1")
+    @pytest.mark.slow
+    def test_K2_K5_A3(self, corrclust_K2_noise, corrclust_K5_noise): _assert_noise_below(corrclust_K2_noise, corrclust_K5_noise, "K_2", "K_5", "A_3")
+    @pytest.mark.slow
+    def test_K3_K4_A1(self, loo_K3_noise, loo_K4_noise):             _assert_noise_below(loo_K3_noise, loo_K4_noise, "K_3", "K_4", "A_1")
+    @pytest.mark.slow
+    def test_K3_K4_A3(self, corrclust_K3_noise, corrclust_K4_noise): _assert_noise_below(corrclust_K3_noise, corrclust_K4_noise, "K_3", "K_4", "A_3")
+    @pytest.mark.slow
+    def test_K3_K5_A1(self, loo_K3_noise, loo_K5_noise):             _assert_noise_below(loo_K3_noise, loo_K5_noise, "K_3", "K_5", "A_1")
+    @pytest.mark.slow
+    def test_K3_K5_A3(self, corrclust_K3_noise, corrclust_K5_noise): _assert_noise_below(corrclust_K3_noise, corrclust_K5_noise, "K_3", "K_5", "A_3")
+    @pytest.mark.slow
+    def test_K4_K5_A1(self, loo_K4_noise, loo_K5_noise):             _assert_noise_below(loo_K4_noise, loo_K5_noise, "K_4", "K_5", "A_1")
+    @pytest.mark.slow
+    def test_K4_K5_A3(self, corrclust_K4_noise, corrclust_K5_noise): _assert_noise_below(corrclust_K4_noise, corrclust_K5_noise, "K_4", "K_5", "A_3")

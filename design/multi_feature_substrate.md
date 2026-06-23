@@ -213,7 +213,7 @@ Each new estimator needs an explicit multi-feature consumption protocol:
 | K_4 | HMM with model selection | Explicit + searched H | Best MDL across H |
 | K_5 | Non-coding pattern counting | None | LZ phrase count |
 
-Five structurally distinct families. The 15-pair Spearman rank correlation matrix asks whether all five recover the same per-feature rho ranks despite architectural differences. Convergence at >= 0.7 across every off-diagonal pair is the v0.5.5 capstone empirical claim.
+Five structurally distinct families. The 15-pair Spearman rank correlation matrix asks whether all five recover the same per-feature rho ranks despite architectural differences. Operationalized at the v0.5.5 capstone (amendment 2026-06-23): every off-diagonal pair clears Spearman >= 0.5 on the structured substrate and drops below 0.3 on the noise-only counterfactual.
 
 ### 6. Falsifiability invariants
 
@@ -341,7 +341,7 @@ Carry forward from v0.4 with symbol -> feature substitution:
 | v0.5.2 | `(K_5, *)` for each of `{form B multi, K_1 multi, K_2}` |
 | v0.5.3 | `(K_3, *)` for each of `{form B multi, K_1 multi, K_2, K_5}` |
 | v0.5.4 | `(K_4, *)` for each of `{form B multi, K_1 multi, K_2, K_5, K_3}` |
-| v0.5.5 capstone | Full 15-pair off-diagonal matrix every pair `>= 0.7`; noise-only control test asserted (every pair drops significantly on noise-only stream) |
+| v0.5.5 capstone | Full 15-pair off-diagonal matrix, every pair `>= 0.5` structured; noise-only counterfactual asserted: every pair `< 0.3` on noise (`T_NOISE`), on A_1 + A_3 for all pairs + A_2 sampled (amendment 2026-06-23) |
 
 #### Noise-only control stream (Q6)
 
@@ -350,11 +350,11 @@ Carry forward from v0.4 with symbol -> feature substitution:
 | Function | `noise_only_multi_feature_stream(n_features, n_steps, rng)` |
 | Generation | All features i.i.d. `Bernoulli(0.5)`, including indices 0-3 |
 | Label dict | omitted, or all features labeled `noise` |
-| Use | counterfactual at v0.5.5 capstone for falsifiability of cross-K convergence |
+| Use | counterfactual at v0.5.5 capstone for falsifiability of cross-K convergence. Operationalized 2026-06-23: each pair structured `>= 0.5` AND noise `< 0.3` (A_1 + A_3 all pairs, A_2 sampled) |
 
 #### A_3 cluster recovery promotion (deferred to v0.5.5)
 
-ARI threshold for required-invariant status is empirically determined from v0.5.0-v0.5.4 observations. Locked in `pre_registration.md` amendment before v0.5.5 release.
+ARI threshold for required-invariant status is empirically determined from v0.5.0-v0.5.4 observations. At the v0.5.5 capstone (amendment 2026-06-23) A_3 cluster-recovery ARI remains observational -- promotion deferred to keep the capstone focused on the falsifiability spine; promotable in a later amendment.
 
 ## Resolution protocol
 

@@ -39,13 +39,14 @@ Weights are either user-supplied or induced from data:
 
 ## Current state
 
-- Version `0.5.4` (pyproject + README). v0.5.4 = K_4 MDL-HMM (uncommitted at time of writing).
+- Version `0.5.5` (pyproject + README). v0.5.5 = capstone (noise-only falsifiability + Seam 1 resolution).
 - Proxies (K_n): K1 compression-delta (zstd), K2 n-gram MDL, K3 neural prequential
   (single-layer GRU), K4 MDL-HMM (factorized-Bernoulli HMM, two-part MDL selection over
   H in {1,2,3,4}, deterministic Baum-Welch, `HMM_SEED=0`), K5 Lempel parsing (bit-level LZ76, numba).
 - Ablations (A_m): A1 LOO replace-with-uniform, A2 Shapley (k=64), A3 correlation-cluster.
-- Tests: 121 fast + 48 slow + 18 very_slow (1 xfail). v0.5.4: full 15-pair {K4} x {*} matrix added;
-  `(K4, K2)` under A2 = 0.830 (no new seam) -- evidence Seam 1 is `(K5, K2)`-specific.
+- Tests: 127 fast + 75 slow + 18 very_slow (1 xfail). v0.5.5: noise-only counterfactual
+  falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
+  33 new noise tests on A1+A3 (all 15 pairs) + A2 sample. Seam 1 resolved `(K5, K2)`-specific.
 
 ## Locked constants (pre-registered — do NOT change without a version bump + amendment)
 
@@ -66,9 +67,10 @@ version, record the amendment in that file's history section, never silently edi
 ## Open seam (do not "fix" silently)
 
 Seam 1: `(K5, K2)` under A2 Shapley sits at Spearman 0.491, just under the 0.5
-threshold. Pre-registered, mechanically `xfail(strict=True)`, deferred to the v0.5.5
-capstone. It is a real recorded near-miss, not a bug — leave it xfail unless Benjamin
-directs otherwise.
+threshold. **Resolved at v0.5.5 as `(K5, K2)`-specific** — of all `(X, K2)` pairs under
+A2 only K5 misses; K3, K4 (0.830), form B, K1 all clear — so the framework's operating
+envelope is not restricted. It stays mechanically `xfail(strict=True)` as a documented
+near-miss; leave it xfail (a strict XPASS forces re-evaluation) unless Benjamin directs otherwise.
 
 ## Test gating
 
