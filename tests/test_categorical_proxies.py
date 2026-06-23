@@ -26,8 +26,11 @@ from cit.proxies.categorical import (
     ngram_mdl_proxy_cat,
     neural_prequential_proxy_cat,
     mdl_hmm_proxy_cat,
+    compression_delta_proxy_cat,
+    lempel_parsing_proxy_cat,
     _bigram_nll_bits,
     _marginal_entropy_bits,
+    _encode_bits_cat,
 )
 
 A = ALPHABET
@@ -286,3 +289,114 @@ def test_k4_validation():
         mdl_hmm_proxy_cat(np.full((10, 2), -1))               # negative
     with pytest.raises(ValueError):
         mdl_hmm_proxy_cat(rng.integers(0, A, size=(10, 2)), alphabet=3)  # alphabet too small
+
+
+# --------------------------------------------------------------------------- #
+# K1 / K5 categorical: marginal-relative via time-shuffle surrogate baseline   #
+# --------------------------------------------------------------------------- #
+
+def _raw_zstd_ratio(col, alphabet):
+    """The OLD-style K1: zstd ratio against the RAW encoding (no marginal baseline)."""
+    import zstandard
+    enc = np.packbits(_encode_bits_cat(np.asarray(col), alphabet)).tobytes()
+    comp = zstandard.ZstdCompressor(level=3).compress(enc)
+    return 1.0 - len(comp) / len(enc)
+
+
+# --- K1 (zstd, fast: zstd is cheap even full-stream) ---
+
+def test_k1_distractors_flat_marginal_relative(d1):
+    for seed, obs in d1.items():
+        for j in NOISE:
+            c = compression_delta_proxy_cat(_col(obs, j), alphabet=A)
+            assert c < DISTRACTOR_CEIL, f"seed {seed} f{j} C_K1={c:.4f}"
+
+
+def test_k1_marginal_relative_beats_raw_on_skew(d1):
+    """The lock: f7's skewed marginal compresses under a raw baseline; the surrogate
+    baseline cancels it to ~0."""
+    obs = next(iter(d1.values()))
+    for j in (6, 7):
+        raw = _raw_zstd_ratio(_col(obs, j), A)
+        c = compression_delta_proxy_cat(_col(obs, j), alphabet=A)
+        assert raw > 0.10, f"f{j} raw zstd ratio {raw:.4f}"
+        assert c < DISTRACTOR_CEIL
+        assert c < 0.2 * raw, f"f{j} surrogate {c:.4f} vs raw {raw:.4f}"
+
+
+def test_k1_recovers_drift(d1):
+    for seed, obs in d1.items():
+        assert compression_delta_proxy_cat(_col(obs, 4), alphabet=A) > 0.03
+
+
+def test_k1_temporal_shuffle_kills_coherence(d1):
+    obs = next(iter(d1.values()))
+    assert compression_delta_proxy_cat(_col(obs, 4), alphabet=A) > 0.03
+    perm = np.random.default_rng(0).permutation(obs.shape[0])
+    assert compression_delta_proxy_cat(obs[perm, 4][:, None], alphabet=A) < DISTRACTOR_CEIL
+
+
+def test_k1_determinism_and_validation():
+    obs = generate_stream(REPLICATE_SEEDS[0], T=5000)[1]
+    assert compression_delta_proxy_cat(obs, alphabet=A) == compression_delta_proxy_cat(obs, alphabet=A)
+    rng = np.random.default_rng(6)
+    assert compression_delta_proxy_cat(rng.integers(0, A, size=(2000, 3))) == \
+        compression_delta_proxy_cat(rng.integers(0, A, size=(2000, 3)), alphabet=A)
+    with pytest.raises(ValueError):
+        compression_delta_proxy_cat(rng.integers(0, A, size=10))     # 1-D
+
+
+# --- K5 (LZ76, slow: surrogate parse is costly; single-feature/pair only) ---
+
+_K5_T = 30000
+
+
+@pytest.fixture(scope="module")
+def k5_single():
+    obs = generate_stream(REPLICATE_SEEDS[0])[1][:_K5_T]
+    return obs, {j: lempel_parsing_proxy_cat(obs[:, j][:, None], alphabet=A) for j in (0, 1, 2, 3, 4, 5, 6, 7)}
+
+
+@pytest.mark.slow
+def test_k5_distractors_flat_marginal_relative(k5_single):
+    _, single = k5_single
+    for j in NOISE:
+        assert single[j] < DISTRACTOR_CEIL, f"f{j} C_K5={single[j]:.4f}"
+
+
+@pytest.mark.slow
+def test_k5_marginal_relative_beats_raw_on_skew(k5_single):
+    obs, single = k5_single
+    for j in (6, 7):
+        raw = _raw_zstd_ratio(obs[:, j][:, None], A)
+        assert raw > 0.10 and single[j] < DISTRACTOR_CEIL, f"f{j} raw {raw:.4f} C_K5 {single[j]:.4f}"
+
+
+@pytest.mark.slow
+def test_k5_recovers_drift_and_regime(k5_single):
+    _, single = k5_single
+    assert single[4] > 0.05   # D
+    assert single[0] > 0.03   # A
+
+
+@pytest.mark.slow
+def test_k5_recovers_coalition_via_pair(k5_single):
+    """K5 picks up the C coalition jointly: the (f2,f3) pair clears the distractor ceiling
+    while each is individually flat."""
+    obs, single = k5_single
+    c_pair = lempel_parsing_proxy_cat(obs[:, [2, 3]], alphabet=A)
+    assert single[2] < DISTRACTOR_CEIL and single[3] < DISTRACTOR_CEIL
+    assert c_pair > 0.05, f"pair C_K5={c_pair:.4f}"
+
+
+@pytest.mark.slow
+def test_k5_determinism(k5_single):
+    obs, _ = k5_single
+    col = obs[:5000, 4][:, None]
+    assert lempel_parsing_proxy_cat(col, alphabet=A) == lempel_parsing_proxy_cat(col, alphabet=A)
+
+
+def test_k5_validation():
+    rng = np.random.default_rng(7)
+    with pytest.raises(ValueError):
+        lempel_parsing_proxy_cat(rng.integers(0, A, size=10))     # 1-D (before numba)

@@ -31,8 +31,11 @@ __all__ = [
     "ngram_mdl_proxy_cat",
     "neural_prequential_proxy_cat",
     "mdl_hmm_proxy_cat",
+    "compression_delta_proxy_cat",
+    "lempel_parsing_proxy_cat",
     "NEURAL_SEED",
     "HMM_SEED",
+    "SHUFFLE_SEED",
 ]
 
 _LOG2 = float(np.log(2.0))
@@ -50,6 +53,10 @@ _HMM_TOL = 1e-4              # convergence tol on per-step mean log-likelihood
 _SELF_TRANS = 0.9           # sticky self-transition for EM init
 _EMIT_EPS = 1e-6            # emission-probability clip
 _TRANS_EPS = 1e-12         # transition-probability clip
+
+# K1/K5 marginal-relative (time-shuffle surrogate) hyperparameters
+SHUFFLE_SEED = 0             # per-feature time-permutation seed (the marginal-only surrogate)
+_ZSTD_LEVEL_K1 = 3          # carries the v0.3/v0.5 K1 compressor level
 
 
 def _validate(stream, n_features, alphabet):
@@ -356,3 +363,102 @@ def mdl_hmm_proxy_cat(stream, n_features=None, alphabet=None):
         return 0.0
     C_hat = 1.0 - min(L_by_H.values()) / L_baseline
     return float(np.clip(C_hat, 0.0, 1.0))
+
+
+# --------------------------------------------------------------------------- #
+# K1 / K5 categorical: marginal-relative via a time-shuffle surrogate baseline #
+# --------------------------------------------------------------------------- #
+#
+# K1 (zstd) and K5 (LZ76) have no probability model, so the marginal-relative lock
+# is enforced by a SURROGATE baseline: independently time-permute each feature, which
+# preserves every per-feature marginal EXACTLY while destroying all temporal and
+# cross-feature structure. The proxy reports compressibility/parsimony BEYOND that
+# surrogate:  C = 1 - complexity(real) / complexity(surrogate).  Encoding artifacts,
+# padding, and marginal skew are identical in both and cancel; a feature whose only
+# structure is its (skewed) marginal has real ~ surrogate -> C ~ 0.
+
+def _bits_per_symbol(alphabet):
+    return max(1, int(np.ceil(np.log2(alphabet))))
+
+
+def _encode_bits_cat(arr, alphabet):
+    """Bit-tight FEATURE-MAJOR encoding: each feature's history laid out contiguously.
+
+    Each value -> ceil(log2 A) MSB-first bits; the (T, n, bps) bit cube is transposed to
+    (n, T, bps) so a compressor/parser sees each feature's TEMPORAL structure (and, via
+    cross-block matching, inter-feature structure) instead of an 8-feature-interleaved
+    stream that strides per-feature structure out of reach. Returns a flat uint8 0/1 array.
+    """
+    bps = _bits_per_symbol(alphabet)
+    shifts = np.arange(bps - 1, -1, -1)
+    bits = ((arr[:, :, None] >> shifts) & 1).astype(np.uint8)   # (T, n, bps)
+    return bits.transpose(1, 0, 2).reshape(-1)                  # -> (n, T, bps) flat
+
+
+def _time_shuffle(arr, seed):
+    """Independently permute each feature column in time (the marginal-only surrogate)."""
+    rng = np.random.default_rng(seed)
+    out = np.empty_like(arr)
+    for j in range(arr.shape[1]):
+        out[:, j] = arr[rng.permutation(arr.shape[0]), j]
+    return out
+
+
+def compression_delta_proxy_cat(stream, n_features=None, alphabet=None):
+    """K1 categorical: zstd compressibility BEYOND the per-feature marginal (surrogate baseline).
+
+        C_K1 = 1 - len(zstd(real)) / len(zstd(time_shuffled))   (clipped to [0, 1])
+
+    Both streams share the bit-tight encoding and differ only in structure, so marginal
+    skew and padding cancel. Carries the K1 compressor level (3) and SHUFFLE_SEED.
+
+    Parameters
+    ----------
+    stream : ndarray (n_steps, n_features), integer in [0, alphabet)
+    n_features : int, optional   -- must match stream.shape[1] if given
+    alphabet : int, optional     -- alphabet size; inferred (max+1) if None
+
+    Returns
+    -------
+    C_hat : float in [0, 1]
+    """
+    arr, T, n, A = _validate(stream, n_features, alphabet)
+    import zstandard  # lazy: keep K2-K4 import light
+
+    cctx = zstandard.ZstdCompressor(level=_ZSTD_LEVEL_K1)
+    real = len(cctx.compress(np.packbits(_encode_bits_cat(arr, A)).tobytes()))
+    surr = len(cctx.compress(np.packbits(_encode_bits_cat(_time_shuffle(arr, SHUFFLE_SEED), A)).tobytes()))
+    if surr <= 0:
+        return 0.0
+    return float(np.clip(1.0 - real / surr, 0.0, 1.0))
+
+
+def lempel_parsing_proxy_cat(stream, n_features=None, alphabet=None):
+    """K5 categorical: LZ76 parsimony BEYOND the per-feature marginal (surrogate baseline).
+
+        C_K5 = 1 - lz76(bits(real)) / lz76(bits(time_shuffled))   (clipped to [0, 1])
+
+    Reuses the locked LZ76 phrase-count kernel from cit.proxies.lempel_parsing on the
+    bit-tight encoding. Carries SHUFFLE_SEED.
+
+    Parameters
+    ----------
+    stream : ndarray (n_steps, n_features), integer in [0, alphabet)
+    n_features : int, optional   -- must match stream.shape[1] if given
+    alphabet : int, optional     -- alphabet size; inferred (max+1) if None
+
+    Returns
+    -------
+    C_hat : float in [0, 1]
+    """
+    arr, T, n, A = _validate(stream, n_features, alphabet)
+    from cit.proxies.lempel_parsing import _lz76_complexity  # lazy: pulls numba only for K5
+
+    real_bits = _encode_bits_cat(arr, A)
+    surr_bits = _encode_bits_cat(_time_shuffle(arr, SHUFFLE_SEED), A)
+    if real_bits.shape[0] < 2:
+        return 0.0
+    c_surr = _lz76_complexity(surr_bits)
+    if c_surr <= 0:
+        return 0.0
+    return float(np.clip(1.0 - _lz76_complexity(real_bits) / c_surr, 0.0, 1.0))
