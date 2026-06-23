@@ -382,9 +382,27 @@ Asserted invariants: arithmetic `Delta_frac >= 0.20` on iid/G-E/TCUN; lossless o
 
 ---
 
-## v0.7 — cross-domain validation (not yet implemented)
+## v0.7 — cross-domain validation (Metacoherence; v0.7.0 locked; D2/D3/M5 capstone pending)
 
-The cross-domain validation architecture from Metacoherence Appendix A. Domain specifications D₁, D₂, D₃ will be pre-registered in an amendment to this file before v0.5 implementation begins. The eight-cell outcome interpretation matrix from Metacoherence §8.3–8.4 will be reproduced verbatim and bound to outcomes in advance.
+The cross-domain validation architecture from Metacoherence. Four conditions: R1 (persistence prediction), R2 (cross-philosophy convergence), R3 (intervention asymmetry) -- within-domain signatures -- plus the M5 admissibility gate (domain-translation invariance, evaluated FIRST; it conditions the matrix). Three domains on a transparency gradient: D1 (synthetic HSMM, exact partition), D2 (Pfam protein families, CC0 via EBI/InterPro), D3 (FOMC statements, public domain). The eight-cell outcome interpretation matrix (Metacoherence Sec 8.3-8.4) binds each (R1,R2,R3) configuration to a framework consequence under M5-pass and M5-fail -- reproduced verbatim and bound in advance at the capstone. Locked statistical thresholds (Sec 8.7): R2 median Spearman `> 0.6` (lower 95% CI `> 0.4`); R1 Cohen's d `> 0.5` (CI `> 0.3`, `p < 0.01`); R3 structural/interpretive ratio `> 3.0` (CI `> 2.0`); M5 factor-of-2 rank-normalized ratio across all domain pairs for `>= 3 of 5` estimators; Bonferroni across 51 cells; bootstrap `B = 1000`.
+
+Sequencing (sliced): v0.7.0 = D1 substrate + M5 partition + R2; v0.7.1 = R1 (persistence); v0.7.2 = R3 (interventions); then D2, D3, and the M5 cross-domain + eight-cell capstone.
+
+### D1 substrate + M5 partition + R2 (locked v0.7.0)
+
+The full-transparency domain; its M5 partition is exact by construction. Full record in the 2026-06-23 v0.7.0 amendment below.
+
+| Element | Locked value |
+|---------|--------------|
+| Generator | 3-state hidden semi-Markov; negbinom sojourns (mean dwell 200, dispersion `r=6`, CV ~ 0.41); transitions equiprobable to the two non-current states; `T=50_000` (~250 sojourns); `N_REPLICATES=20` seeded streams |
+| Features (8, alphabet 8) | f0 A:regime (`F0_scale=1.7`); f1 B:long-range (`f1 = g(f0,f2,f4 @ t-L)` w.p. `B_keep=0.35` else uniform, `L=12`); f2,f3 C:coalition (additive mask -- individually uniform, jointly recover regime); f4 D:drift (`std=0.10`, `peak=1.0`); f5/f6/f7 distractors (uniform / Zipf / low-freq) |
+| Calibration (Sec 5.4) | MI-balanced: `I_A=0.76, I_B=0.46, I_C=0.34, I_D=0.58`; max single-property share `0.356 < 0.40`; distractors structurally flat (regime/local MI ~ 0). Exact `K3 x A1` ceiling verified in-build |
+| Marginal-relative coherence | LOCKED -- every estimator's coherence measured relative to each feature's marginal (NOT a uniform baseline); else skewed-marginal distractors are mistaken for coherent (the failure D1 exists to catch) |
+| M5 partition (by construction) | coherence-bearing = {f0,f1,f2,f3,f4}; noise = {f5,f6,f7} |
+| R2 | 5x3 grid {K1..K5} x {A1,A2,A3} categorical, induced `w` over 8 features; cross-philosophy median Spearman `> 0.6` (CI `> 0.4`); bootstrap `B=1000`, block = mean sojourn (200) |
+| Deliverable | property-recovery cross-tab (15 cells x 4 properties); D1 is CHARACTERIZED, not pass/failed |
+
+Asserted invariants: R2 median Spearman `> 0.6` (CI `> 0.4`); class separation (coherence-bearing rank above distractors in every cell); distractor flatness (marginal-relative); cross-tab matches the pre-registered qualitative pattern; generator determinism (bit-exact per seed). Gating: cheap cells (K1/K2 x A1/A3) fast; K3 + K5/K3 Shapley slow/very_slow. New `cit/data/hsmm_d1.py` + categorical proxy generalizations + `tests/test_metacoherence_d1.py`.
 
 ---
 
@@ -749,5 +767,35 @@ Structured floor = 0.307 (TCUN). `WIN_MARGIN = 0.20` sits ~35% below the floor w
 **Lock scope.** v0.6.2+ Selective Compression empirics. New test file `tests/test_selective_compression_empirics.py` (fast); substrate generators in `cit/data/` or the test module. No changes to `cit/coders/selective.py`. Design memo `design/v06_v07_spec.md` Sec 7.4 updated. This COMPLETES the v0.6 operational-theorem program (capacity v0.6.0, coder v0.6.1, empirics v0.6.2); v0.7 cross-domain is next.
 
 **Honest notes.** (a) On memory sources the arithmetic coder uses a static i.i.d. model, so it reaches the i.i.d. merged entropy, not the merged entropy RATE; the win-margin (a DIFFERENCE of blind vs selective under the same coder) is unaffected, and the zstd row confirms the saving grows when memory is exploited. (b) `WIN_MARGIN` is calibrated to the locked substrates; new substrates extend (not retune) the claim via a future amendment. (c) Both coders are fully lossless on `S_delta`, so this is an equal-retention/lower-rate demonstration; the dual equal-rate/higher-retention (lossy-baseline) framing is out of v0.6.2 scope.
+
+### 2026-06-23 -- v0.7.0 D1 substrate + M5 partition + R2 (Metacoherence cross-domain, domain 1)
+
+**Scope.** Opens the v0.7 cross-domain program (Metacoherence: R1 + R2 + R3 within-domain signatures + the M5 admissibility gate + the eight-cell outcome matrix, across three domains). v0.7 is sequenced: v0.7.0 = D1 (synthetic HSMM) substrate + the D1 M5 feature-partition + R2 (cross-philosophy convergence); R1 (persistence) = v0.7.1, R3 (intervention asymmetry) = v0.7.2; then D2 (Pfam, CC0), D3 (FOMC, public domain), and the M5 cross-domain + eight-cell capstone. D1 is the full-transparency tier; its partition is exact by construction.
+
+**D1 generator (locked).** A 3-state hidden semi-Markov regime layer with structured discrete emissions, per Metacoherence Sec 5. Locked structure: 3 states; negative-binomial sojourns (mean dwell 200, dispersion `r=6` -> CV ~ 0.41); transitions equiprobable to the two non-current states (irreducible/aperiodic); stream length `T = 50_000` (~250 sojourns); `N_REPLICATES = 20` independent seeded streams. Eight features, alphabet 8 each:
+
+| feature | property | construction (locked) |
+|---------|----------|-----------------------|
+| f0 | A (regime indicator) | regime-conditional categorical, 3 distributions, `F0_scale = 1.7` |
+| f1 | B (long-range coupling) | `f1[t] = g(f0,f2,f4 @ t-L)` with prob `B_keep = 0.35`, else uniform; `L = 12`; `g` fixed pseudorandom |
+| f2, f3 | C (coalitional pair) | additive mask: `f2 ~ uniform`, `f3 = (f2 + C_VAL[state, bucket]) mod 8`; individually uniform, jointly recover regime; bucket cycles with period = mean dwell |
+| f4 | D (drift carrier) | emission peaked at a slowly-drifting mode; drift random-walk `std = 0.10`, peaking `1.0`, re-centered per regime entry |
+| f5, f6, f7 | distractors | uniform / Zipf(1.1) / low-frequency(0.6) -- skewed marginals, NO structural coherence |
+
+**Calibration (Metacoherence Sec 5.4, done 2026-06-23 by information-content balancing).** Parameters locked so the four properties' recoverable mutual information is comparable and no single property dominates. Measured (marginal-relative MI): `I_A = 0.76, I_B = 0.46, I_C = 0.34, I_D = 0.58` bits; max single-property share `0.356 < 0.40` (the Sec 5.4 ceiling); distractors structurally flat (regime MI 0.000, local MI 0.001) DESPITE skewed marginals. The exact "40%-of-`w`-variance-under-K3xA1" check is verified during the build with the real marginal-relative K3; params are fixed unless that verification forces a recorded amendment (the K4 / v0.6.0 discipline).
+
+**CRITICAL design lock -- marginal-relative coherence.** Every estimator's coherence on D1 MUST be measured relative to each feature's marginal, NOT against a uniform baseline. The Zipf / low-frequency distractors carry low marginal entropy by design; a uniform-baseline measure mistakes that for coherence (a naive GRU did exactly this in due-diligence) -- the precise failure mode D1 exists to catch. This binds the categorical generalization of every proxy (predictive: `H_marginal - H_pred`; compression: structural vs marginal-only baseline).
+
+**M5 feature-partition for D1 (locked, by construction).** Coherence-bearing class = {f0, f1, f2, f3, f4}; noise class = {f5, f6, f7}. Exact (a property of the generator, not derived from induced `w`). Feeds the M5 gate (deferred to the cross-domain capstone).
+
+**R2 protocol (locked).** The 5x3 grid -- estimators {K1, K2, K3, K4, K5} x ablations {A1, A2, A3} -- generalized to alphabet-8 categorical features, run on D1; induced `w` over the 8 features per cell. R2 = cross-philosophy median Spearman rank correlation of the `w` vectors over philosophically-decoupled estimator pairs, with bootstrap CIs by time-window resampling at block length = mean sojourn (200), `B = 1000`. Pass: median Spearman `> 0.6`, lower 95% CI `> 0.4` (Metacoherence Sec 8.7, locked; distinct from v0.3's 0.7 and v0.5's 0.5). Categorical generalization: K1/K5 operate on the byte/bit encoding (alphabet-agnostic); K2 (per-feature categorical n-gram MDL), K3 (GRU softmax heads), K4 (categorical-emission HMM) are generalized from binary -- all with marginal-relative coherence.
+
+**Property-recovery cross-tab (the Sec 5.7 deliverable).** For each of the 15 cells, report which of properties {A, B, C, D} the cell's induced `w` recovers (signal features ranking above distractors by a pre-registered margin). The 15x4 pattern is the diagnostic deliverable -- D1 is CHARACTERIZED, not pass/failed, at this level (expected: K1xA1 recovers A only; K3xA2 recovers A,B,C,D; A1 systematically misses C; short-context estimators miss B).
+
+**Asserted invariants (locked v0.7.0).** (1) R2: cross-philosophy median Spearman `> 0.6` (CI `> 0.4`) on D1; (2) class separation: coherence-bearing features rank above distractors under every cell (the shared signal driving R2); (3) distractor flatness: distractors carry ~0 structural coherence (marginal-relative) despite skewed marginals; (4) the property-recovery cross-tab matches the pre-registered qualitative pattern; (5) generator determinism (bit-exact streams per seed).
+
+**Gating.** The 5x3 grid on D1 includes K3 (neural) and K5/K3 Shapley (A2) -- `slow` / `very_slow` tiers as in v0.5. Cheap cells (K1/K2 x A1/A3) `fast`. New module `cit/data/hsmm_d1.py`; categorical proxy generalizations under `cit/proxies/`; tests `tests/test_metacoherence_d1.py`.
+
+**Honest notes / risks.** (a) Marginal-relative coherence is load-bearing (above). (b) Property B recovery depends on the real categorical K3 actually learning the lag-12 coupling; if it cannot, B is recovered only by K4 (or not at all) -- recorded as a cross-tab finding, not tuned over. (c) `R2 > 0.6` on D1 is the source-locked threshold; because estimators legitimately diverge on B/C (the cross-tab's point), median Spearman is driven by class-separation with within-class rank noise -- if it falls short it is recorded honestly (seam), not adjusted. (d) `N_REPLICATES = 20`, replicate seeds locked; bootstrap `B = 1000`. (e) The exact Sec 5.4 ceiling is verified in-build. New locked constants: D1 generator params (above), `N_REPLICATES = 20`, R2 threshold `0.6` / CI `0.4`, bootstrap `B = 1000` (block = 200).
 
 

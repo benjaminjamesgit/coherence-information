@@ -413,9 +413,16 @@ the SOUND `H(Z)` footing (the floor is `H(Z)`, NOT `H_w`).
 
 ## 8. v0.7 -- Cross-domain validation (Metacoherence)
 
-The cross-domain architecture from Metacoherence Appendix A. Tests that the SAME `rho` signal
-recovers across distinct domain substrates `D1, D2, D3` (to be pre-registered as an amendment
-BEFORE v0.5... now before v0.7 implementation). Key elements:
+The cross-domain architecture from Metacoherence. Tests that the SAME `rho` signal recovers across
+distinct domain substrates `D1, D2, D3`. **v0.7.0 LOCKED 2026-06-23** (pre_registration.md: the
+`## v0.7` section + the 2026-06-23 v0.7.0 amendment): D1 = a 3-state hidden semi-Markov substrate
+(8 alphabet-8 features encoding 4 properties A/B/C/D + 3 distractors; params MI-balanced so no
+property exceeds 40% of recoverable info), its exact-by-construction M5 partition ({f0..f4} vs
+{f5..f7}), and R2 (cross-philosophy median Spearman `> 0.6`, CI `> 0.4`) via the categorical 5x3
+grid with the LOAD-BEARING marginal-relative coherence requirement (else skewed-marginal distractors
+read as coherent). Sequenced: v0.7.0 D1+M5-partition+R2; v0.7.1 R1 (persistence); v0.7.2 R3
+(interventions); then D2 (Pfam, CC0), D3 (FOMC), and the M5 + eight-cell capstone. Four conditions:
+R1 (persistence prediction), R2 (cross-philosophy convergence), R3 (intervention asymmetry), and:
 
 - **M5 cross-domain admissibility gate** (operationalized in Metacoherence): mean-w over
   coherence-bearing vs noise features, rank-normalized, within a factor-of-2 across all domain
