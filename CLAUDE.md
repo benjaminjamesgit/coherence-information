@@ -55,7 +55,10 @@ Weights are either user-supplied or induced from data:
 - `NEURAL_SEED = 7` — K3 GRU init/SGD. CPU-only; `torch.use_deterministic_algorithms(True)`.
 - `HMM_SEED = 0` — K4 Baum-Welch EM init. CPU/numpy deterministic. In `cit/proxies/mdl_hmm.py`.
 - `DEFAULT_CORRELATION_THRESHOLD = 0.15` — A3 clustering, `cit/ablations/correlation_cluster.py`.
-- `SEED = 42` — stochastic tests, `tests/test_shannon_recovery.py:SEED`.
+- `SEED = 42` — Shannon-recovery stochastic tests, `tests/test_shannon_recovery.py:SEED`.
+- `STREAM_SEED = 42` — synthetic-stream generation. In `tests/test_induction_pipeline.py`,
+  `test_cross_proxy_validation.py`, `test_cross_ablation_validation.py`, `test_multi_feature_substrate.py`.
+- `ABLATION_SEED = 123` — ablation RNG (A1 LOO / A2 Shapley / A3 corr-cluster). Same four test files.
 - Convergence thresholds: cross-proxy Spearman rho >= 0.5 (multi-feature substrate);
   cross-ablation rho >= 0.7 (A1 vs A2) plus per-symbol sign agreement.
 - Collapse tolerances: algebraic identity `1e-12`; empirical convergence per-distribution
@@ -102,6 +105,5 @@ near-miss; leave it xfail (a strict XPASS forces re-evaluation) unless Benjamin 
 
 ## Roadmap (next)
 
-v0.5.4 K4 MDL-HMM -> v0.5.5 capstone (full 15-pair K x A matrix + noise-only
-falsifiability, resolves Seam 1) -> v0.6 capacity estimator + Selective Compression
--> v0.7 cross-domain (Metacoherence).
+v0.6 capacity estimator (C_C = max I_w(X;Y)) + weighted typical-set coder /
+Selective Compression -> v0.7 cross-domain (Metacoherence).
