@@ -297,6 +297,60 @@ Pre-registered framework limitations surfaced by empirical execution. Each seam 
 
 ---
 
+## v0.6 — operational theorems (capacity estimator v0.6.0 locked; coder v0.6.1, Selective Compression v0.6.2 pending)
+
+Operationalizes the formal capacity/compression theorems from `cit formal.docx` (JAMFFO-2) on top of the v0.5-validated rho signal. v0.6.0 locks the coherence-capacity estimator; the weighted typical-set coder (v0.6.1) and Selective Compression empirics (v0.6.2) are pending. Full protocol rationale, due-diligence numbers, and the Sec 6 erratum are in the 2026-06-23 amendment-history entry below.
+
+### Coherence capacity estimator (locked v0.6.0)
+
+| Element | Locked value |
+|---------|--------------|
+| Definition | `C_C = max_{p(x)} I_w(X;Y)` over the input simplex, fixed DMC `p(y|x)`, fixed `w(x) in [0,1]` |
+| Implementation | `cit.capacity.coherence_capacity`; reuses `cit.information.I_w` unchanged (inherits the boundary spine) |
+| Solver | projected-gradient ascent on the simplex (Euclidean projection), deterministic multi-start (centroid + n vertices + resolution-`m=20` simplex lattice), best local optimum |
+| Gradient | analytic `dI_w/dp(x)`, unit-test-verified against central finite differences |
+| Solver params | `tol = 1e-10` (objective improvement), `max_iter = 2000` per start; no RNG (bit-exact deterministic) |
+| Scope | deterministic-lattice multi-start locked for small-alphabet fixtures only; larger alphabets require a future seeded-sampling amendment |
+| Concavity | OPEN -- the `w(x)` factor breaks the standard `I(X;Y)` concavity argument; multi-start agreement is the empirical uniqueness stand-in, asserted only on the pre-registered fixtures |
+| `delta` (must-preserve threshold) | not required by the capacity value (`C_C` is delta-independent); deferred to the v0.6.1 coder layer |
+| Gating | fast (small DMCs, sub-second); no slow/very_slow tier |
+
+### Binary Coherence Channel fixture (CORRECTED -- Sec 6 erratum)
+
+`cit formal.docx` Sec 6 gives `C_C(eps) = 0.5(1+eps)` for the identity channel with `w=(1, eps)` and uniform input. Due-diligence (2026-06-23) shows uniform is NOT the capacity-achieving input for `eps < 1`: for the identity channel `I_w = H_w(X) = -q log2 q - eps(1-q) log2(1-q)` (`q = p(0)`), and `d/dq` at `q=0.5` equals `(1-eps)(1 - 1/ln2) < 0`, so the maximizer sits at `q* < 0.5`. Thus `0.5(1+eps)` is `I_w` evaluated at uniform -- a valid lower bound on `C_C`, equal to `C_C` only at `eps=1`. Locked true capacity:
+
+| eps | C_C = max_p I_w | argmax q*=p(0) | 0.5(1+eps) = I_w@uniform |
+|-----|-----------------|----------------|--------------------------|
+| 0.00 | 0.530738 (= `1/(e*ln2)`, exact) | 0.367879 (= `1/e`, exact) | 0.500000 |
+| 0.25 | 0.639687 (grid-verified) | 0.4134 | 0.625000 |
+| 0.50 | 0.755588 (grid-verified) | 0.4499 | 0.750000 |
+| 0.75 | 0.876210 (grid-verified) | 0.4782 | 0.875000 |
+| 1.00 | 1.000000 (exact, Shannon boundary) | 0.500000 | 1.000000 |
+
+No elementary closed form exists for general `eps` (the argmax solves a transcendental equation); only the endpoints `eps in {0, 1}` have exact closed forms. This erratum affects ONLY the Sec 6 worked example, NOT Capacity Theorem 4.1 itself (`C_C = max_p I_w` is correct as stated). Flagged for author erratum; parked with the App A.2 soundness flag.
+
+### Asserted invariants (locked v0.6.0)
+
+| Invariant | Threshold |
+|-----------|-----------|
+| Boundary (spine): `w=1 => C_C == Shannon capacity` on BSC(`p in {0.1, 0.25}`), Z-channel(`f=0.5`) | atol `1e-6` |
+| Corrected fixture closed-form anchors `C_C(0)=1/(e*ln2)`, `C_C(1)=1` | atol `1e-9` |
+| Corrected fixture grid-verified `C_C(eps)`, `eps in {0.25, 0.5, 0.75}` | atol `1e-5` |
+| `argmax q* < 0.5` for `eps < 1` | strict |
+| Lower-bound relation `C_C(eps) >= 0.5(1+eps)` (strict for `eps<1`, equal at `eps=1`) | strict |
+| P2 bound `0 <= C_C <= C_Shannon` (capacity at `w=1`) on every test channel | strict |
+| Determinism: repeated calls bit-identical | strict |
+| Monotonicity: `C_C` non-decreasing under a uniform upward scaling of all weights toward 1 | strict |
+
+### Known gaps (carried into v0.6.1)
+
+- No closed form for general `eps` (transcendental argmax); only endpoints anchored.
+- `I_w` concavity in `p(x)` unproven; multi-start agreement is the empirical stand-in.
+- Deterministic-lattice multi-start is small-alphabet-only.
+- App A.2 soundness flag (raw vs weighted log-prob in the typical-set cardinality bound) still parked for the v0.6.1 coder.
+
+---
+
 ## v0.7 — cross-domain validation (not yet implemented)
 
 The cross-domain validation architecture from Metacoherence Appendix A. Domain specifications D₁, D₂, D₃ will be pre-registered in an amendment to this file before v0.5 implementation begins. The eight-cell outcome interpretation matrix from Metacoherence §8.3–8.4 will be reproduced verbatim and bound to outcomes in advance.
@@ -540,5 +594,42 @@ No proxy pair has positive convergence on noise under any ablation (signed max =
 **Lock scope.** v0.5.5+ noise-only counterfactual tests and the consolidated structured matrix. `T_noise = 0.3` locked. Gating: noise-only A_1/A_3 for K_3/K_4/K_5 are `slow` (mirror the structured slow cost); the A_2 cheap-proxy noise sample is `slow` (form B/K_1/K_2 Shapley ~ seconds). No new very_slow tier.
 
 **Implementation (v0.5.5).** Noise-only fixtures (LOO + CorrCluster per proxy on `noise_only_multi_feature_stream(20000, seed 42)`); per-pair noise-Spearman `< 0.3` assertions under A_1/A_3 for all 15 pairs; the A_2 cheap-proxy noise sample; a consolidated structured-matrix capstone assertion. Seam 1 xfail retained.
+
+### 2026-06-23 -- v0.6.0 coherence-capacity estimator protocol lock
+
+**Change.** First operational-theorem estimator locked. `C_C = max_{p(x)} I_w(X;Y)` for a fixed discrete memoryless channel `p(y|x)` and fixed weights `w(x) in [0,1]`, maximized over the input simplex. Implements Coherence Capacity Theorem 4.1 (`cit formal.docx`, JAMFFO-2). New module `cit/capacity.py`; reuses `cit/information.py:I_w` unchanged, so the estimator inherits the boundary-condition spine. Capacity tests are `fast` (small DMCs, sub-second); no slow/very_slow tier. This opens the v0.6 program (capacity v0.6.0; coder v0.6.1; Selective Compression v0.6.2), sequenced capacity-first as the most self-contained, lowest-risk deliverable.
+
+**Solver (locked).** Projected-gradient ascent on the probability simplex (Euclidean projection), polished from a deterministic multi-start set -- centroid + all `n` vertices + a resolution-`m=20` simplex lattice -- taking the best local optimum. Analytic gradient of `I_w` with respect to `p(x)`, verified against central finite differences in a unit test. `tol = 1e-10` on objective improvement, `max_iter = 2000` per start. No RNG: fully deterministic and bit-exact (no new seed constant is introduced). The deterministic-lattice multi-start is locked ONLY for the small-alphabet fixtures pre-registered here; larger-alphabet capacity requires a future seeded-sampling amendment (out of v0.6.0 scope, recorded so it is a versioned change, not silent drift).
+
+**Concavity is OPEN.** Concavity of `I_w` in `p(x)` is not proven in any source document -- the `w(x)` factor breaks the standard `I(X;Y)`-concavity argument. Recorded as open/asserted; the empirical stand-in for uniqueness is multi-start agreement (all starts finishing within atol of the best agree on the argmax), asserted only on the pre-registered fixtures. No guarantee is claimed that the papers do not provide.
+
+**Due-diligence (measured 2026-06-23, throwaway prototype reusing repo `I_w`).** Projected-gradient multi-start reproduces an independent brute-force simplex grid to `~1e-12` (binary channels) and `~4e-8` (a 3-input channel). Boundary `w=1` recovers Shannon capacity exactly: BSC(`p`) -> `1 - H_b(p)` at the uniform maximizer; Z-channel(`f=0.5`) -> `0.321928` at `q* ~ 0.6`. These settle the decisive pre-lock risk (does a numpy simplex maximizer reproduce the paper's closed form and the boundary) before any code is committed.
+
+**Binary Coherence Channel fixture -- CORRECTED (Sec 6 erratum).** `cit formal.docx` Sec 6 states the identity channel with `w=(1, eps)` and uniform input gives `C_C(eps) = 0.5(1+eps)`. Due-diligence shows uniform input is NOT the capacity-achieving input for `eps < 1`: for the identity channel `I_w = H_w(X) = -q log2 q - eps(1-q) log2(1-q)` (`q = p(0)`), whose derivative at `q=0.5` is `(1-eps)(1 - 1/ln2) < 0`, so the maximizer sits at `q* < 0.5`. Therefore `0.5(1+eps)` is `I_w` evaluated at uniform -- a valid lower bound on `C_C`, equal to `C_C` only at `eps=1` -- not the capacity. The true capacity (max over the simplex), locked:
+
+| eps | C_C = max_p I_w | argmax q*=p(0) | 0.5(1+eps) = I_w@uniform |
+|-----|-----------------|----------------|--------------------------|
+| 0.00 | 0.530738 (= `1/(e*ln2)`, exact) | 0.367879 (= `1/e`, exact) | 0.500000 |
+| 0.25 | 0.639687 (grid-verified) | 0.4134 | 0.625000 |
+| 0.50 | 0.755588 (grid-verified) | 0.4499 | 0.750000 |
+| 0.75 | 0.876210 (grid-verified) | 0.4782 | 0.875000 |
+| 1.00 | 1.000000 (exact, Shannon boundary) | 0.500000 | 1.000000 |
+
+No elementary closed form exists for general `eps` (the argmax solves a transcendental equation); only the endpoints `eps in {0, 1}` have exact closed forms (`1/(e*ln2)` and `1`). This erratum affects ONLY the Sec 6 worked example, NOT Capacity Theorem 4.1 itself (`C_C = max_p I_w` is correct as stated). Flagged for author erratum; parked with the App A.2 soundness flag.
+
+**Asserted invariants (locked v0.6.0).**
+
+1. *Boundary (spine):* `w=1 => C_C == Shannon capacity` on BSC(`p in {0.1, 0.25}`) and Z-channel(`f=0.5`), atol `1e-6`.
+2. *Corrected fixture:* identity channel, `w=(1, eps)`. Closed-form anchors `C_C(1)=1` and `C_C(0)=1/(e*ln2)` to atol `1e-9`; grid-verified `C_C(eps)` for `eps in {0.25, 0.5, 0.75}` to atol `1e-5`; `argmax q* < 0.5` strict for `eps < 1`.
+3. *Lower-bound relation:* `C_C(eps) >= 0.5(1+eps)` (the value-at-uniform), strict for `eps < 1`, equality at `eps = 1`.
+4. *P2 bound:* `0 <= C_C <= C_Shannon` (capacity at `w=1`) on every test channel.
+5. *Determinism:* repeated calls return bit-identical `C_C`.
+6. *Monotonicity:* `C_C` non-decreasing under a uniform upward scaling of all weights toward 1 (follows from `I_w` monotone in `w`).
+
+**delta (must-preserve threshold).** The capacity value `C_C = max_p I_w` is independent of the reliability threshold `delta > 0` (which governs which symbols the decoder must recover). delta belongs to the achievability/coder layer; deferred to v0.6.1. Recorded so its absence here is a deliberate scope choice, not an omission.
+
+**Known gaps carried forward.** (a) no closed form for general `eps`; (b) concavity open; (c) deterministic multi-start small-alphabet-only; (d) the Sec 6 erratum above; (e) the App A.2 soundness flag still parked for v0.6.1.
+
+**Lock scope.** v0.6.0+ capacity estimator and tests. New module `cit/capacity.py`; new test file `tests/test_capacity.py` (fast tier). The `design/v06_v07_spec.md` Section 7.2 fixture line (`reproduce C_C(eps)=0.5(1+eps)`) is superseded by this corrected fixture; the design memo is updated to match in the same commit.
 
 

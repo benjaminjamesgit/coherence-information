@@ -304,33 +304,39 @@ Kraft-McMillan with weighted typical-set counting. `w=1 => L >= H(X)` (Shannon).
 Proofs: weighted WLLN (Lemma A.1) + Chebyshev/Chernoff (A.2); cardinality (A.3)
 `(1-d) 2^{n(H_w-eps)} <= |T| <= 2^{n(H_w+eps)}`.
 
-### 7.2 v0.6.0 -- Coherence capacity estimator (READY to pre-register)
+### 7.2 v0.6.0 -- Coherence capacity estimator (LOCKED 2026-06-23)
 
-Everything REQUIRED is present (definition, both theorems, boundary condition, a closed-form
-fixture). The pre-reg amendment should lock:
+Pre-registered in `pre_registration.md` (the `## v0.6` section + the 2026-06-23 amendment entry).
+Due-diligence settled the decisive risk (does a numpy simplex maximizer reproduce the fixture and
+the boundary) before locking. What is locked:
 
 - **Definition:** `C_C = max_{p(x)} I_w(X;Y)` for fixed DMC `p(y|x)` and fixed `w(x)`,
   over the input simplex. Reuse `cit/information.py:I_w`.
 - **Boundary unit test (the spine):** `C_C(w=1) == Shannon channel capacity` to tolerance,
   mirroring `test_shannon_recovery`. Use a channel with closed-form Shannon capacity (BSC, Z-channel).
-- **Closed-form fixture (from the paper, Sec 6 Binary Coherence Channel):** identity channel
-  `Y=X`, `X=Y={0,1}`, `w(0)=1`, `w(1)=eps`, uniform input => **`C_C(eps) = 0.5(1+eps)`**
-  bits/use (eps=1 -> 1 bit Shannon; eps=0 -> 0.5 bit). Any estimator must reproduce this curve.
-- **OPEN CHOICES we make at pre-reg (NOT theory gaps -- the papers leave these to us):**
-  - *Solver.* No document gives one. RECOMMENDED: a general constrained simplex maximizer
-    (projected-gradient / scipy-free numpy optimizer) with **multi-start**, since Blahut-Arimoto's
-    convergence is NOT justified here (see concavity). BA may be a cross-check only.
-  - *Concavity.* `I_w` concavity in `p(x)` is NOT proven anywhere; the `w(x)` factor breaks
-    the standard `I(X;Y)`-concavity argument. Pre-register concavity as OPEN/asserted; use a
-    multi-start agreement check (same `C_C` from many random inits) as the empirical stand-in
-    for uniqueness. Do NOT claim a guarantee the papers don't provide.
-  - *Tolerance / iteration cap* for the solver (align with repo collapse tols).
-  - *Must-preserve threshold `delta > 0`* (both theorems leave it arbitrary) -- pick a concrete value.
-  - *Test channels* beyond the Binary Coherence Channel (e.g. a BSC with chosen crossover +
-    weights) -- author the numbers.
-- **Asserted invariants (proposed):** boundary collapse on >=1 channel; reproduce
-  `C_C(eps)=0.5(1+eps)` on the fixture; `0 <= C_C <= C_Shannon` (P2); monotonicity of `C_C`
-  in a uniform weight scale (optional).
+- **Binary Coherence Channel fixture -- CORRECTED (Sec 6 erratum).** The paper's Sec 6
+  `C_C(eps)=0.5(1+eps)` (identity channel, `w=(1,eps)`, uniform input) is `I_w` at UNIFORM input,
+  NOT the capacity: `I_w = H_w = -q log2 q - eps(1-q) log2(1-q)` is maximized at `q* < 0.5` for
+  eps<1, so `0.5(1+eps)` is only a lower bound (equal at eps=1). Locked TRUE capacity: eps=0 ->
+  0.530738 (=`1/(e*ln2)`, `q*=1/e`); 0.25 -> 0.639687; 0.5 -> 0.755588; 0.75 -> 0.876210; 1.0 ->
+  1.0. No closed form for general eps; only the endpoints are exact. Erratum affects ONLY the Sec 6
+  example, NOT Capacity Theorem 4.1 (`C_C = max_p I_w`, correct). Flagged for author erratum.
+- **CHOICES LOCKED at pre-reg (the papers leave these to us; now settled):**
+  - *Solver.* Projected-gradient ascent on the simplex with a DETERMINISTIC multi-start set
+    (centroid + n vertices + resolution-m=20 lattice), best local optimum; analytic gradient
+    FD-checked; `tol=1e-10`, `max_iter=2000`; no RNG (bit-exact, no new seed). Small-alphabet
+    fixtures only; larger alphabets need a seeded-sampling amendment. Blahut-Arimoto NOT used.
+  - *Concavity: OPEN.* Not proven (the `w(x)` factor breaks the standard argument). Multi-start
+    agreement is the empirical uniqueness stand-in, asserted on the fixtures. No guarantee claimed.
+  - *Tolerance / iteration cap:* `tol=1e-10`, `max_iter=2000`; test atols 1e-6 (boundary), 1e-9
+    (closed-form anchors), 1e-5 (grid-verified eps).
+  - *delta (must-preserve threshold):* the capacity value is delta-independent; deferred to v0.6.1.
+  - *Test channels:* BSC(p in {0.1,0.25}) + Z-channel(f=0.5) for the boundary; the corrected
+    Binary Coherence Channel for the fixture.
+- **Asserted invariants (locked):** boundary collapse (BSC + Z, atol 1e-6); the corrected fixture
+  (closed-form anchors atol 1e-9, grid-verified eps atol 1e-5, `q*<0.5` strict); `C_C(eps) >=
+  0.5(1+eps)`; `0 <= C_C <= C_Shannon` (P2); determinism (bit-identical); monotonicity of `C_C` in
+  a uniform weight scale. Tests FAST in `tests/test_capacity.py`.
 
 ### 7.3 v0.6.1 -- Weighted typical-set coder (lands in `cit/coders/`; REAL authoring burden)
 
@@ -361,8 +367,9 @@ fixture). The pre-reg amendment should lock:
 
 ### 7.5 KNOWN GAPS AND RISKS (carry these into the v0.6 pre-reg, honestly)
 
-1. **No capacity solver / no concavity result.** Builder's burden (Section 7.2). Pre-register
-   the solver as a choice and concavity as open.
+1. **No capacity solver / no concavity result IN THE PAPERS.** Authored repo-side: solver LOCKED
+   v0.6.0 (deterministic projected-gradient multi-start); concavity remains OPEN (multi-start
+   agreement is the empirical stand-in). See Section 7.2.
 2. **The practical weighted coder is constructed nowhere** (Section 7.3). Author it at v0.6.1.
 3. **App A.2 soundness flag (a real issue in the paper's proof, flagged for Benjamin's review).**
    The typical-set cardinality UPPER bound `|T| <= 2^{n(H_w+eps)}` and the "index in
@@ -449,8 +456,12 @@ solver, the concavity result, and the practical streaming coder appear in NONE o
   achievability; Benjamin's call; parked for v0.6.1.
 - **Stale `pyproject.toml` markers docstring** -- names only "K_5 LZ76", predates K3/K4 and
   the noise tests. Cosmetic; left as-is.
-- **No v0.6/v0.7 pre-registration yet** -- everything in Sections 7-9 is PLANNING until written
-  into `pre_registration.md` as dated amendments before implementation.
+- **v0.6.0 capacity estimator PRE-REGISTERED (2026-06-23)** -- locked in `pre_registration.md`
+  (`## v0.6` + the 2026-06-23 entry); Section 7.2 updated to the corrected fixture. v0.6.1 (coder),
+  v0.6.2 (Selective Compression), and all of v0.7 remain PLANNING until their own dated amendments.
+- **Sec 6 fixture erratum (2026-06-23)** -- `C_C(eps)=0.5(1+eps)` is the value at uniform input,
+  not the capacity (true `C_C` is higher for eps<1; see Section 7.2). Author erratum flagged; does
+  NOT affect Capacity Theorem 4.1.
 
 ---
 
