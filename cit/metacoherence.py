@@ -29,6 +29,15 @@ __all__ = [
     "partition_diagnostic",
     "recovered_properties",
     "build_cross_tab",
+    "crossing_delta",
+    "crossing_assignment",
+    "concordance_verdict",
+    "twin_spearman",
+    "decoupling_control_verdict",
+    "CROSSING_REFS",
+    "DECOUPLE_STABILITY_N",
+    "DECOUPLE_CONFIDENT",
+    "DECOUPLE_WEAK",
     "compute_cell",
     "compute_grid",
     "compute_a1_cell",
@@ -183,6 +192,157 @@ def recovered_properties(w):
 def build_cross_tab(w_by_cell):
     """cell_name -> sorted list of recovered properties (the 15x4 deliverable, by cell)."""
     return {cell: sorted(recovered_properties(w)) for cell, w in w_by_cell.items()}
+
+
+# --------------------------------------------------------------------------- #
+# Decoupling control (pre-reg 2026-06-23): twin-excluded nine-cell concordance #
+# --------------------------------------------------------------------------- #
+#
+# Adjudicates whether D1's A1 {K1,K5}|{K2,K3,K4} split tracks coding PHILOSOPHY or stream
+# REPRESENTATION, by crossing two MODELING functionals onto the byte stream (K3b, K2b;
+# cit.proxies.crossing) and asking which block each joins. The decision Delta is TWIN-EXCLUDED
+# and cross-functional: a crossing is compared to the modeling reference set with its OWN twin
+# removed (K3b vs {K2,K4}, K2b vs {K3,K4}) minus the byte-stream set {K1,K5}, so the trivial
+# same-functional / different-serialization twin correlation never inflates the modeling side.
+# Pure functions over given w-vectors -- no grid, no proxy execution here.
+
+DECOUPLE_STABILITY_N = 18      # per-proxy sign-count supermajority out of N_REPLICATES (=20)
+DECOUPLE_CONFIDENT = 0.40      # |median Delta| >= -> CONFIDENT band
+DECOUPLE_WEAK = 0.10          # |median Delta| >= -> WEAK-LEAN band (else NONE / ~0)
+
+# twin-excluded cross-functional reference sets (the crossing's OWN twin is excluded from M)
+CROSSING_REFS = {
+    "K3b": {"twin": "K3", "M": ("K2", "K4"), "B": ("K1", "K5")},
+    "K2b": {"twin": "K2", "M": ("K3", "K4"), "B": ("K1", "K5")},
+}
+
+
+def _mean_spearman_to(w_p, w_by_proxy, names):
+    """Mean Spearman of w_p against each named proxy's w-vector; NaN (zero-variance) cells dropped."""
+    rs = [spearman(_w_list(w_p), _w_list(w_by_proxy[x])) for x in names]
+    rs = [r for r in rs if not np.isnan(r)]
+    return float(np.mean(rs)) if rs else float("nan")
+
+
+def crossing_delta(crossing, w_by_proxy):
+    """One seed's twin-excluded cross-functional decision Delta for a crossing proxy.
+
+        Delta = mean Spearman(w[crossing], w[M\\twin]) - mean Spearman(w[crossing], w[{K1,K5}])
+
+    w_by_proxy maps proxy name -> {feature -> w} and must contain the crossing, its modeling
+    reference set, and {K1, K5}. NaN if a needed side is entirely zero-variance.
+    """
+    if crossing not in CROSSING_REFS:
+        raise ValueError(f"unknown crossing {crossing!r}; expected {tuple(CROSSING_REFS)}")
+    ref = CROSSING_REFS[crossing]
+    w_p = w_by_proxy[crossing]
+    return _mean_spearman_to(w_p, w_by_proxy, ref["M"]) - _mean_spearman_to(w_p, w_by_proxy, ref["B"])
+
+
+def crossing_assignment(deltas):
+    """Per-proxy assignment from the per-seed Delta list (stability sign-count x two-band magnitude).
+
+    deltas : sequence of per-seed Delta (length N_REPLICATES; NaN entries are allowed, ignored
+             in the median, and counted toward NEITHER sign). Returns label in
+             {MODELING, BYTE, UNSTABLE} + confidence sub-band + the Delta 90% interval (a
+             REPORTED corroborator, NOT the locked decision -- that is the sign-count).
+    """
+    d = np.asarray(deltas, dtype=np.float64)
+    finite = d[~np.isnan(d)]
+    n_M = int(np.sum(d > 0.0))            # NaN > 0 is False
+    n_B = int(np.sum(d < 0.0))            # NaN < 0 is False
+    median_delta = float(np.median(finite)) if finite.size else float("nan")
+    if finite.size:
+        p5, p95 = float(np.percentile(finite, 5)), float(np.percentile(finite, 95))
+    else:
+        p5 = p95 = float("nan")
+    ci90_excludes_zero = bool(finite.size and (p5 > 0.0 or p95 < 0.0))
+
+    mag = abs(median_delta)
+    confidence = ("CONFIDENT" if mag >= DECOUPLE_CONFIDENT
+                  else "WEAK-LEAN" if mag >= DECOUPLE_WEAK else None)
+
+    if n_M >= DECOUPLE_STABILITY_N and median_delta >= DECOUPLE_WEAK:
+        label = "MODELING"
+    elif n_B >= DECOUPLE_STABILITY_N and median_delta <= -DECOUPLE_WEAK:
+        label = "BYTE"
+    else:
+        label, confidence = "UNSTABLE", None
+
+    return {"label": label, "confidence": confidence, "n_M": n_M, "n_B": n_B,
+            "n_seeds": int(d.size), "median_delta": median_delta,
+            "ci90": (p5, p95), "ci90_excludes_zero": ci90_excludes_zero}
+
+
+def _weaker(c_a, c_b):
+    """The weaker of two confidence sub-bands (WEAK-LEAN dominates CONFIDENT)."""
+    return "WEAK-LEAN" if ("WEAK-LEAN" in (c_a, c_b)) else "CONFIDENT"
+
+
+def concordance_verdict(assign_k3b, assign_k2b):
+    """Total nine-cell concordance verdict over (assignment(K3b), assignment(K2b)).
+
+    The map is TOTAL over {MODELING, BYTE, UNSTABLE}^2 (pre-reg, fixed before any cell runs):
+      (M, M) -> PHILOSOPHY                both join the modeling class despite the byte stream
+      (B, B) -> REPRESENTATION_ARTIFACT   both join the byte block despite the modeling philosophy
+      (M, B) / (B, M) -> PROXY_SPECIFIC_SPLIT
+      any UNSTABLE    -> INCONCLUSIVE     concordance cannot rest on one crossing; a lone
+                                          decisive crossing's lean is RECORDED, not terminal
+    Same-direction confidence = the weaker of the two crossings' sub-bands.
+    """
+    a, b = assign_k3b["label"], assign_k2b["label"]
+    lean = None
+    if a == "MODELING" and b == "MODELING":
+        verdict = "PHILOSOPHY"
+        confidence = _weaker(assign_k3b["confidence"], assign_k2b["confidence"])
+    elif a == "BYTE" and b == "BYTE":
+        verdict = "REPRESENTATION_ARTIFACT"
+        confidence = _weaker(assign_k3b["confidence"], assign_k2b["confidence"])
+    elif {a, b} == {"MODELING", "BYTE"}:
+        verdict, confidence = "PROXY_SPECIFIC_SPLIT", None
+    else:
+        verdict, confidence = "INCONCLUSIVE", None
+        decisive = [(name, asg) for name, asg in (("K3b", assign_k3b), ("K2b", assign_k2b))
+                    if asg["label"] in ("MODELING", "BYTE")]
+        if len(decisive) == 1:
+            name, asg = decisive[0]
+            lean = {"proxy": name, "direction": asg["label"], "confidence": asg["confidence"]}
+    return {"verdict": verdict, "confidence": confidence, "lean": lean,
+            "assignments": {"K3b": assign_k3b, "K2b": assign_k2b}}
+
+
+def twin_spearman(crossing, w_by_proxy):
+    """Spearman(w[crossing], w[its twin]) -- the representation-invariance sanity check, REPORTED
+    and NEVER a decision input. High = the functional is representation-stable (low-distortion)."""
+    ref = CROSSING_REFS[crossing]
+    return spearman(_w_list(w_by_proxy[crossing]), _w_list(w_by_proxy[ref["twin"]]))
+
+
+def decoupling_control_verdict(per_seed_w):
+    """Full decoupling-control verdict from the per-seed A1 w-vectors of all seven proxies.
+
+    Parameters
+    ----------
+    per_seed_w : list over seeds of {proxy_name -> {feature -> w}}, each holding
+                 K1,K2,K3,K4,K5 plus the crossings K3b,K2b (the A1 column at full-T).
+
+    Returns
+    -------
+    dict: verdict / confidence / lean / assignments (from concordance_verdict), plus per-seed
+          `deltas` {crossing -> [Delta per seed]} and `twin_sanity` {crossing -> median Spearman
+          to its twin} (reported, not a decision input).
+    """
+    deltas = {c: [crossing_delta(c, w) for w in per_seed_w] for c in CROSSING_REFS}
+    assignments = {c: crossing_assignment(deltas[c]) for c in CROSSING_REFS}
+    out = concordance_verdict(assignments["K3b"], assignments["K2b"])
+    twin = {}
+    for c in CROSSING_REFS:
+        ts = [twin_spearman(c, w) for w in per_seed_w]
+        ts = [t for t in ts if not np.isnan(t)]
+        twin[c] = float(np.median(ts)) if ts else float("nan")
+    out["deltas"] = deltas
+    out["twin_sanity"] = twin
+    return out
 
 
 def compute_cell(proxy_name, ablation_name="A1", seed=7000, T=None):
