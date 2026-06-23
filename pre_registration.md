@@ -834,4 +834,81 @@ Structured floor = 0.307 (TCUN). `WIN_MARGIN = 0.20` sits ~35% below the floor w
   - **Confirm/deny criterion (LOCKED IN ADVANCE):** rerun at full-T (50_000), 20 seeds. If the block boundary FOLLOWS ENCODING (it moves when representation is crossed, holding philosophy fixed), the D1 R2 result is a REPRESENTATION ARTIFACT. If it FOLLOWS PHILOSOPHY (survives representation-crossing), R2 has real traction on D1. This criterion is fixed now; the outcome is recorded honestly in either direction.
   - **Status:** PENDING, not implemented, sequenced before D2/D3.
 
+### 2026-06-23 -- v0.7.0 decoupling control: pre-registration (modeling-on-byte-stream crossing, A1, full-T, 20 seeds)
+
+**What this is.** This entry pre-registers, in full and before any cell runs, the decoupling control whose DESIGN was committed as PENDING in the record-correction entry above (its point (e)). It selects control option (e)(ii) -- add MODELING proxies on the BYTE-STREAM representation -- and fixes the crossing proxies, the cluster-assignment metric, the seed ensemble, and the concordance decision rule NOW, so the verdict cannot be tuned after the fact (the Sec 8 pre-register-before-implementation discipline). No code is written in this entry; no v0.7.0 threshold or locked constant is changed (R2 `0.6` / CI `0.4` untouched). Implementation is the SECOND step, gated separately, with its outcome recorded honestly in either direction.
+
+**The confound being broken.** The v0.7.0 A1 grid populates only two of the four (representation x philosophy) corners, and they lie on the SAME diagonal -- so representation and philosophy are collinear:
+
+    representation \ philosophy   coding / parsing       modeling / predictive
+    byte-stream                   K1 (zstd), K5 (LZ76)   -- EMPTY --   <- filled here
+    categorical-native            -- EMPTY --            K2, K3, K4
+
+The {K1,K5} | {K2,K3,K4} block split observed at A1 therefore cannot be attributed to philosophy: it equals the byte-stream | categorical boundary. This control fills the empty `byte-stream x modeling` corner, making representation and philosophy INDEPENDENT axes.
+
+**The crossing proxies (LOCKED): K3b and K2b, co-primary.** Two modeling proxies are crossed onto the byte stream and run TOGETHER (neither is a fallback to the other), because a single crossing is weak evidence and the two are weak in OPPOSITE ways:
+  - **K3b -- lowest-distortion crossing** = the K3 neural-prequential predictive-likelihood functional on the byte stream. K3 is the most flexible proxy, so K3b distorts the philosophy least under re-encoding; but for the same reason a lone K3b PHILOSOPHY result is weak -- a representation-invariant GRU may show "K3 is robust," not "the split is philosophical." `NEURAL_SEED = 7` carried (deterministic, CPU-only).
+  - **K2b -- most mechanistically targeted crossing** = the K2 bigram-MDL functional on the byte stream. K2's factorized, coalition-blind structure IS the confound mechanism (a factorized proxy is architecturally blind to the C coalition that drives the {K1,K5} block), so K2b tests directly whether that blindness follows the PROXY or the REPRESENTATION. Deterministic (MDL, no RNG).
+
+Both apply their functional to the IDENTICAL feature-major bit-tight byte-stream encoding that K1 and K5 consume, via the IDENTICAL A1 LOO machinery and the IDENTICAL time-shuffle surrogate baseline (`SHUFFLE_SEED = 0`); {K1, K5, K3b, K2b} share representation, encoder, baseline, and ablation EXACTLY and differ ONLY in the complexity functional (compression / parsing / neural-prediction / bigram-MDL). Requiring CONCORDANCE across both crossings is far stronger than either alone; if they DISAGREE, that disagreement is itself a finding (the split is proxy-specific, not a clean representation/philosophy dichotomy -- a first-class verdict below). (The mirror corner, a categorical-native CODING proxy, is NOT crossed: it would require a new, less-canonical "categorical compression" functional and so introduce its own representation question.)
+
+**Scope (LOCKED).** A1 ONLY (A2 Shapley is the separate, deferred rescue verdict; A3 == A1 on D1, slices-2-3 build-record point 3). Full-T `= 50_000`. Seeds = the locked replicate ensemble `7000..7019` (`N_REPLICATES = 20`); no new seed base. "Enough seeds for stable cluster assignment" is operationalized by the 18/20 supermajority in the decision rule below.
+
+**Cluster-assignment metric (LOCKED) -- twin-excluded, cross-functional.** For each seed `s in {7000..7019}`, run the A1 column at `T = 50_000` and induce the per-feature `w` rank-vector for each of {K1, K2, K3, K4, K5} plus the two crossings K3b, K2b. The decision Delta for a crossing proxy P is its mean Spearman to the MODELING reference set minus its mean to the BYTE-STREAM reference set -- with P's OWN TWIN EXCLUDED from the modeling set, so every term is cross-functional. The twin correlation (K3b-vs-K3, K2b-vs-K2) is a same-functional / same-information / different-serialization quantity, high for trivial reasons; putting it in the decision mean would inflate the modeling side and pre-tilt the verdict toward PHILOSOPHY. The claim under test is "P resembles the modeling philosophy AS A CLASS," not "P resembles its own reflection."
+
+Reference sets (twin-excluded):
+
+    P = K3b :  M3 = {K2, K4}      B = {K1, K5}
+    P = K2b :  M2 = {K3, K4}      B = {K1, K5}
+
+Per crossing proxy P and seed s:
+
+    s_M(P,s)    = mean over X in M_P of  Spearman( w[P], w[X] )
+    s_B(P,s)    = mean over X in B    of  Spearman( w[P], w[X] )
+    Delta(P,s)  = s_M(P,s) - s_B(P,s)
+    label(P,s)  = M  if Delta(P,s) > 0  else  B
+
+Aggregate over the 20 seeds, per proxy: `n_M(P) = #{ s : label(P,s) = M }`; `median_Delta(P) = median_s Delta(P,s)`. (Spearman per the existing `cit.metacoherence.spearman`; a zero-variance cell yields NaN and is dropped from that seed's block mean, as already coded.)
+
+**Twin sanity checks (REPORTED, NOT decision inputs).** Spearman(K3b, K3) and Spearman(K2b, K2) per seed are recorded SEPARATELY as representation-invariance diagnostics: high values confirm each functional is representation-stable (so the crossing is low-distortion); a low twin correlation would mean the functional is itself representation-sensitive, which would CONTEXTUALIZE -- but never drive -- that proxy's verdict.
+
+**Per-proxy assignment (LOCKED) -- stability x magnitude, two-band.** For each crossing proxy P, combine the stability sign-count with a two-band magnitude read of `median_Delta(P)`. (Delta's real dynamic range is `~ +-1.1` -- full assignment `~ within-family 0.8` minus `cross-family -0.28` -- so a decisive decoupling lands near `+-0.5..1.0`; `0.10` only rules out `~0`, hence the second band.)
+
+    stable-toward-M  :  n_M(P) >= 18 / 20
+    stable-toward-B  :  n_M(P) <=  2 / 20
+    |median_Delta(P)| >= 0.40         ->  CONFIDENT
+    0.10 <= |median_Delta(P)| < 0.40  ->  WEAK-LEAN   (reported as a lean, not a clean call)
+    |median_Delta(P)| <  0.10         ->  NONE (~0)
+
+    assignment(P) = MODELING  if stable-toward-M and median_Delta(P) >= +0.10   (CONFIDENT if >= +0.40, else WEAK-LEAN)
+                  = BYTE      if stable-toward-B and median_Delta(P) <= -0.10   (CONFIDENT if <= -0.40, else WEAK-LEAN)
+                  = UNSTABLE  otherwise  (3 <= n_M(P) <= 17, or |median_Delta(P)| < 0.10)
+
+The `18/20` sign-count is the locked stability bar; the implementation ALSO reports each proxy's 20-seed `Delta(P, .)` distribution 90% interval (whether it excludes 0) as a corroborating read, but the locked decision uses the sign-count.
+
+**Concordance verdict (LOCKED IN ADVANCE -- TOTAL over all nine cells, fixed before any cell runs).** Each crossing independently resolves, after the 18/20 + two-band step, to exactly one of THREE per-crossing states: `assignment(P) in {MODELING, BYTE, UNSTABLE}` (MODELING/BYTE carry a CONFIDENT or WEAK-LEAN sub-band; UNSTABLE has none). Two crossings x three states = NINE combinations; ALL nine are mapped HERE, so no cell is adjudicated after seeing the number. Verdict = f(assignment(K3b), assignment(K2b)):
+
+                       K2b=MODELING      K2b=BYTE          K2b=UNSTABLE
+    K3b=MODELING       PHILOSOPHY        PROXY-SPECIFIC    INCONCLUSIVE*
+    K3b=BYTE           PROXY-SPECIFIC    REPRESENTATION    INCONCLUSIVE*
+    K3b=UNSTABLE       INCONCLUSIVE*     INCONCLUSIVE*     INCONCLUSIVE
+
+    (*) exactly one crossing decisive, the other UNSTABLE -> INCONCLUSIVE, with the
+        single decisive crossing's LEAN (which proxy, PHIL or REP direction) RECORDED
+        but licensing NO terminal verdict; U/U -> INCONCLUSIVE with no lean.
+
+The four terminal verdicts (the two same-decisive corners + the two opposite-decisive cells):
+
+- **PHILOSOPHY (split tracks coding philosophy -> D1 R2 is adjudicable):** both = MODELING. Both modeling functionals join the modeling class DESPITE the byte-stream representation -> the {K1,K5}|{K2,K3,K4} split is driven by philosophy, the v0.7.0 confound is broken in favor of philosophy, and the A1 low cross-philosophy median is a GENUINE divergence -- `R2 > 0.6` becomes a valid (and, on the A1 evidence, failing) test on D1. CONFIDENT if both proxies CONFIDENT, else PHILOSOPHY-WEAK-LEAN.
+
+- **REPRESENTATION ARTIFACT (split tracks encoding -> D1 R2 not yet a valid test):** both = BYTE. Both join the byte-stream block DESPITE the modeling philosophy -> the split is an encoding artifact; `R2 > 0.6` on D1 is not a valid cross-philosophy test as instrumented, and the recorded fix is to equalize representation (control option (e)(i)) before ANY D1 R2 verdict. CONFIDENT if both proxies CONFIDENT, else ARTIFACT-WEAK-LEAN.
+
+- **PROXY-SPECIFIC SPLIT (a finding in its own right):** the two are OPPOSITE-decisive (one MODELING, one BYTE). The confound is then proxy-dependent -- K2's factorized blindness and K3's flexibility behave differently under re-encoding -- so neither a clean PHILOSOPHY nor a clean REPRESENTATION verdict holds; redirects to control option (e)(i) and/or a wider crossing before any D1 R2 verdict. **CAVEAT (weight accordingly):** K2b carries MORE model-change than K3b -- K3b is genuinely "same functional, different serialization," whereas K2b as a bigram over the byte stream is closer to a BYTE-bigram than a feature-bigram (its factorization unit shifts from feature to byte; that shift is exactly what targets the C-blindness). So a PROXY-SPECIFIC-SPLIT has an alternative reading -- K2b being a meaningfully different MODEL, not a deep proxy-specificity of the split -- and must be weighted as such, not read as a clean third dichotomy.
+
+- **INCONCLUSIVE (no verdict licensed):** any cell with one or both crossings UNSTABLE (the five `*`/`U,U` cells above). Concordance cannot be established from a single decisive crossing -- the co-primary design exists precisely because one crossing is weak evidence -- so a lone decisive result does NOT license PHILOSOPHY or REPRESENTATION; it is recorded as INCONCLUSIVE with the single-crossing LEAN noted (proxy + direction), and the recorded next move is control option (e)(i) and/or additional crossings. Not pre-judged.
+
+**New locked numbers (this entry only).** Stability supermajority `18/20` (with each proxy's 20-seed Delta-distribution 90% interval reported as a corroborating read); magnitude bands `CONFIDENT |median_Delta| >= 0.40`, `WEAK-LEAN 0.10 <= |median_Delta| < 0.40`, `NONE < 0.10`. No new estimator or seed constants -- K3b carries `NEURAL_SEED = 7`, K2b is deterministic, both carry `SHUFFLE_SEED = 0` and the feature-major encoder, and the control seeds are the locked `7000..7019`. The R2 threshold and every v0.7.0 locked constant are unchanged by this entry.
+
+**Status.** PENDING implementation. The two co-primary crossing proxies (K3b, K2b), the twin-excluded cross-functional metric, the twin sanity checks, and the TOTAL nine-cell concordance decision rule (incl. the K2b model-change caveat) are FIXED as of this entry; the build (the K3b + K2b proxies + the A1 full-T x 20-seed run + the metric computation, a CI/very_slow artifact) is the next step and supersedes nothing here.
+
 
