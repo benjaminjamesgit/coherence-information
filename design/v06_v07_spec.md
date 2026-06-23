@@ -328,13 +328,14 @@ the boundary) before locking. What is locked:
     fixtures only; larger alphabets need a seeded-sampling amendment. Blahut-Arimoto NOT used.
   - *Concavity: OPEN.* Not proven (the `w(x)` factor breaks the standard argument). Multi-start
     agreement is the empirical uniqueness stand-in, asserted on the fixtures. No guarantee claimed.
-  - *Tolerance / iteration cap:* `tol=1e-10`, `max_iter=2000`; test atols 1e-6 (boundary), 1e-9
-    (closed-form anchors), 1e-5 (grid-verified eps).
+  - *Tolerance / iteration cap:* `tol=1e-10`, `max_iter=2000`; test atols 1e-6 (boundary), 1e-8
+    (closed-form anchors; corrected from 1e-9 post-implementation -- the locked tol floors at
+    ~1e-9 value accuracy on the flat eps=0 max), 1e-5 (grid-verified eps).
   - *delta (must-preserve threshold):* the capacity value is delta-independent; deferred to v0.6.1.
   - *Test channels:* BSC(p in {0.1,0.25}) + Z-channel(f=0.5) for the boundary; the corrected
     Binary Coherence Channel for the fixture.
 - **Asserted invariants (locked):** boundary collapse (BSC + Z, atol 1e-6); the corrected fixture
-  (closed-form anchors atol 1e-9, grid-verified eps atol 1e-5, `q*<0.5` strict); `C_C(eps) >=
+  (closed-form anchors atol 1e-8, grid-verified eps atol 1e-5, `q*<0.5` strict); `C_C(eps) >=
   0.5(1+eps)`; `0 <= C_C <= C_Shannon` (P2); determinism (bit-identical); monotonicity of `C_C` in
   a uniform weight scale. Tests FAST in `tests/test_capacity.py`.
 

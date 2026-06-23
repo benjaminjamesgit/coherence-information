@@ -334,7 +334,7 @@ No elementary closed form exists for general `eps` (the argmax solves a transcen
 | Invariant | Threshold |
 |-----------|-----------|
 | Boundary (spine): `w=1 => C_C == Shannon capacity` on BSC(`p in {0.1, 0.25}`), Z-channel(`f=0.5`) | atol `1e-6` |
-| Corrected fixture closed-form anchors `C_C(0)=1/(e*ln2)`, `C_C(1)=1` | atol `1e-9` |
+| Corrected fixture closed-form anchors `C_C(0)=1/(e*ln2)`, `C_C(1)=1` | atol `1e-8` |
 | Corrected fixture grid-verified `C_C(eps)`, `eps in {0.25, 0.5, 0.75}` | atol `1e-5` |
 | `argmax q* < 0.5` for `eps < 1` | strict |
 | Lower-bound relation `C_C(eps) >= 0.5(1+eps)` (strict for `eps<1`, equal at `eps=1`) | strict |
@@ -620,7 +620,7 @@ No elementary closed form exists for general `eps` (the argmax solves a transcen
 **Asserted invariants (locked v0.6.0).**
 
 1. *Boundary (spine):* `w=1 => C_C == Shannon capacity` on BSC(`p in {0.1, 0.25}`) and Z-channel(`f=0.5`), atol `1e-6`.
-2. *Corrected fixture:* identity channel, `w=(1, eps)`. Closed-form anchors `C_C(1)=1` and `C_C(0)=1/(e*ln2)` to atol `1e-9`; grid-verified `C_C(eps)` for `eps in {0.25, 0.5, 0.75}` to atol `1e-5`; `argmax q* < 0.5` strict for `eps < 1`.
+2. *Corrected fixture:* identity channel, `w=(1, eps)`. Closed-form anchors `C_C(1)=1` and `C_C(0)=1/(e*ln2)` to atol `1e-8` (see post-implementation correction below); grid-verified `C_C(eps)` for `eps in {0.25, 0.5, 0.75}` to atol `1e-5`; `argmax q* < 0.5` strict for `eps < 1`.
 3. *Lower-bound relation:* `C_C(eps) >= 0.5(1+eps)` (the value-at-uniform), strict for `eps < 1`, equality at `eps = 1`.
 4. *P2 bound:* `0 <= C_C <= C_Shannon` (capacity at `w=1`) on every test channel.
 5. *Determinism:* repeated calls return bit-identical `C_C`.
@@ -631,5 +631,7 @@ No elementary closed form exists for general `eps` (the argmax solves a transcen
 **Known gaps carried forward.** (a) no closed form for general `eps`; (b) concavity open; (c) deterministic multi-start small-alphabet-only; (d) the Sec 6 erratum above; (e) the App A.2 soundness flag still parked for v0.6.1.
 
 **Lock scope.** v0.6.0+ capacity estimator and tests. New module `cit/capacity.py`; new test file `tests/test_capacity.py` (fast tier). The `design/v06_v07_spec.md` Section 7.2 fixture line (`reproduce C_C(eps)=0.5(1+eps)`) is superseded by this corrected fixture; the design memo is updated to match in the same commit.
+
+**Correction (2026-06-23, post-implementation).** Implementation showed the locked solver stop (`tol = 1e-10` on objective improvement) reaches ~`1e-9` *value* accuracy on the FLAT `eps=0` maximum (`f''(1/e) = -e/ln2 ~ -3.92`; measured error `1.12e-9`, scaling ~11x `tol` near the flat max), so the closed-form-anchor test atol is corrected from `1e-9` to `1e-8`. This is a test-tolerance correction ONLY: the analytic gradient and solver are verified correct -- tightening `tol` to `1e-12` / `1e-14` drives the error to `1.1e-11` / `1.1e-13`, converging to the exact `1/(e*ln2)`. No theory quantity, locked constant (`tol`, `max_iter`, `lattice_m` unchanged), or fixture value changes; `1e-8` is still an 8-significant-digit match to the closed form. The boundary-spine (atol `1e-6`) and grid-verified (atol `1e-5`) tolerances are unaffected. Recorded here rather than silently loosened.
 
 

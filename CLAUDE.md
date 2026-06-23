@@ -39,12 +39,18 @@ Weights are either user-supplied or induced from data:
 
 ## Current state
 
-- Version `0.5.5` (pyproject + README). v0.5.5 = capstone (noise-only falsifiability + Seam 1 resolution).
+- Version `0.6.0` (pyproject + README). v0.6.0 = coherence capacity estimator (first operational
+  theorem); v0.5.5 = capstone (noise-only falsifiability + Seam 1 resolution).
 - Proxies (K_n): K1 compression-delta (zstd), K2 n-gram MDL, K3 neural prequential
   (single-layer GRU), K4 MDL-HMM (factorized-Bernoulli HMM, two-part MDL selection over
   H in {1,2,3,4}, deterministic Baum-Welch, `HMM_SEED=0`), K5 Lempel parsing (bit-level LZ76, numba).
 - Ablations (A_m): A1 LOO replace-with-uniform, A2 Shapley (k=64), A3 correlation-cluster.
-- Tests: 127 fast + 75 slow + 18 very_slow (1 xfail). v0.5.5: noise-only counterfactual
+- Capacity (v0.6.0): `cit/capacity.py:coherence_capacity` = max_p I_w(X;Y) over the input simplex
+  via deterministic projected-gradient multi-start (analytic gradient, no RNG, bit-exact); `w=1`
+  recovers Shannon capacity (BSC/Z). Sec 6 fixture erratum recorded: paper's C_C(eps)=0.5(1+eps)
+  is I_w@uniform, a lower bound, NOT the max (uniform not optimal for eps<1). Concavity OPEN.
+- Tests: 159 fast + 75 slow + 18 very_slow (1 xfail). v0.6.0: 32 capacity tests (all fast).
+  v0.5.5: noise-only counterfactual
   falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
   33 new noise tests on A1+A3 (all 15 pairs) + A2 sample. Seam 1 resolved `(K5, K2)`-specific.
 
@@ -63,6 +69,9 @@ Weights are either user-supplied or induced from data:
   cross-ablation rho >= 0.7 (A1 vs A2) plus per-symbol sign agreement.
 - Collapse tolerances: algebraic identity `1e-12`; empirical convergence per-distribution
   atol in `pre_registration.md`.
+- Capacity solver (v0.6.0): `tol = 1e-10`, `max_iter = 2000`, `lattice_m = 20`, no RNG
+  (deterministic, bit-exact). In `cit/capacity.py`. Closed-form-anchor test atol `1e-8`
+  (corrected from 1e-9 post-impl; the locked tol floors at ~1e-9 on the flat eps=0 max).
 
 The locked record is `pre_registration.md`. If evidence forces a change: bump the
 version, record the amendment in that file's history section, never silently edit.
@@ -105,5 +114,5 @@ near-miss; leave it xfail (a strict XPASS forces re-evaluation) unless Benjamin 
 
 ## Roadmap (next)
 
-v0.6 capacity estimator (C_C = max I_w(X;Y)) + weighted typical-set coder /
-Selective Compression -> v0.7 cross-domain (Metacoherence).
+v0.6.0 capacity estimator (C_C = max I_w(X;Y)) SHIPPED. Next: v0.6.1 weighted typical-set coder
+(cit/coders/) + v0.6.2 Selective Compression empirics -> v0.7 cross-domain (Metacoherence).
