@@ -14,6 +14,7 @@ import pytest
 from cit.metacoherence import (
     spearman,
     cross_philosophy_r2,
+    partition_diagnostic,
     recovered_properties,
     build_cross_tab,
     compute_a1_cell,
@@ -56,6 +57,37 @@ def test_build_cross_tab_shape():
     wbc = {"K2xA1": {i: (0.6 if i == 4 else 0.5) for i in range(8)}}
     tab = build_cross_tab(wbc)
     assert tab["K2xA1"] == ["D"]
+
+
+def test_partition_diagnostic_bound_and_decomposition():
+    """The +0.43 shared-partition bound, as a read-only diagnostic over given w-vectors."""
+    # derived floor for n=8, k=5
+    floor = partition_diagnostic({i: 0.5 for i in range(8)}, {i: 0.5 for i in range(8)})["partition_floor"]
+    assert abs(floor - 0.4285714285) < 1e-9
+
+    # identical vectors: shared top-k, spearman 1, no reshuffle, no proof of difference
+    wa = {0: 0.9, 1: 0.8, 2: 0.7, 3: 0.6, 4: 0.55, 5: 0.4, 6: 0.3, 7: 0.2}
+    d = partition_diagnostic(wa, wa)
+    assert d["shared_top_k"] and d["top_k_a"] == [0, 1, 2, 3, 4]
+    assert abs(d["spearman"] - 1.0) < 1e-12
+    assert d["proves_partitions_differ"] is False
+    assert abs(d["within_class_reshuffle"] - 0.0) < 1e-12
+
+    # saved K1xA1 vs K3xA1 (3dp): spearman << floor -> PROVES the top-k partitions differ
+    K1 = {0: 0.503, 1: 0.494, 2: 0.512, 3: 0.512, 4: 0.483, 5: 0.494, 6: 0.501, 7: 0.501}
+    K3 = {0: 0.51, 1: 0.496, 2: 0.496, 3: 0.496, 4: 0.514, 5: 0.496, 6: 0.496, 7: 0.496}
+    d = partition_diagnostic(K1, K3)
+    assert d["spearman"] < d["partition_floor"]
+    assert d["proves_partitions_differ"] is True
+    assert d["shared_top_k"] is False           # K1 top-5 includes f6/f7; K3's is {f0,f4,f1,f2,f3}
+    assert d["within_class_reshuffle"] is None   # undefined when partitions differ
+
+    # validation
+    import pytest as _pytest
+    with _pytest.raises(ValueError):
+        partition_diagnostic([0.1, 0.2], [0.1, 0.2, 0.3])   # length mismatch
+    with _pytest.raises(ValueError):
+        partition_diagnostic(wa, wa, k=8)                   # k must be < n
 
 
 @pytest.mark.slow

@@ -26,6 +26,7 @@ from cit.data.hsmm_d1 import ALPHABET, COHERENCE_BEARING, NOISE  # noqa: F401
 __all__ = [
     "spearman",
     "cross_philosophy_r2",
+    "partition_diagnostic",
     "recovered_properties",
     "build_cross_tab",
     "compute_cell",
@@ -106,6 +107,70 @@ def cross_philosophy_r2(w_by_cell, pairs=None):
         "median": float(np.median(valid)) if valid else float("nan"),
         "n_valid": len(valid),
         "n_pairs": len(pairs),
+    }
+
+
+def partition_diagnostic(w_a, w_b, k=5):
+    """Decompose a pair's Spearman via the shared-top-k-partition bound (read-only).
+
+    Two rank-vectors over n features that BOTH place the same k features on top (and the
+    same n-k on the bottom) cannot have an arbitrarily low Spearman: the worst case is
+    both sub-orders fully reversed, giving a floor
+
+        partition_floor = 1 - 6 * [k(k^2-1) + m(m^2-1)] / [3 * n(n^2-1)],   m = n - k
+
+    (for n=8, k=5 this is +0.4286). So a Spearman BELOW the floor is a *proof* that the two
+    top-k partitions differ -- the proxies are not even ranking the same k features as
+    signal. At or above the floor with a shared top-k set, the remaining gap to 1.0 is pure
+    within-class reshuffle. This makes the +0.43 bound a permanent diagnostic for splitting
+    "different signal sets" from "same set, reordered".
+
+    Pure function over two given w-vectors: no grid, no threshold, no locked constant.
+    `partition_floor` is a derived combinatorial value, not a tunable parameter. Top-k ties
+    are broken by lower feature index (deterministic); with display-rounded w those ties may
+    be rounding artifacts.
+
+    Parameters
+    ----------
+    w_a, w_b : dict {feature -> w} (keys 0..n-1) or length-n sequence
+    k : int, default 5  -- size of the "signal" partition (D1: the 5 coherence-bearing features)
+
+    Returns
+    -------
+    dict: spearman, k, partition_floor, shared_top_k (bool), top_k_a, top_k_b,
+          proves_partitions_differ (spearman < floor), within_class_reshuffle (1 - spearman
+          when the top-k sets match, else None).
+    """
+    a = _w_list(w_a) if isinstance(w_a, dict) else list(w_a)
+    b = _w_list(w_b) if isinstance(w_b, dict) else list(w_b)
+    n = len(a)
+    if len(b) != n:
+        raise ValueError(f"length mismatch: {n} vs {len(b)}")
+    if not (1 <= k < n):
+        raise ValueError(f"k must be in [1, n); got k={k}, n={n}")
+
+    def _top_k(vals):
+        order = sorted(range(n), key=lambda i: (-vals[i], i))   # value desc, index asc
+        return frozenset(order[:k])
+
+    top_a, top_b = _top_k(a), _top_k(b)
+    shared = top_a == top_b
+
+    m = n - k
+    max_sum_d2 = (k * (k * k - 1) + m * (m * m - 1)) / 3.0
+    floor = 1.0 - 6.0 * max_sum_d2 / (n * (n * n - 1))
+
+    rho = spearman(a, b)
+    rho_nan = bool(np.isnan(rho))
+    return {
+        "spearman": rho,
+        "k": k,
+        "partition_floor": float(floor),
+        "shared_top_k": shared,
+        "top_k_a": sorted(top_a),
+        "top_k_b": sorted(top_b),
+        "proves_partitions_differ": (not rho_nan) and rho < floor,
+        "within_class_reshuffle": (float(1.0 - rho) if shared and not rho_nan else None),
     }
 
 
