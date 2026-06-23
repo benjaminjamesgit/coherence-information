@@ -44,3 +44,6 @@ htmlcov/
 *.h5
 *.parquet
 *.npz
+
+# Claude Code (local settings; previously only ignored by machine-global config)
+.claude/
