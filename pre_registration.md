@@ -297,7 +297,7 @@ Pre-registered framework limitations surfaced by empirical execution. Each seam 
 
 ---
 
-## v0.6 — operational theorems (capacity estimator v0.6.0 locked; coder v0.6.1, Selective Compression v0.6.2 pending)
+## v0.6 — operational theorems (capacity estimator v0.6.0 + selective coder v0.6.1 locked; Selective Compression empirics v0.6.2 pending)
 
 Operationalizes the formal capacity/compression theorems from `cit formal.docx` (JAMFFO-2) on top of the v0.5-validated rho signal. v0.6.0 locks the coherence-capacity estimator; the weighted typical-set coder (v0.6.1) and Selective Compression empirics (v0.6.2) are pending. Full protocol rationale, due-diligence numbers, and the Sec 6 erratum are in the 2026-06-23 amendment-history entry below.
 
@@ -347,7 +347,24 @@ No elementary closed form exists for general `eps` (the argmax solves a transcen
 - No closed form for general `eps` (transcendental argmax); only endpoints anchored.
 - `I_w` concavity in `p(x)` unproven; multi-start agreement is the empirical stand-in.
 - Deterministic-lattice multi-start is small-alphabet-only.
-- App A.2 soundness flag (raw vs weighted log-prob in the typical-set cardinality bound) still parked for the v0.6.1 coder.
+- App A.2 soundness flag (raw vs weighted log-prob in the typical-set cardinality bound) -- RESOLVED-NEGATIVE at v0.6.1 (Thm 5.1 holds only at `w=1`; see the selective coder subsection below + the 2026-06-23 v0.6.1 amendment).
+
+### Selective compression coder (locked v0.6.1)
+
+Repairs Selective Compression Theorem 5.1, which is unsound for non-constant w (RESOLVED-NEGATIVE; full record, counterexamples, and paper-text confirmation in the 2026-06-23 v0.6.1 amendment below). `H_w` is recast as a MEASURE ("bits that matter"), not a compression rate; the operational floor is the merged-source entropy `H(Z)`.
+
+| Element | Locked value |
+|---------|--------------|
+| Corrected floor | `H(Z)`, `Z = (S_delta union {*})`, `S_delta = {x: w(x) > delta}`; `H(Z) = sum_{x in S_delta} p(x) log2(1/p(x)) + (1-q) log2(1/(1-q))`, `q = p(S_delta)` |
+| Converse | any uniquely-decodable code reproducing every `x in S_delta` exactly has `L >= H(Z)` (Shannon converse on the i.i.d. source Z) |
+| Achievability | entropy coder on Z: `L <= H(Z) + eps` |
+| Boundary (spine) | `S_delta = X` (e.g. `w=1`, or `delta < min w`) `=> H(Z) = H(X)`; collapses to Shannon |
+| Coder | `cit/coders/selective.py`: merge -> entropy-code. Primary = static arithmetic/range coder on Z (rate `-> H(Z)+eps`, bit-exact); practical variant = zstd on the merged byte stream (reuses K1 encoder) |
+| `delta` | explicit must-preserve threshold; no hidden default |
+| Decoder contract | reproduce every `S_delta` symbol exactly; fixed placeholder for `*` positions (don't-cares not reconstructed) |
+| `H_w` | unchanged in `cit/information.py`; a MEASURE, not a rate |
+
+Asserted invariants: lossless on `S_delta` (strict); arithmetic rate `<= H(Z) + 0.02` bits/symbol at `N=200_000`; `H(Z) <= H(X)` (strict `<` when `>= 2` don't-cares merged); coherence saving (merged rate `<` weight-blind when `>= 2` don't-cares); boundary `S_delta=X => rate -> H(X)`; determinism (bit-identical). Fast tier; `tests/test_selective_coder.py`.
 
 ---
 
@@ -633,5 +650,52 @@ No elementary closed form exists for general `eps` (the argmax solves a transcen
 **Lock scope.** v0.6.0+ capacity estimator and tests. New module `cit/capacity.py`; new test file `tests/test_capacity.py` (fast tier). The `design/v06_v07_spec.md` Section 7.2 fixture line (`reproduce C_C(eps)=0.5(1+eps)`) is superseded by this corrected fixture; the design memo is updated to match in the same commit.
 
 **Correction (2026-06-23, post-implementation).** Implementation showed the locked solver stop (`tol = 1e-10` on objective improvement) reaches ~`1e-9` *value* accuracy on the FLAT `eps=0` maximum (`f''(1/e) = -e/ln2 ~ -3.92`; measured error `1.12e-9`, scaling ~11x `tol` near the flat max), so the closed-form-anchor test atol is corrected from `1e-9` to `1e-8`. This is a test-tolerance correction ONLY: the analytic gradient and solver are verified correct -- tightening `tol` to `1e-12` / `1e-14` drives the error to `1.1e-11` / `1.1e-13`, converging to the exact `1/(e*ln2)`. No theory quantity, locked constant (`tol`, `max_iter`, `lattice_m` unchanged), or fixture value changes; `1e-8` is still an 8-significant-digit match to the closed form. The boundary-spine (atol `1e-6`) and grid-verified (atol `1e-5`) tolerances are unaffected. Recorded here rather than silently loosened.
+
+### 2026-06-23 -- v0.6.1 Selective Compression repair (Thm 5.1 resolved-negative) + corrected H(Z) coder
+
+**Thm 5.1 / App A.2 resolution (RESOLVED-NEGATIVE for non-constant w).** The paper's Selective Compression Theorem 5.1 (`cit formal.docx` Sec 5) -- "any uniquely-decodable lossless code whose decoder reproduces every symbol with `w(x) > delta` has `L >= H_w`, achievable to `L <= H_w + eps` via weighted typical-set coding" -- is UNSOUND for non-constant w; it holds only in the `w=1` Shannon boundary. Established 2026-06-23 by a 4-agent adversarial analysis (independent lenses: operational floor, cardinality bound, alternative criteria; an adversarial verifier failed to rescue the result), confirmed against the actual paper text:
+
+- The operational criterion is verbatim the hard delta-threshold exact-reproduction (Sec 5.1).
+- The cardinality bound `|T_{w,eps}^n| <= 2^{n(H_w+eps)}` (App A.2 Lemma A.3) is false for `w != 1`: w-typicality constrains the WEIGHTED self-information `~ n*H_w`, but the typical set's SIZE is governed by the RAW log-prob `-log p(x^n)`. Enumerated counterexamples: binary `p=(0.5,0.5)`, `w=(1,0)`, `n=3`, `eps=0.3` gives `|T|=6 > 2^2.4=5.28`; `p=(0.7,0.3)`, `w=(1,0)`, `n=4` gives `|T|=15 >> 5.43`. The index is too short to label typical blocks injectively -- the coder is not even uniquely decodable.
+- Both directions fail: under the threshold criterion only `S_delta = {x: w(x) > delta}` must be reproduced, so the true floor is the merged-source entropy `H(Z)` (below), which can EXCEED `H_w`. The paper's own Sec 5.4 binary example (`w=(1, ~0)`, claims a weighted coder reaches `H_w -> p0(-log p0)`) is the counterexample: the true floor is the full Shannon `H_b(p0)` (knowing which positions are the structural symbol IS the whole binary sequence); at `p0=0.5` the paper claims `0.5` bits/symbol where `>= 1.0` is required.
+
+The Capacity Theorem (Sec 4) is UNAFFECTED (its coherence-joint typicality is a sound union-bound use). `H_w` / `I_w` as measures (Sec 3) are unaffected.
+
+**H_w recast (not dropped).** `H_w(X) = sum_x p(x) w(x) (-log2 p(x)) = E_p[w(X)*iota(X)]` (expected attention-weighted surprisal) is RETAINED as the coherence-weighted entropy MEASURE ("bits that matter") -- `cit/information.py:H_w` unchanged. It is explicitly NOT an achievable compression rate for non-constant w. The original theorem's error was identifying a significance MEASURE with a compression RATE; v0.6.1 separates them.
+
+**Corrected Selective Compression Theorem (Option A, locked v0.6.1).** For an i.i.d. source `p(x)` over finite alphabet X, weights `w(x) in [0,1]`, threshold `delta > 0`:
+
+- Must-preserve set `S_delta = {x: w(x) > delta}`; `q = p(S_delta)`.
+- Merged source Z over alphabet `S_delta union {*}`: `Z = x` for `x in S_delta`, else `Z = *` (one token).
+- Floor: `L* = H(Z) = sum_{x in S_delta} p(x) log2(1/p(x)) + (1-q) log2(1/(1-q))`.
+- Converse: any uniquely-decodable code reproducing every `x in S_delta` exactly must convey Z losslessly, so `L >= H(Z)` (Shannon converse on the i.i.d. source Z).
+- Achievability: an entropy coder on Z achieves `L <= H(Z) + eps` (arithmetic coding).
+- Boundary (the spine): `S_delta = X` (e.g. `w=1`, or `delta < min_x w(x)`) `=> Z = X => H(Z) = H(X)`; collapses to Shannon lossless coding.
+- Property: `H(Z) <= H(X)` always (merging symbols cannot increase entropy); strict `<` iff `>= 2` distinct symbols are merged.
+
+**Coder (locked v0.6.1).** Module `cit/coders/selective.py`. Construction = "merge -> entropy-code":
+
+- merge: each symbol -> itself if in `S_delta`, else the reserved token `*`.
+- PRIMARY (theorem-faithful): a static integer arithmetic/range coder on the merged stream with the empirical Z-pmf (two-pass; model transmitted, `O(|S_delta|)` bits, negligible per-symbol); rate `-> H(Z) + eps`. Deterministic, bit-exact; exact round-trip on the merged stream.
+- PRACTICAL variant: zstd (level locked) on the merged byte stream (reuses K1 encoder infra); reported alongside, looser overhead.
+- `delta`: explicit parameter (the must-preserve threshold); no hidden default.
+- Decoder contract: reproduce every `S_delta` symbol EXACTLY; emit a fixed placeholder (a designated don't-care symbol) for `*` positions (don't-cares are NOT reconstructed -- the point of selective compression).
+- Determinism: bit-exact, no RNG in the coder; test source seeded `STREAM_SEED=42`.
+
+**Asserted invariants (locked v0.6.1).**
+
+1. *Lossless on S_delta:* `decode(encode(x))` reproduces every symbol with `w(x) > delta` exactly (strict).
+2. *Achievability:* arithmetic-coder total rate (incl. model) `<= H(Z) + TOL_RATE` on a length-`N` i.i.d. stream. `N = 200_000`, `TOL_RATE = 0.02` bits/symbol (engineering calibration; confirmed at implementation).
+3. *Floor ordering:* `H(Z) <= H(X)` (strict `<` when `>= 2` don't-care symbols merged).
+4. *Coherence saving:* arithmetic `rate(merged) < rate(weight-blind, S_delta=X)` when `|X \ S_delta| >= 2`.
+5. *Boundary spine:* `S_delta = X => H(Z) = H(X)` and coder rate `-> H(X)` (within `TOL_RATE`); covers `w=1` and `delta < min w`.
+6. *Determinism:* bit-identical output across runs.
+7. *H_w-as-measure:* `H_w` unchanged (`cit/information.py`); documented as a measure, not a rate.
+
+**Gating.** Fast (small/medium i.i.d. streams; arithmetic coder + zstd both fast). No slow tier.
+
+**Lock scope.** v0.6.1+ selective coder and tests. New module `cit/coders/selective.py`; new test file `tests/test_selective_coder.py` (fast). v0.6.2 (Selective Compression empirics: win-margin vs weight-blind on richer substrates) is separate, pending its own amendment. Design memo `design/v06_v07_spec.md` Sec 7.3-7.4 updated to the corrected theorem in the same commit.
+
+**Known gaps / honest notes.** (a) `H(Z)` is partition-driven (depends on `S_delta` via `delta`, not the graded w values) -- a deliberate consequence of the threshold criterion; the graded weights live in the `H_w` measure, not the rate. (b) Corrected theorem is i.i.d.-source (Thm 5.1 scope); sources with memory are out of v0.6.1 scope. (c) `TOL_RATE`/`N` are engineering calibration, confirmed against the real coder at implementation.
 
 

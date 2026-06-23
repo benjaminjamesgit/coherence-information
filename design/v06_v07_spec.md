@@ -339,18 +339,31 @@ the boundary) before locking. What is locked:
   0.5(1+eps)`; `0 <= C_C <= C_Shannon` (P2); determinism (bit-identical); monotonicity of `C_C` in
   a uniform weight scale. Tests FAST in `tests/test_capacity.py`.
 
-### 7.3 v0.6.1 -- Weighted typical-set coder (lands in `cit/coders/`; REAL authoring burden)
+### 7.3 v0.6.1 -- Selective compression coder (LOCKED 2026-06-23; Thm 5.1 repaired)
 
-- **CONSTRUCTED in the paper (Sec 5.2), implementable directly:** the block typical-set coder
-  -- build the dictionary of the coherence-typical set `T_w,eps^n` (size `<= 2^{n(H_w+eps)}`),
-  index a typical block in `n(H_w+eps)` bits, else send a flag + raw symbols; decoder shares
-  the dictionary. This is the classical Shannon-Cover typical-set coder with a w-weighted
-  typicality predicate. It is impractical (dictionary size `2^{n*H_w}`).
-- **MERELY ASSERTED, constructed in NO document (the part the repo actually wants):** the
-  practical *streaming* coder -- "weighted arithmetic coding or weighted Lempel-Ziv (replace
-  empirical frequency by w-weighted counts)." HOW `w` reweights arithmetic-coder interval
-  subdivision or LZ phrase counts is undefined. v0.6.1 must AUTHOR this (cf. K5's LZ76 parser).
-- This is a genuine design problem to pre-register, not lift.
+Pre-registered in `pre_registration.md` (the v0.6 "Selective compression coder" subsection + the
+2026-06-23 v0.6.1 amendment). A 4-agent adversarial analysis (confirmed against the paper text)
+found the paper's Thm 5.1 UNSOUND for non-constant w -- RESOLVED-NEGATIVE -- so the repo builds the
+corrected theorem instead.
+
+- **Thm 5.1 is unsound for w != 1 (resolved-negative).** Achievability `L <= H_w + eps` and the
+  App A.2 cardinality bound `|T| <= 2^{n(H_w+eps)}` both fail: w-typicality constrains the WEIGHTED
+  log-prob `~ H_w`, but the typical set's SIZE is governed by the RAW `-log p(x^n)` (enumerated:
+  `|T|=6 > 5.28`; `|T|=15 >> 5.43`). Under the threshold criterion only `S_delta={x:w(x)>delta}` must
+  be reproduced, so the true floor is the merged-source entropy `H(Z)`, which can exceed `H_w`. The
+  paper's own Sec 5.4 binary example is the counterexample. Holds only at `w=1` (Shannon).
+- **H_w recast (kept):** `H_w = E_p[w(X)(-log p(X))]` stays as the "bits that matter" MEASURE, not a
+  compression rate. `cit/information.py:H_w` unchanged.
+- **Corrected theorem (Option A, built):** compress to `H(Z)`, `Z=(S_delta union {*})` -- reproduce
+  `S_delta` exactly, collapse all don't-cares to one token. Converse `L >= H(Z)`; achievability
+  `L <= H(Z)+eps` (entropy coding of Z); boundary `S_delta=X => H(Z)=H(X)` (Shannon spine);
+  `H(Z) <= H(X)` always. H(Z) is partition-driven (the threshold, not the graded weights, sets it;
+  the graded weights live in the H_w measure).
+- **Coder (`cit/coders/selective.py`):** "merge -> entropy-code." Primary = static arithmetic/range
+  coder on Z (rate `-> H(Z)+eps`, bit-exact); practical variant = zstd on the merged byte stream
+  (reuses K1). `delta` explicit; decoder reproduces `S_delta` exactly + a fixed placeholder for `*`.
+- **Invariants:** lossless on `S_delta`; arithmetic rate `<= H(Z)+0.02` at `N=200k`; `H(Z) <= H(X)`;
+  coherence saving vs weight-blind when `>= 2` don't-cares; boundary collapse; determinism. Fast tier.
 
 ### 7.4 v0.6.2 -- Selective Compression empirics
 
@@ -372,16 +385,14 @@ the boundary) before locking. What is locked:
    v0.6.0 (deterministic projected-gradient multi-start); concavity remains OPEN (multi-start
    agreement is the empirical stand-in). See Section 7.2.
 2. **The practical weighted coder is constructed nowhere** (Section 7.3). Author it at v0.6.1.
-3. **App A.2 soundness flag (a real issue in the paper's proof, flagged for Benjamin's review).**
-   The typical-set cardinality UPPER bound `|T| <= 2^{n(H_w+eps)}` and the "index in
-   `n(H_w+eps)` bits" rate are derived by treating `p(x^n) >= 2^{-n(H_w+eps)}` for w-typical
-   `x^n` -- but w-typicality controls the WEIGHTED log-prob `sum_i w(x_i)(-log p(x_i))`, which
-   does NOT bound the RAW `-log p(x^n) = sum_i (-log p(x_i))` unless `w=1`. So the cardinality
-   upper bound and the coder's achievability RATE do not follow as written for `w != 1`. The
-   WLLN / lower-tail / lower cardinality bound are sound. This affects the Selective
-   Compression converse and the constructed coder -- NOT the capacity theorem (which is clean).
-   v0.6.1/v0.6.2 must either repair this or restrict claims to the sound portion. **Benjamin's
-   call as author; parked for v0.6.1.**
+3. **App A.2 soundness flag -- RESOLVED-NEGATIVE at v0.6.1 (2026-06-23).** The typical-set
+   cardinality bound `|T| <= 2^{n(H_w+eps)}` is false for `w != 1`: w-typicality controls the
+   WEIGHTED log-prob `sum_i w(x_i)(-log p(x_i)) ~ H_w`, which does NOT bound the RAW
+   `-log p(x^n)`, so the bound and the `H_w` achievability rate fail (enumerated counterexamples).
+   Adversarially verified (4-agent) and confirmed against the paper text; Thm 5.1 holds only at
+   `w=1`. Both the converse and achievability to `H_w` are unsound; the capacity theorem (Sec 4) is
+   UNAFFECTED. Repaired in v0.6.1: `H_w` demoted to a measure, operational floor replaced by the
+   merged-source entropy `H(Z)` (Section 7.3 + the 2026-06-23 v0.6.1 amendment in `pre_registration.md`).
 4. **No finite-blocklength theory** (paper Sec 9 defers to Polyanskiy-Poor-Verdu). Any finite-n
    empirical correction needs its own pre-registration.
 5. **No numeric reproducibility constants** in any document (no seeds/tolerances/alphabet sizes
