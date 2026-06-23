@@ -1,8 +1,19 @@
 # CIT Architecture & Design Spec -- v0.6-v0.7 reference
 
-**Status:** living design reference, written at HEAD = v0.5.5 (2026-06-23).
-**Scope:** the full architecture as built through v0.5.5 (the robustness program, COMPLETE)
-plus the design plan for v0.6 (operational theorems) and v0.7 (cross-domain).
+**Status:** living design reference. Current through HEAD = `3b179bc` (2026-06-23): the v0.5
+robustness program and the v0.6 operational-theorem program are SHIPPED; v0.7.0 (cross-domain D1)
+is PRE-REGISTERED, build pending.
+
+**WHERE WE ARE (continuation pointer).** Shipped this line: v0.6.0 capacity estimator, v0.6.1
+selective coder (Thm 5.1 repaired), v0.6.2 win-margin empirics. v0.7.0 PRE-REGISTERED (D1 substrate
++ M5 partition + R2); NEXT = the v0.7.0 build in 3 slices (Section 8.1): (1) `cit/data/hsmm_d1.py`
+generator + structure test; (2) categorical generalization of K2/K3/K4 with MARGINAL-RELATIVE
+coherence; (3) the 5x3 grid + R2 + property-recovery cross-tab. Two SOURCE-PAPER soundness findings
+recorded this program (the framework being "vulnerable in the right way"): the Sec 6 capacity-fixture
+erratum (v0.6.0) and the Thm 5.1 selective-compression unsoundness for w!=1 (v0.6.1, repaired to the
+merged-source floor H(Z)). Boot procedure: read this file + `pre_registration.md` (authoritative).
+
+**Scope:** the architecture through v0.6 (shipped) plus the v0.7 cross-domain design + the D1 build plan.
 
 **Authority.** This document is a DESIGN/ARCHITECTURE reference, not a locked record.
 The authority order is: **Benjamin live > global ACRE > `pre_registration.md` (the locked
@@ -21,9 +32,10 @@ Every estimator/threshold is pre-registered before it is run, so the framework i
 "vulnerable in the right way." A passing test suite that no longer tests convergence is
 lock-in, not success.
 
-Sections 1-6 describe what exists and the working method. Sections 7-10 are the forward
-plan (v0.6, v0.7) with the source theorems verbatim and the known gaps. Sections 11-12 are
-open issues and notation.
+Sections 1-6 describe what exists and the working method. Section 7 (v0.6 operational theorems) is
+now BUILT and shipped (capacity / selective coder / win-margin). Section 8 (v0.7 cross-domain) is the
+ACTIVE FRONTIER -- v0.7.0 pre-registered, build plan in 8.1, D1 lessons + risks in 8.2. Sections 9-10
+are the M-conditions and source documents; 11-12 are open issues and notation.
 
 ---
 
@@ -135,14 +147,17 @@ LZ76) so their difference traces to the parsing/coding boundary, not representat
 | A2 | `shapley_multi` | Shapley value over `k=64` sampled coalitions; replace-with-uniform from kept set; cohort-mean centered. EXPENSIVE. |
 | A3 | `correlation_cluster` | Pearson signed-correlation clustering (threshold `DEFAULT_CORRELATION_THRESHOLD = 0.15`), connected components, ablate cluster-wise. Multi-feature-native (no 1-D analog). |
 
-### 3.6 Coders -- `cit/coders/` is empty
+### 3.6 Coders -- `cit/coders/selective.py` (v0.6.1, built)
 
-This is the deliberate v0.6 placeholder. The weighted typical-set coder (Section 7.3)
-lands here. Nothing is implemented yet.
+The selective compression coder (the corrected `H(Z)` theorem; Section 7.3). `selective_encode` /
+`selective_decode` (a bit-exact 32-bit Witten-Neal-Cleary arithmetic coder on the merged source) +
+a zstd variant + `merged_source_entropy`. It replaces the paper's weighted-typical-set coder, which
+was found UNSOUND for non-constant w (Thm 5.1; Section 7.3).
 
 ### 3.7 Tests and gating
 
-Five test files. Total **220 tests: 127 fast + 75 slow + 18 very_slow (1 xfail = Seam 1).**
+Eight test files. Total **287 tests: 194 fast + 75 slow + 18 very_slow (1 xfail = Seam 1).**
+(v0.7 tests pending the build.)
 
 | File | Covers |
 |------|--------|
@@ -151,6 +166,9 @@ Five test files. Total **220 tests: 127 fast + 75 slow + 18 very_slow (1 xfail =
 | `test_cross_proxy_validation.py` | v0.3 cross-proxy (form B vs K1) at the 1-D level (threshold 0.7). |
 | `test_cross_ablation_validation.py` | v0.4 cross-ablation (A1 vs A2) sign agreement + Spearman >= 0.7. |
 | `test_multi_feature_substrate.py` | the v0.5 program: substrate, all 6 proxies x 3 ablations, the 15-pair cross-proxy matrix, the noise-only falsifiability (`TestNoiseOnlyFalsifiability`), Seam 1 xfail, A3 cluster recovery (observational). |
+| `test_capacity.py` | v0.6.0: boundary spine (BSC/Z recover Shannon capacity), the CORRECTED Binary Coherence Channel fixture, P2, determinism, analytic-gradient FD-check. |
+| `test_selective_coder.py` | v0.6.1: arithmetic round-trip bit-exactness, lossless-on-S_delta, achievability `<= H(Z)+eps`, boundary collapse, H_w-as-measure. |
+| `test_selective_compression_empirics.py` | v0.6.2: win-margin `Delta_frac >= 0.20` on iid/Gilbert-Elliott/TCUN; boundary `Delta = 0`. |
 
 **Gating** (`pyproject.toml addopts = -m 'not slow and not very_slow'`):
 - **fast** (default `pytest`, ~25s): everything cheap (form B / K1 / K2 proxies and their A1/A3/A2, the boundary spine, the 6 cheap noise-falsifiability tests).
@@ -275,7 +293,7 @@ honestly as a seam (`xfail(strict=True)`) with a resolution version -- do not tu
 
 ---
 
-## 7. v0.6 -- Capacity, Coder, Selective Compression (THE PLAN)
+## 7. v0.6 -- Capacity, Coder, Selective Compression (SHIPPED -- program complete)
 
 **Decided (2026-06-23):** sequence is **capacity estimator first (v0.6.0)**, then coder
 (v0.6.1), then Selective Compression empirics (v0.6.2). Source specs come from the papers
@@ -434,6 +452,55 @@ R1 (persistence prediction), R2 (cross-philosophy convergence), R3 (intervention
 v0.7 has empirical content only because v0.3-v0.6 anchored operator-invariance and the
 operational theorems on a single substrate first.
 
+Locked statistical thresholds (Metacoherence Sec 8.7): R2 median Spearman > 0.6 (CI > 0.4);
+R1 Cohen's d > 0.5 (CI > 0.3, p < 0.01); R3 structural/interpretive ratio > 3.0 (CI > 2.0); M5
+factor-of-2 rank-normalized, 3-of-5 estimators; Bonferroni across 51 cells; bootstrap B = 1000.
+Data sources for the real domains are FREE/public (confirmed 2026-06-23): D2 Pfam = CC0 via
+EBI/InterPro (+ HF/Kaggle scrapes); D3 FOMC = U.S. public domain (Fed, HF `vtasca/fomc-statements`).
+
+### 8.1 v0.7.0 build plan (D1 + M5 partition + R2) -- the active work
+
+Sliced for reviewability (pre-reg: 2026-06-23 v0.7.0 amendment + the `## v0.7` section):
+- **Slice 1 -- `cit/data/hsmm_d1.py` (the generator).** Locked construction: 3-state HSMM, negbinom
+  sojourns (mean 200, dispersion r=6), T=50k, N_REPLICATES=20; 8 features x alphabet 8: f0
+  regime-conditional (Property A, F0_scale=1.7); f1 = g(f0,f2,f4 @ t-12) w.p. 0.35 else uniform
+  (Property B, lag L=12); f2 ~ uniform, f3 = (f2 + C_VAL[state,bucket]) % 8 (Property C ADDITIVE
+  MASK -- individually uniform, jointly recover regime); f4 drift-mode emission (Property D,
+  std=0.10, peak=1.0); f5/f6/f7 uniform/Zipf/low-freq distractors. Structure test: MI diagnostics
+  reproduce the calibration (I_A=0.76, I_B=0.46, I_C=0.34, I_D=0.58), distractors structurally flat,
+  bit-exact per seed. The LOCKED construction already encodes the two bug-fixes found in
+  due-diligence (C MUST be additive-masked or it leaks regime info into each feature singly; D's
+  drift must be strong enough to clear the noise floor but not dominate).
+- **Slice 2 -- categorical proxy generalization.** K1/K5 are alphabet-agnostic (byte/bit). K2
+  (per-feature categorical n-gram MDL), K3 (GRU softmax heads), K4 (categorical-emission HMM) are
+  generalized from binary. ALL must measure coherence MARGINAL-RELATIVE (predictive: H_marginal -
+  H_pred; compression: structural vs marginal-only baseline) -- the load-bearing lock (8.2).
+- **Slice 3 -- the 5x3 grid + R2 + cross-tab.** Run all 15 cells on D1; induced w over 8 features;
+  cross-philosophy median Spearman > 0.6 (CI > 0.4, bootstrap B=1000, block=200); the 15x4
+  property-recovery cross-tab (D1 is CHARACTERIZED, not pass/failed -- expected pattern: K1xA1
+  recovers A only; K3xA2 recovers A,B,C,D; A1 misses C; short-context estimators miss B).
+
+### 8.2 D1 lessons + empirical risks (carry into the build)
+
+- **Marginal-relative coherence is LOAD-BEARING.** D1's distractors (Zipf, low-freq) have skewed
+  marginals BY DESIGN. A uniform-baseline coherence measure mistakes that skew for structure -- a
+  naive GRU did exactly this in due-diligence (the low-freq distractor scored HIGHEST rho). Every
+  estimator's coherence on D1 (and any non-marginal-matched substrate) must factor out the marginal.
+  The v0.5 substrate was marginal-matched (p=0.5) so this never arose; D1 is the first substrate
+  where it bites. This is the single most important implementation constraint for Slice 2.
+- **Property B recovery is uncertain.** Whether the real categorical K3 (GRU, online SGD) actually
+  learns the 12-step lag coupling is open; if not, B is recovered only by K4 (or not at all) -- a
+  cross-tab finding, recorded not tuned. (Lag was reduced 150 -> 12 in calibration precisely to make
+  it GRU-learnable; a 3-state HMM cannot buffer 150 steps either, and a fully-deterministic coupling
+  saturated whatever caught it -- hence B_keep=0.35 partial determinism.)
+- **R2 > 0.6 may be tight.** The cross-tab EXPECTS estimators to diverge on which properties they
+  recover; that divergence adds within-class rank noise to the Spearman. R2 > 0.6 is driven by the
+  shared coherence-bearing-vs-distractor class separation. If the median falls short of the
+  source-locked 0.6, record as a seam, do not adjust.
+- **The exact Sec 5.4 ceiling** (40% of w-variance under K3xA1) is verified in-build with the real
+  marginal-relative K3; the MI-balanced generator params stand unless that verification forces a
+  recorded amendment (the K4 / v0.6.0 post-impl-correction discipline).
+
 ---
 
 ## 9. Weight admissibility (M-conditions) -- the principled-quantity layer
@@ -478,13 +545,14 @@ solver, the concavity result, and the practical streaming coder appear in NONE o
 
 - **Seam 1** -- `(K5,K2)` under A2 = 0.491. RESOLVED `(K5,K2)`-specific (Section 4.4); stays
   `xfail(strict=True)`. Do not "fix" silently.
-- **App A.2 soundness flag** -- Section 7.5(3). Real proof gap in the compression coder
-  achievability; Benjamin's call; parked for v0.6.1.
+- **App A.2 soundness flag** -- RESOLVED-NEGATIVE at v0.6.1 (Section 7.5(3)): Thm 5.1 is unsound for
+  `w != 1` (both directions); `H_w` demoted to a measure, the coder rebuilt against `H(Z)`.
 - **Stale `pyproject.toml` markers docstring** -- names only "K_5 LZ76", predates K3/K4 and
   the noise tests. Cosmetic; left as-is.
-- **v0.6.0 capacity estimator PRE-REGISTERED (2026-06-23)** -- locked in `pre_registration.md`
-  (`## v0.6` + the 2026-06-23 entry); Section 7.2 updated to the corrected fixture. v0.6.1 (coder),
-  v0.6.2 (Selective Compression), and all of v0.7 remain PLANNING until their own dated amendments.
+- **v0.6 program SHIPPED (v0.6.0 / 0.6.1 / 0.6.2, 2026-06-23)** -- all locked + released. **v0.7.0
+  PRE-REGISTERED** (D1 substrate + M5 partition + R2; the `## v0.7` section + the 2026-06-23 v0.7.0
+  amendment), build pending (Section 8.1). v0.7.1 (R1), v0.7.2 (R3), D2/D3, and the M5 + eight-cell
+  capstone remain PLANNING until their own dated amendments.
 - **Sec 6 fixture erratum (2026-06-23)** -- `C_C(eps)=0.5(1+eps)` is the value at uniform input,
   not the capacity (true `C_C` is higher for eps<1; see Section 7.2). Author erratum flagged; does
   NOT affect Capacity Theorem 4.1.

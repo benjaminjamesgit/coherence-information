@@ -56,6 +56,12 @@ Weights are either user-supplied or induced from data:
 - Empirics (v0.6.2): falsifiable win-margin — selective coder compresses 31-49% below the weight-blind
   lossless rate at zero retention cost on coherence-structured sources; saving = 0 at the boundary.
   arith Delta_frac >= WIN_MARGIN=0.20 on iid/Gilbert-Elliott/TCUN substrates (calibrated like T_NOISE).
+- v0.7 (IN PROGRESS, cross-domain / Metacoherence): v0.7.0 PRE-REGISTERED (D1 hidden-semi-Markov
+  substrate + exact-by-construction M5 partition + R2), BUILD PENDING in 3 slices (generator ->
+  categorical K2/K3/K4 -> 5x3 grid + R2 + cross-tab). LOAD-BEARING lock: coherence on D1 must be
+  MARGINAL-RELATIVE (skewed-marginal distractors else read as coherent; a naive GRU exhibited this).
+  Sequenced: v0.7.0 D1; v0.7.1 R1 (persistence); v0.7.2 R3 (interventions); then D2 (Pfam, CC0),
+  D3 (FOMC, public domain), M5 gate + eight-cell capstone.
 - Tests: 194 fast + 75 slow + 18 very_slow (1 xfail). v0.6.2: 12 empirics tests. v0.6.1: 23 coder tests. v0.6.0: 32 capacity tests (all fast).
   v0.5.5: noise-only counterfactual
   falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
@@ -79,6 +85,14 @@ Weights are either user-supplied or induced from data:
 - Capacity solver (v0.6.0): `tol = 1e-10`, `max_iter = 2000`, `lattice_m = 20`, no RNG
   (deterministic, bit-exact). In `cit/capacity.py`. Closed-form-anchor test atol `1e-8`
   (corrected from 1e-9 post-impl; the locked tol floors at ~1e-9 on the flat eps=0 max).
+- Selective coder (v0.6.1): `ZSTD_LEVEL = 19`; achievability test atol `0.02` bits/sym at `N=200_000`.
+  In `cit/coders/selective.py`. v0.6.2 win-margin: `WIN_MARGIN = 0.20`, `N=100_000`, seeded substrates.
+- D1 substrate (v0.7.0, pre-registered; build pending): 3-state HSMM, mean dwell 200, dispersion
+  `r=6`, `T=50_000`, `N_REPLICATES=20`; 8 alphabet-8 features (`F0_scale=1.7`; B lag `L=12`,
+  `B_keep=0.35`; C additive mask; D drift `std=0.10`, `peak=1.0`); M5 partition coherence-bearing
+  {f0..f4} / noise {f5..f7}. R2 threshold median Spearman `> 0.6` (CI `> 0.4`); bootstrap `B=1000`
+  (block = mean sojourn 200). MARGINAL-RELATIVE coherence is a hard requirement. `cit/data/hsmm_d1.py`
+  (pending). Calibrated by MI-balancing (Sec 5.4); exact K3xA1 ceiling verified in-build.
 
 The locked record is `pre_registration.md`. If evidence forces a change: bump the
 version, record the amendment in that file's history section, never silently edit.
@@ -121,6 +135,7 @@ near-miss; leave it xfail (a strict XPASS forces re-evaluation) unless Benjamin 
 
 ## Roadmap (next)
 
-v0.6 operational-theorem program COMPLETE (v0.6.0 capacity, v0.6.1 selective coder, v0.6.2 win-margin
-empirics). Next: v0.7 cross-domain validation (Metacoherence; D1-D3 domains, M5 admissibility gate,
-eight-cell outcome matrix) -- pre-register domains before implementation.
+v0.6 program COMPLETE. v0.7 cross-domain (Metacoherence) IN PROGRESS: v0.7.0 (D1 + M5 partition + R2)
+PRE-REGISTERED 2026-06-23; NEXT = the v0.7.0 build in 3 slices (`cit/data/hsmm_d1.py` generator ->
+categorical K2/K3/K4 with marginal-relative coherence -> 5x3 grid + R2 + property-recovery cross-tab).
+Then v0.7.1 R1 (persistence), v0.7.2 R3 (interventions), D2 (Pfam), D3 (FOMC), M5 + eight-cell capstone.

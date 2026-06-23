@@ -38,7 +38,7 @@ Weights can be user-supplied for direct use of `H_w` and `I_w`, or **induced fro
 | v0.3 | Compression-delta proxy (form A / K₁) via zstd; cross-proxy validation invariants (Spearman ρ ≥ 0.7 across form B and K₁); 69 tests |
 | v0.2 | Predictive log-loss proxy (form B); replace-with-uniform leave-one-out ablation (A₁); induction pipeline `stream → Ĉ → ρ → w`; labeled synthetic substrate; 57 tests |
 | v0.1 | Formal quantities `H`, `H_w`, `I_w`; synthetic test substrate; Shannon-recovery spine test; 27 tests |
-| v0.7 *(planned)* | Cross-domain validation architecture (Metacoherence); M5 admissibility gate |
+| v0.7 *(in progress)* | Cross-domain validation (Metacoherence): R1 (persistence) + R2 (cross-philosophy convergence) + R3 (intervention asymmetry) within-domain signatures + the M5 admissibility gate + the eight-cell outcome matrix, across three domains (D₁ synthetic HSMM; D₂ Pfam, CC0; D₃ FOMC, public domain). **v0.7.0 pre-registered**: the D₁ hidden-semi-Markov substrate (8 features encoding 4 properties + 3 distractors), its exact M5 partition, and R2 (median Spearman > 0.6) via the categorical 5×3 grid with marginal-relative coherence. Build sequenced D₁ → R1 → R3 → D₂ → D₃ → M5 capstone |
 
 ## Quick start
 
