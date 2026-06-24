@@ -1087,4 +1087,23 @@ where `logL_true` is the per-step log-likelihood of the observations under the E
 
 **Discipline.** Read-only diagnostic computed from the locked generator (NO proxies, NO grid, NO Cohen's d). Pre-committed reads fixed before the numbers; the disconfirmer was set in advance and not triggered. No locked constant VALUE changed. The module `cit/persistence_d1.py` stays UNCOMMITTED pending Benjamin's confirm. Append-only, ASCII.
 
+### 2026-06-24 -- v0.7.1 R1 CLOSER: partial proxy d-matrix confirms the mechanism-confound (K1 FAILS, K2 PASSES); K3/K4/K5 + A2 deferred (predictable, confounded, slow)
+
+**What this is.** The D1 R1 closer: the proxy grid (induce `w` -> per-(cell,seed) median-`w` split -> Cohen's d -> B=1000 bootstrap) run on the CHEAP cells to validate the full pipeline end-to-end and confirm the coverage pattern, REUSING the estimator-agnostic cost table (`results/r1_persistence/cost_table_T50000.json`). Calibration-only, partial-by-design.
+
+**Scope decision (timing-justified, Benjamin 2026-06-24: run the cheap cells, do NOT spend the very_slow tier).** Timing probe at locked T=50000 (per cell, x20 seeds): K1/K2 x {A1,A3} ~1.8 min each; K1/K2 x A2 ~10-12 min each; K4 x A1 ~99 min and K4 x A3 ~100 min; K3/K5 (GRU / LZ76 under LOO) worse still. So "A1/A3 x all K" at full scale is a NIGHT. The cheap grid is therefore K1, K2 x {A1, A3} (~7 min total) -- a D-MISSER (K1, covers {A,C}) and a D-COVERER (K2, covers {A,D}), the crux contrast. K3/K4/K5 (all cover D -> predicted to pass like K2) and the A2-Shapley cells are DEFERRED: predictable from the coverage map, mechanism-confounded, and slow (the very_slow A2 x K3/K5 is the ~20h artifact, explicitly NOT spent to confirm an already-known confounded pattern).
+
+**Result (partial d-matrix, 20 seeds, T=50000; saved `results/r1_persistence/d_matrix_cheap.json`):**
+
+      K1xA1   d = -0.386   ci95_lo = -0.485   p = 1.000   FAIL   (D=f4 in high-w on 0/20 seeds)
+      K1xA3   d = -0.386   ci95_lo = -0.486   p = 1.000   FAIL   (0/20)
+      K2xA1   d = +0.986   ci95_lo = +0.965   p = 0.000   PASS   (D=f4 in high-w on 20/20 seeds)
+      K2xA3   d = +0.986   ci95_lo = +0.965   p = 0.000   PASS   (20/20)
+
+A1 == A3 exactly (the recorded `A3 == A1` on D1: Pearson finds only singletons).
+
+**Reading.** The pipeline is VALIDATED end-to-end (induce -> split -> Cohen's d -> bootstrap -> verdict). The result is the MECHANISM-CONFOUND made concrete: K2 PASSES purely because it ranks the sharp feature D (f4, ~all the persistence cost) in its high-`w` half on 20/20 seeds; K1 FAILS (in fact NEGATIVE d) because it MISSES D and puts f4 in its low-`w` half on 0/20 seeds. So "passing R1 on D1" == "weighting the sharp feature D high," which COINCIDES with the persistence-designated feature but for the CONCENTRATION reason, NOT persistence-relevance (the drift->transition coupling is absent). K3/K4/K5 cover D -> predicted to pass like K2. This CONFIRMS, at the d-matrix level, the necessary-not-sufficient + mechanism-confounded verdict; by design it adds NO independent evidence.
+
+**D1 R1 status: CLOSED as calibration.** Apparatus built + validated against full-transparency ground truth (`cit/persistence_d1.py`, committed `95d85ff`); cost ordering disambiguated (D-led, 20/20); mechanism-confound exposed + recorded; partial d-matrix confirms the coverage pattern. The load-bearing R1 is D2/D3 (the concentration-homogeneity check above is pre-registered FIRST). No locked constant changed; A2 + K3/K4/K5 deferred (not pre-judged beyond the coverage prediction). NEXT: D2 (Pfam) pre-registration with the homogeneity check.
+
 
