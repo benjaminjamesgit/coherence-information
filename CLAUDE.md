@@ -57,7 +57,7 @@ Weights are either user-supplied or induced from data:
   lossless rate at zero retention cost on coherence-structured sources; saving = 0 at the boundary.
   arith Delta_frac >= WIN_MARGIN=0.20 on iid/Gilbert-Elliott/TCUN substrates (calibrated like T_NOISE).
 - v0.7 (IN PROGRESS, cross-domain / Metacoherence; version still `0.6.2`, not yet shipped): v0.7.0 D1
-  BUILT + record-corrected (slices 1-3, committed `823928a` + `f1d1da3`). D1 generator `cit/data/hsmm_d1.py`
+  BUILT + record-corrected (slices 1-3, committed `823928a` + `f1d1da3`; full v0.7 chain `d9eb3b5`..`bbd081c`). D1 generator `cit/data/hsmm_d1.py`
   (seeds 7000..7019); categorical marginal-relative K1-K5 `cit/proxies/categorical.py`; categorical A1/A2/A3
   `cit/ablations/categorical.py`; `cit/induce_cat.py`; R2 + cross-tab `cit/metacoherence.py` (incl.
   `partition_diagnostic`, the +0.43 shared-top-k bound); CI verdict job `scripts/run_metacoherence_grid.py`.
@@ -93,8 +93,9 @@ Weights are either user-supplied or induced from data:
   costume; R1 escapes the ceiling by not requiring cross-estimator AGREEMENT, not by being coverage-free).
   Eight-cell matrix needs re-derivation under R2-as-diagnostic (capstone-pending). Sequenced next: v0.7.1 R1 (now PRIMARY); v0.7.2 R3; then D2 (Pfam, CC0),
   D3 (FOMC), M5 + capstone.
-- Tests: 235 fast + 98 slow + 18 very_slow (1 xfail). v0.7.0: 13 D1-structure + 35 categorical-proxy +
-  8 categorical-ablation + 8 R2/cross-tab. v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
+- Tests: 261 fast + 100 slow + 18 very_slow = 379 (1 xfail). v0.7.0: 13 D1-structure + 35 categorical-proxy
+  + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
+  v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
   v0.5.5: noise-only counterfactual
   falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
   33 new noise tests on A1+A3 (all 15 pairs) + A2 sample. Seam 1 resolved `(K5, K2)`-specific.
@@ -123,8 +124,14 @@ Weights are either user-supplied or induced from data:
   `SHUFFLE_SEED = 0` (K1/K5 time-shuffle surrogate baseline); K1 `_ZSTD_LEVEL_K1 = 3`; feature-major bit-tight
   encoding (`ceil(log2 A)` bits/feature, channel-grouped -- the post-audit correctness fix, do NOT revert
   to step-major); `GRID_ABLATION_SEED = 123`; K3 `NEURAL_SEED=7`, K4 `HMM_SEED=0` carried. R2 threshold
-  `0.6` / CI `0.4` LOCKED (D1's A1 column is a representation-philosophy CONFOUND -- instrument-validity,
-  not a falsification; see pre-reg 2026-06-23 record correction).
+  `0.6` / CI `0.4` KEPT (number unchanged) but RECLASSIFIED by the bbd081c reframe: a CONVERGENCE FLAG,
+  NOT a pass/fail gate -- R2 is DIAGNOSTIC (corroborating on convergence, non-falsifying on divergence,
+  coverage-capped); falsifiability relocated to R1/R3 (pre-reg 2026-06-24 program reframe).
+- v0.7.0 decoupling control (`cit/metacoherence.py`): `DECOUPLE_STABILITY_N = 18` (per-proxy sign-count
+  supermajority of `N_REPLICATES=20`); `DECOUPLE_CONFIDENT = 0.40` / `DECOUPLE_WEAK = 0.10` (|median Delta|
+  two-band magnitude); `CROSSING_REFS` (twin-excluded nine-cell refs for K3b/K2b); `DECOUPLE_PROXIES =
+  PROXIES + (K3b, K2b)`. Crossings carry `NEURAL_SEED=7` (K3b) + `SHUFFLE_SEED=0`. NO locked constant VALUE
+  was changed by ANY v0.7 work.
 - D1 substrate (v0.7.0, pre-registered; BUILT): 3-state HSMM, mean dwell 200, dispersion
   `r=6`, `T=50_000`, `N_REPLICATES=20`; 8 alphabet-8 features (`F0_scale=1.7`; B lag `L=12`,
   `B_keep=0.35`; C additive mask; D drift `std=0.10`, `peak=1.0`); M5 partition coherence-bearing
@@ -173,11 +180,17 @@ near-miss; leave it xfail (a strict XPASS forces re-evaluation) unless Benjamin 
 
 ## Roadmap (next)
 
-v0.6 program COMPLETE. v0.7 cross-domain (Metacoherence) IN PROGRESS: v0.7.0 D1 BUILT (slices 1-3,
-uncommitted) -- generator + categorical K1-K5 + categorical A1/A2/A3 + R2/cross-tab machinery + the CI
-verdict script. Headline result: the A1-column R2 is a SEAM (proxies recover COMPLEMENTARY properties,
-median Spearman ~ -0.08 << 0.6), recorded honestly. IMMEDIATE next options: (a) run the A2 rescue
-verdict via `scripts/run_metacoherence_grid.py --T 50000 --ablations A1,A2,A3` (CI/local, hours) to
-decide if Shapley converges; (b) ship v0.7.0 as the D1 characterization (version bump) with the seam +
-A2-pending recorded; (c) commit the build. Then v0.7.1 R1 (persistence), v0.7.2 R3 (interventions),
-D2 (Pfam), D3 (FOMC), M5 + eight-cell capstone.
+v0.6 program COMPLETE. v0.7 cross-domain (Metacoherence) IN PROGRESS, all committed on main through
+`bbd081c`: v0.7.0 D1 build (`d9eb3b5`, `823928a`) + record-correction (`f1d1da3`, instrument-validity not
+falsification) + decoupling control (pre-reg `7cca0c5`, proxies `231fd94`, metric `8277bdb`, wiring
+`3ea5c50`, RESULT `d840553`) + program reframe (`bbd081c`). The decoupling control RAN -> verdict
+INCONCLUSIVE / necessary-not-sufficient: K3b modeling-confident (20/20, median +0.51), K2b unstable
+(17/20); a read-only I_C diagnostic REJECTED property-dependence, so K2b's near-miss is genuine NOISE;
+(e)(i) hold-encoding-constant stays gated/unjudged. PROGRAM REFRAME (epistemics): D1 recast as ESTIMATOR
+COVERAGE-CALIBRATION (DIFFERENTIAL coverage, K5/parsing MOST COMPLETE, ASYMMETRIC not compositional); R2
+reclassified DIAGNOSTIC (0.6/0.4 kept as a convergence flag, non-falsifying on divergence); R1 (persistence)
++ the v0.6.2 selective-compression functional win ELEVATED to PRIMARY (per-estimator functional validity
+AGGREGATED, NOT cross-estimator prediction-agreement -- the R1 spec guard). Eight-cell matrix needs
+RE-DERIVATION under R2-as-diagnostic (capstone-pending). NEXT = v0.7.1 R1 (now PRIMARY); v0.7.2 R3; D2
+(Pfam, CC0); D3 (FOMC); M5 + capstone. Deferred (not pre-judged): the A2-Shapley rescue verdict; the
+R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
