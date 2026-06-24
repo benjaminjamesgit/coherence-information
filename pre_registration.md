@@ -1276,4 +1276,32 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 
 **Discipline.** DESIGN + dated amendment; the pilot is a SMALL 1-2-family build/run (data gitignored), NOT a family-list lock and NOT the full 20-family grid, NOT an R1/R2/M5 production run. The transposition (S vs P) and the family list are LOCKED only AFTER the pilot verdict + Benjamin's sign-off. Supersedes-in-status (append-only) the resolution entry's "S adequate" endorsement + the ortholog-KEY; no prior lock edited, no constant VALUE changed. Append-only, ASCII.
 
+### 2026-06-24 -- v0.7.2 D2 (Pfam) COUPLING PILOT (intermediate) + B' PRE-REGISTRATION: edge-valued coevolution vs node-valued induced-w; the B target self-corrected
+
+**What this is.** A dated, append-only amendment recording the D2 beta-direction COUPLING PILOT outcome (PF13354) and PRE-REGISTERING the next check B' with thresholds FIXED here, BEFORE B' is run (sec 8: pre-register before implementation; this entry is committed + pushed before the B' run). DESIGN + a standalone measurement that REUSES pinned artifacts only (`data/pfam/pilotS_PF13354_matrix.npy`, `iq_PF13354.rate`, PDB `1djc`); it does NOT touch the KxA grid or the proxies. Nothing in `data/` is committed (gitignored). Context: the framing-S premise check found the marginal-relative proxies EMPTY (K2/K3 perfectly flat, K1/K4 near-flat; w orthogonal to conservation); this entry tests whether the beta SIGNAL (cross-position coupling) EXISTS to induce w toward.
+
+**(a) COUPLING-PILOT OUTCOME (PF13354; `scripts/pilot_d2_coupling.py`).** Meff = 1522 / 2000; mapping 244 / 248 columns -> `1djc:A`; contacts 644 (Cb-Cb < 8A, |i-j| >= 5); MIp APC-corrected (raw-MI mean 0.275 -> MIp mean ~0). Contacts + MIp enter as COMPARISON-COMPRESSIONS (Meta-Coherence Sec 6.4 idiom), NOT a ground-truth oracle.
+  - A (top-L MIp PAIR precision) = 0.131 vs base rate 0.022 vs conservation-product 0.016 -> PASS.
+  - C (Spearman(s_i, conservation)) = -0.338; s_i vs inverse-tolerance +0.016 -> PASS.
+  - B (Spearman(s_i, contact_degree)) = +0.101 vs conservation's +0.430 -> FAIL.
+  - VERDICT: INTERMEDIATE. The pairwise coevolution signal is REAL, STRONG, and conservation-INDEPENDENT (A, C); the per-position SUM s_i is a WEAK contact-DEGREE predictor (B). Neither the strict HOLD (A and B and C) nor the explicit collapse-to-alpha trigger (C >= 0.7, or A at base rate) fired.
+
+**(b) DIAGNOSIS (hypotheses, NOT conclusions).** (i) The naive SUM is a poor edge->node projection: APC-centering plus sparse strong partners buried under many near-zero MIp terms means s_i = sum_j MIp(i,j) is noise-dominated. (ii) contact_degree is BURIAL-confounded: buried residues are BOTH more conserved AND higher contact-degree, so conservation's +0.430 is largely BURIAL, not coupling. Both hypotheses motivate B'.
+
+**(c) SELF-CORRECTION on pre-registration (sec 8, honest).** The pre-committed B target (contact_degree) was BURIAL-loaded and structurally favored conservation. B as-registered FAILED and is NOT silently redefined; B' (below) is a NEW pre-registered check, recorded as a successor, NOT a retcon of B.
+
+**(d) STRUCTURAL OPEN QUESTION.** Coevolution is EDGE-valued (a property of position PAIRS); CIT induced-w is NODE-valued (Sec 6.2 per-position w). The edge->node projection is the CENTRAL beta risk: if no faithful node-projection of the coupling signal exists, Sec 6.2's per-position-w construction is under strain for D2. beta stays a CANDIDATE direction GATED on B' -- NOT locked into the D2 design.
+
+**(e) B' PRE-REGISTRATION (thresholds FIXED here, before running).**
+  - Node aggregations from the existing MIp matrix (`data/pfam/pilot_coupling_PF13354.npz`):
+      s_max(i)  = max_j MIp(i,j);
+      s_top5(i) = mean of the top-5 MIp(i,j) over j;
+      s_cnt(i)  = #{ j : MIp(i,j) > q99 }, where q99 = the 99th percentile of off-diagonal MIp.
+  - Burial proxy = Cb HALF-SPHERE EXPOSURE (`Bio.PDB.HSExposure.HSExposureCB` on `1djc:A`; no external binary). PINNED.
+  - Targets: T1 = contact_degree (continuity with B); T2 = BURIAL-CONTROLLED = partial Spearman(s_agg, contact_degree | burial) vs partial Spearman(conservation, contact_degree | burial).
+  - B'-PASS iff AT LEAST ONE aggregation has partial-Spearman(s_agg, contact_degree | burial) BOTH > 0 AND > conservation's partial-Spearman. (Also report the raw Spearman of each aggregation vs contact_degree, and vs the original B, for the record.)
+  - DECISION RULE: B'-PASS -> beta buildable at per-position granularity -> next step is JOINT-PROXY design (SEPARATE, not now). B'-FAIL -> the edge->node loss is real -> ESCALATE the Sec 6.2 per-position-w question to Benjamin; do NOT build past it.
+
+**Discipline.** DESIGN + dated amendment + a standalone reused-artifact measurement; NO KxA grid, NO proxy changes, NO joint-proxy build; nothing in `data/` committed (gitignored). The pre-registration (this entry) is committed + pushed BEFORE B' is run. Append-only, ASCII.
+
 

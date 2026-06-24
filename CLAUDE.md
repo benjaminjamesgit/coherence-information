@@ -100,8 +100,12 @@ Weights are either user-supplied or induced from data:
   feature D, NOT tracking persistence-relevance). The concentration confound is PARKED for D2/D3 with a pre-registered
   emission-concentration-HOMOGENEITY check. D2 (Pfam, CC0) R1 PRE-REGISTERED (`df025a3`; ML per-site-rate
   substitution tolerance + the conservation-tautology confound check; two numbers flagged for the data-survey).
-  Sequenced next: the D2 DATA SURVEY (lock the family list + the entropy-baseline margin), then the D2 build;
-  then D3 (FOMC), R3, M5 + capstone.
+  D2 then ADVANCED (all committed): survey (M-CSA-seeded pool) -> conservation-tautology REWORK + RESOLUTION +
+  dual-transposition REDESIGN amendments -> a framing-S premise check (the marginal-relative proxies measure EMPTY:
+  K2/K3 flat) -> a COUPLING pilot = INTERMEDIATE (pairwise coevolution real + conservation-independent A/C; the
+  per-position SUM projection weak B). Check B' PRE-REGISTERED (edge->node node-aggregations, burial-controlled).
+  NEXT: run B', then -- gated on it -- joint-proxy design OR escalate the Sec 6.2 per-position-w edge->node
+  question; then D3 (FOMC), R3, M5 + capstone.
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -206,7 +210,10 @@ necessary-not-sufficient AND MECHANISM-CONFOUNDED; cost ordering D-LED (informat
 concentration-biased across, 20-seed disambiguation); partial proxy d-matrix K1 FAILS / K2 PASSES; concentration
 confound parked for D2/D3 (emission-concentration-homogeneity check pre-registered first); the full R1 grid
 (K3/K4/K5, A2) deferred (predictable/confounded/slow). D2 (Pfam, CC0) R1 PRE-REGISTERED (`df025a3`; ML
-per-site-rate substitution tolerance + conservation-tautology confound check). NEXT = the D2 DATA SURVEY (lock
-the family list + the entropy-baseline margin), then the D2 build; then D3 (FOMC), R3, M5 + capstone. Deferred
+per-site-rate substitution tolerance + conservation-tautology confound check). D2 advanced through survey +
+rework/resolution/redesign + a framing-S premise check (proxies EMPTY) + a coupling pilot (INTERMEDIATE: pairwise
+coevolution real + conservation-independent, per-position projection weak); check B' PRE-REGISTERED. NEXT = run B',
+then -- gated -- joint-proxy design OR escalate the Sec 6.2 per-position-w edge->node question; then D3 (FOMC), R3,
+M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
