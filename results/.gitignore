@@ -1,0 +1,5 @@
+# Experiment records under results/ keep the verdict + per-seed JSON + run scripts (committed
+# explicitly); transient run logs, empty error files, and atomic-write temporaries are ignored.
+*.log
+*.err
+*.tmp

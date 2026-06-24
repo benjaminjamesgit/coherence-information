@@ -69,10 +69,17 @@ Weights are either user-supplied or induced from data:
   categorical-native), so philosophy and REPRESENTATION are CONFOUNDED -> `R2>0.6` NOT YET ADJUDICABLE (not
   falsification, not vindication). PROVISIONAL (single seed 7000, T=8000=16% of locked 50k; C most
   seed-variable). BANKED: property A converges across BOTH representations + all 5 proxies. Invariant (2)
-  SPLIT (substrate-MI holds / induced-w fails at A1). A representation-vs-philosophy DECOUPLING CONTROL is
-  PRE-REGISTERED (pending, before D2/D3). A3==A1 on D1 (Pearson singletons); pre-reg line 791 corrected
-  (K1/K5 were NOT alphabet-agnostic). Sequenced next: decoupling control; v0.7.1 R1; v0.7.2 R3; then D2
-  (Pfam, CC0), D3 (FOMC), M5 + capstone.
+  SPLIT (substrate-MI holds / induced-w fails at A1). The representation-vs-philosophy DECOUPLING CONTROL
+  (modeling-on-byte-stream crossings K3b/K2b, A1, full-T, 20 seeds) RAN (2026-06-24): terminal verdict
+  INCONCLUSIVE -- necessary-NOT-sufficient. It WEAKENS the representation-artifact reading (nothing leaned byte
+  at full power) but does NOT establish philosophy: K3b leans modeling confidently (20/20, median +0.51) yet was
+  pre-flagged as able to for trivial flexibility reasons (twin 0.88 is consistent with representation-invariance);
+  K2b -- which probes the actual factorized C-blindness -- was UNSTABLE (17/20, one seed short). A pre-registered
+  read-only I_C diagnostic REJECTED a property-dependent-representation explanation (the 3 negative-Delta seeds are
+  NOT high-I_C; ranks [12,1,17], Spearman -0.25 n.s.), so the K2b near-miss is genuine borderline NOISE. Option
+  (e)(i) (hold-encoding-constant) stays the recorded-but-UNJUDGED next control (see 2026-06-24 amendment). A3==A1
+  on D1 (Pearson singletons); pre-reg line 791 corrected (K1/K5 were NOT alphabet-agnostic). Sequenced next:
+  v0.7.1 R1; v0.7.2 R3; then D2 (Pfam, CC0), D3 (FOMC), M5 + capstone.
 - Tests: 235 fast + 98 slow + 18 very_slow (1 xfail). v0.7.0: 13 D1-structure + 35 categorical-proxy +
   8 categorical-ablation + 8 R2/cross-tab. v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
   v0.5.5: noise-only counterfactual

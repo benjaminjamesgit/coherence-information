@@ -1,0 +1,49 @@
+{
+  "T": 50000,
+  "seeds": [
+    7014
+  ],
+  "verdict": "INCONCLUSIVE",
+  "confidence": null,
+  "lean": null,
+  "assignments": {
+    "K3b": {
+      "label": "UNSTABLE",
+      "confidence": null,
+      "n_M": 1,
+      "n_B": 0,
+      "n_seeds": 1,
+      "median_delta": 0.6160443700579467,
+      "ci90": [
+        0.6160443700579467,
+        0.6160443700579467
+      ],
+      "ci90_excludes_zero": true
+    },
+    "K2b": {
+      "label": "UNSTABLE",
+      "confidence": null,
+      "n_M": 1,
+      "n_B": 0,
+      "n_seeds": 1,
+      "median_delta": 0.5800978526035095,
+      "ci90": [
+        0.5800978526035095,
+        0.5800978526035095
+      ],
+      "ci90_excludes_zero": true
+    }
+  },
+  "twin_sanity": {
+    "K3b": 0.8095238095238095,
+    "K2b": 0.9285714285714286
+  },
+  "deltas": {
+    "K3b": [
+      0.6160443700579467
+    ],
+    "K2b": [
+      0.5800978526035095
+    ]
+  }
+}

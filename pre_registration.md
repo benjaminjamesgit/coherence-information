@@ -911,4 +911,31 @@ The four terminal verdicts (the two same-decisive corners + the two opposite-dec
 
 **Status.** PENDING implementation. The two co-primary crossing proxies (K3b, K2b), the twin-excluded cross-functional metric, the twin sanity checks, and the TOTAL nine-cell concordance decision rule (incl. the K2b model-change caveat) are FIXED as of this entry; the build (the K3b + K2b proxies + the A1 full-T x 20-seed run + the metric computation, a CI/very_slow artifact) is the next step and supersedes nothing here.
 
+### 2026-06-24 -- v0.7.0 decoupling control: RESULT (INCONCLUSIVE) + I_C property-dependence diagnostic (REJECTED)
+
+**What this is.** The decoupling control pre-registered in the 2026-06-23 entry above was RUN to completion; this entry records its outcome with the CAUTIOUS framing, plus a read-only I_C diagnostic pre-registered before computing. No locked constant changed; no grid re-run; control option (e)(i) NOT executed. The I_C diagnostic is read-only (plug-in MI on the locked seeds, the line-801 `_properties` method). Both the terminal verdict and the diagnostic are reported against rules fixed BEFORE the numbers were seen.
+
+**Run.** `scripts/run_decoupling_control.py --T 50000` over the locked 20-seed ensemble (`7000..7019`), A1-only, sharded one seed per process. 20/20 seeds completed, ZERO failures (`results/decoupling_control/verdict.json`).
+
+**(a) Terminal verdict: INCONCLUSIVE** -- per the locked nine-cell rule, the cell `(K3b = MODELING, K2b = UNSTABLE)`.
+
+**(b) Per-crossing.**
+- K3b (lowest-distortion crossing): MODELING, CONFIDENT. `n_M = 20/20`, median `Delta = +0.506`, 90% interval `[+0.137, +0.956]` (excludes 0).
+- K2b (more-model-change crossing): UNSTABLE. `n_M = 17/20` (misses the locked `18/20` by ONE seed; 3 negative-`Delta` seeds `7003 -0.226`, `7008 -0.119`, `7018 -0.060`), median `+0.363` (WEAK band), 90% interval `[-0.124, +0.639]` (straddles 0).
+- Twin sanity (REPORTED, not decisional): `K3b-K3 = 0.881`, `K2b-K2 = 0.798`.
+
+**(c) Headline -- necessary, NOT sufficient (stated precisely).** The representation-artifact reading is WEAKENED: at full power nothing leaned byte (the underpowered `T=400`/2-seed smoke's negative lean was noise). But the PHILOSOPHY reading is NOT ESTABLISHED. The verdict rests SOLELY on K3b -- the crossing pre-flagged at design time (the 2026-06-23 entry, K3b bullet) as able to lean modeling for TRIVIAL flexibility reasons: a representation-invariant GRU shows "K3 is robust," not necessarily "the split is philosophical." Its twin Spearman `0.88` is consistent with representation-INVARIANCE, not only with faithfulness, so it does not discriminate the two readings. Meanwhile K2b -- the crossing that probes the ACTUAL factorized C-blindness mechanism -- was inconclusive. So the control removes the strong-artifact reading and leaves a SINGLE-crossing modeling lean that, by the pre-registered bar, does NOT license a PHILOSOPHY verdict. This entry does NOT narrate "the needle moved toward philosophy" or any equivalent gloss: a `17/20` that does not round to `18/20` must not be narrated as a near-win.
+
+**(d) Discipline (Sec 5 / Sec 8).** The metric held the line -- `17/20` was NOT rounded to a verdict. This record holds the NARRATIVE to the same bar: the cautious framing in (c) is that discipline applied to prose, not only to the threshold.
+
+**(e) I_C property-dependence diagnostic (pre-registered, read-only) -- REJECTED.** The cheap check before any follow-up control: does K2b's instability track coalition property C?
+- **Hypothesis (fixed before computing):** K2b probes property C; on high-I_C seeds, byte-adjacency exposes the coalition and pulls K2b toward the `{K1,K5}` byte cluster (negative `Delta`). Prediction: the 3 negative-`Delta` seeds `{7003, 7008, 7018}` are HIGH-I_C (top half of I_C ranks, clustered), and `Spearman(K2b Delta, I_C)` over the 20 seeds is NEGATIVE.
+- **Disconfirmer (pre-committed):** if the negative-`Delta` seeds are NOT systematically high on I_C, property-dependent-representation is REJECTED; the K2b instability is recorded as noise / genuine borderline -- INCONCLUSIVE-as-noise stands.
+- **Computed** (per-seed I_C via the committed line-801 plug-in `_properties` method on the locked `T=50000` streams; ensemble mean `0.462 +/- 0.172`, range `[0.143, 0.821]` -- reproduces line-801 exactly): the 3 negative-`Delta` seeds rank `[12, 1, 17]` of 20 on I_C -- SCATTERED, mean rank `10.0` (random expectation `10.5`); one of them (`7008`) is the LOWEST-I_C seed of all 20 (rank 1, `I_C = 0.143`), the direct opposite of the prediction. `Spearman(K2b Delta, I_C) = -0.251`: weakly negative, BELOW the `|0.4|` support threshold, NOT significant at `n=20` (`|rho| ~ 0.45` needed for `p<0.05`), and NOT produced by the claimed mechanism (the negative-`Delta` seeds being high-I_C, which is falsified).
+- **VERDICT: property-dependent-representation REJECTED.** Per the pre-committed disconfirmer the scattered ranks alone reject, independent of the weak Spearman. The K2b near-miss is genuine borderline NOISE, not a C-coalition representation signal. INCONCLUSIVE-as-noise stands. (No softening.)
+
+**(f) Next control stays PENDING and gated.** The locked INCONCLUSIVE branch's recorded next move -- control option (e)(i), hold ONE encoding constant across all five proxies -- remains PENDING and UNJUDGED. With the I_C diagnostic REJECTED (Step-1 = noise), (e)(i) is the recorded next control IF the question is pursued further; it is NOT executed here. Known distortion of (e)(i), recorded so it is not forgotten: the coding/parsing proxies (K1, K5) CANNOT be made categorical-native, so holding encoding constant forces the MODELING proxies onto the byte stream rather than the reverse -- (e)(i) probes the same axis from the opposite anchor and carries its own representational commitment.
+
+**Discipline.** No threshold moved (`R2 0.6` / CI `0.4`; the decoupling `18/20` + magnitude bands -- all unchanged); no locked constant changed; no grid re-run; (e)(i) NOT run. Artifact: `results/decoupling_control/verdict.json` + the run scripts are committed as the experiment record.
+
 
