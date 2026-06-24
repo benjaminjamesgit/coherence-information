@@ -189,3 +189,30 @@ def test_decoupling_control_verdict_proxy_specific_split():
     assert out["verdict"] == "PROXY_SPECIFIC_SPLIT"
     assert out["assignments"]["K3b"]["label"] == "MODELING"
     assert out["assignments"]["K2b"]["label"] == "BYTE"
+
+
+# --------------------------------------------------------------------------- #
+# (e) wiring: the full pipeline (compute_cell K3b/K2b -> induce -> metric)      #
+# --------------------------------------------------------------------------- #
+
+@pytest.mark.slow
+def test_decoupling_run_pipeline_composes_small():
+    """End-to-end wiring at tiny T: the registry runs K3b/K2b, induces the 7-proxy A1
+    w-vectors, and emits a structurally-valid nine-cell verdict. With 2 seeds the per-proxy
+    sign-count cannot reach 18, so the verdict is INCONCLUSIVE -- the point is that the PIPELINE
+    composes, not the scientific verdict (which needs full-T x the 20-seed ensemble)."""
+    from cit.metacoherence import compute_decoupling_run, DECOUPLE_PROXIES
+
+    run = compute_decoupling_run(seeds=(7000, 7001), T=300)
+    assert run["seeds"] == [7000, 7001] and len(run["per_seed_w"]) == 2
+    for w_by_proxy in run["per_seed_w"]:
+        assert set(w_by_proxy) == set(DECOUPLE_PROXIES)          # all 7 proxies present per seed
+        for w in w_by_proxy.values():
+            assert set(w) == set(range(8)) and all(0.0 < v < 1.0 for v in w.values())
+
+    v = run["verdict"]
+    assert v["verdict"] in ("PHILOSOPHY", "REPRESENTATION_ARTIFACT",
+                            "PROXY_SPECIFIC_SPLIT", "INCONCLUSIVE")
+    assert set(v["assignments"]) == {"K3b", "K2b"}
+    assert set(v["twin_sanity"]) == {"K3b", "K2b"}
+    assert all(len(v["deltas"][c]) == 2 for c in ("K3b", "K2b"))

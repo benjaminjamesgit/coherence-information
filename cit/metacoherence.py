@@ -41,6 +41,8 @@ __all__ = [
     "compute_cell",
     "compute_grid",
     "compute_a1_cell",
+    "compute_decoupling_run",
+    "DECOUPLE_PROXIES",
     "PROPERTY_FEATURES",
     "PROXIES",
     "ABLATIONS",
@@ -357,6 +359,7 @@ def compute_cell(proxy_name, ablation_name="A1", seed=7000, T=None):
         ngram_mdl_proxy_cat, neural_prequential_proxy_cat, mdl_hmm_proxy_cat,
         compression_delta_proxy_cat, lempel_parsing_proxy_cat,
     )
+    from cit.proxies.crossing import neural_prequential_byte_proxy, bigram_mdl_byte_proxy
     from cit.ablations.categorical import (
         leave_one_out_ablation_cat, shapley_ablation_cat, correlation_cluster_ablation_cat,
     )
@@ -368,6 +371,8 @@ def compute_cell(proxy_name, ablation_name="A1", seed=7000, T=None):
         "K3": neural_prequential_proxy_cat,
         "K4": mdl_hmm_proxy_cat,
         "K5": lempel_parsing_proxy_cat,
+        "K3b": neural_prequential_byte_proxy,    # decoupling-control crossing (modeling-on-byte)
+        "K2b": bigram_mdl_byte_proxy,            # decoupling-control crossing (modeling-on-byte)
     }
     ablations = {
         "A1": leave_one_out_ablation_cat,
@@ -407,3 +412,36 @@ def compute_grid(proxies=PROXIES, ablations=("A1",), seed=7000, T=None):
             res = compute_cell(k, a, seed=seed, T=T)
             grid[res["cell"]] = res["w"]
     return grid
+
+
+DECOUPLE_PROXIES = PROXIES + ("K3b", "K2b")    # the 5 grid proxies + the 2 decoupling crossings
+
+
+def compute_decoupling_run(seeds=None, T=None):
+    """Run the A1 decoupling control end-to-end: per seed -> 7-proxy w-vectors -> nine-cell verdict.
+
+    For each seed, computes the A1 (LOO) induced-w vector for each of DECOUPLE_PROXIES
+    ({K1..K5} + the crossings K3b, K2b) on the D1 stream, then feeds the per-seed
+    {proxy -> w} list to `decoupling_control_verdict`. HEAVY at locked T (K3b ~ tens of
+    minutes/seed -> ~20h over the 20-seed ensemble), so this is the CI/very_slow overnight
+    artifact -- run it out-of-process via scripts/run_decoupling_control.py, NOT inline.
+
+    Parameters
+    ----------
+    seeds : iterable of int, optional   -- defaults to the locked replicate ensemble (7000..7019)
+    T : int, optional                   -- stream length; locked 50000 if None
+
+    Returns
+    -------
+    dict: seeds, T, per_seed_w (list of {proxy -> {feature -> w}}), verdict
+          (the full decoupling_control_verdict output).
+    """
+    from cit.data.hsmm_d1 import REPLICATE_SEEDS
+    if seeds is None:
+        seeds = REPLICATE_SEEDS
+    seeds = list(seeds)
+    per_seed_w = []
+    for seed in seeds:
+        per_seed_w.append({p: compute_cell(p, "A1", seed=seed, T=T)["w"] for p in DECOUPLE_PROXIES})
+    return {"seeds": seeds, "T": T, "per_seed_w": per_seed_w,
+            "verdict": decoupling_control_verdict(per_seed_w)}
