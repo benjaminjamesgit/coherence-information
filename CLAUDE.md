@@ -103,9 +103,12 @@ Weights are either user-supplied or induced from data:
   D2 then ADVANCED (all committed): survey (M-CSA-seeded pool) -> conservation-tautology REWORK + RESOLUTION +
   dual-transposition REDESIGN amendments -> a framing-S premise check (the marginal-relative proxies measure EMPTY:
   K2/K3 flat) -> a COUPLING pilot = INTERMEDIATE (pairwise coevolution real + conservation-independent A/C; the
-  per-position SUM projection weak B). Check B' PRE-REGISTERED (edge->node node-aggregations, burial-controlled).
-  NEXT: run B', then -- gated on it -- joint-proxy design OR escalate the Sec 6.2 per-position-w edge->node
-  question; then D3 (FOMC), R3, M5 + capstone.
+  per-position SUM projection weak B). Check B' (`scripts/pilot_d2_bprime.py`) RAN + FAILED: burial confound REAL
+  (contact_degree~burial +0.78; conservation's contact prediction drops +0.43->+0.14 burial-controlled), and NO
+  edge->node node-aggregation (s_max/s_top5/s_cnt) beats conservation's burial-controlled partial -> the edge->node
+  projection LOSES the signal. The pre-registered B'-FAIL decision ESCALATES the Sec 6.2 per-position-w EDGE->NODE
+  question (coevolution is edge-valued, induced-w is node-valued) -- NOW OPEN for Benjamin; the D2 KxA grid /
+  family-lock / R1-M5-R2 runs are HELD pending the ruling. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -212,8 +215,9 @@ confound parked for D2/D3 (emission-concentration-homogeneity check pre-register
 (K3/K4/K5, A2) deferred (predictable/confounded/slow). D2 (Pfam, CC0) R1 PRE-REGISTERED (`df025a3`; ML
 per-site-rate substitution tolerance + conservation-tautology confound check). D2 advanced through survey +
 rework/resolution/redesign + a framing-S premise check (proxies EMPTY) + a coupling pilot (INTERMEDIATE: pairwise
-coevolution real + conservation-independent, per-position projection weak); check B' PRE-REGISTERED. NEXT = run B',
-then -- gated -- joint-proxy design OR escalate the Sec 6.2 per-position-w edge->node question; then D3 (FOMC), R3,
-M5 + capstone. Deferred
+coevolution real + conservation-independent, per-position projection weak); check B' RAN + FAILED (no edge->node
+node-aggregation beats burial-controlled conservation -> the edge->node projection loses the signal). NEXT = Benjamin's
+ruling on the ESCALATED Sec 6.2 per-position-w edge->node question (D2 grid/family-lock/R1-M5-R2 runs HELD); then
+D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.

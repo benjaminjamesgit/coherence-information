@@ -1,6 +1,6 @@
 # CIT Architecture & Design Spec -- v0.6-v0.7 reference
 
-**Status:** living design reference. Current through HEAD = `df025a3` (2026-06-24): the v0.5
+**Status:** living design reference. Current through HEAD = `3042fe2` (2026-06-24; D2 beta-line): the v0.5
 robustness program and the v0.6 operational-theorem program are SHIPPED; v0.7.0 (cross-domain D1)
 is BUILT + record-corrected, the DECOUPLING CONTROL is BUILT + RUN, the v0.7 PROGRAM has been
 REFRAMED, **v0.7.1 R1 (persistence) is BUILT + RUN + CLOSED** (as calibration; Section 8.5), and
@@ -21,15 +21,17 @@ disambiguates it as information-sensitive WITHIN a property + concentration-bias
 d-matrix confirms K1 FAILS / K2 PASSES; the concentration confound is parked for D2/D3 behind a pre-registered
 emission-concentration-HOMOGENEITY check. **D2 (Pfam) R1 PRE-REGISTERED (Section 8.6):** ML per-site-rate
 substitution tolerance + the conservation-tautology confound check (entropy-baseline contrast). See
-`pre_registration.md` (2026-06-23 / 2026-06-24 amendments) for the authoritative record. Version 0.7.1 (the v0.7 line -- D1 build + decoupling control + the reframe + R1 calibration + the D2 pre-registration -- shipped + tagged `v0.7.1` on 2026-06-24; cross-domain VALIDATION is still in progress, D2 next).
+`pre_registration.md` (2026-06-23 / 2026-06-24 amendments) for the authoritative record. Version 0.7.1 (the v0.7 line -- D1 + decoupling + reframe + R1 calibration + the D2 pre-registration -- shipped + tagged `v0.7.1` 2026-06-24). v0.7.2 (D2) IN PROGRESS: the D2 beta-line (Section 8.7) advanced through survey + framing-S-EMPTY + coupling-pilot-INTERMEDIATE + B'-FAIL; the Sec 6.2 per-position-w EDGE->NODE question is ESCALATED + OPEN.
 
 **WHERE WE ARE (continuation pointer).** Shipped this line: v0.6.0 capacity estimator, v0.6.1
 selective coder (Thm 5.1 repaired), v0.6.2 win-margin empirics. v0.7.0 D1 is BUILT + record-corrected;
 the decoupling control is BUILT + RUN (verdict INCONCLUSIVE, Section 8.3); the v0.7 program is REFRAMED
 (Section 8.4: D1 -> coverage-calibration, R2 -> diagnostic, R1/functional -> PRIMARY). v0.7.1 R1 is now
 CLOSED as calibration (Section 8.5; the R1 SPEC GUARD held -- per-estimator functional validity AGGREGATED,
-NOT cross-estimator agreement); D2 (Pfam) R1 is PRE-REGISTERED (Section 8.6). NEXT = the D2 DATA SURVEY
-(lock the family list + the entropy-baseline margin), then the D2 build; then D3 (FOMC); v0.7.2 R3; the M5 +
+NOT cross-estimator agreement); D2 (Pfam) R1 was PRE-REGISTERED (8.6) then ADVANCED through the beta-line (Section 8.7): the survey RAN, the
+framing-S marginal-relative proxies measured EMPTY, a coevolution-coupling pilot is INTERMEDIATE, and the
+pre-registered B' check FAILED -- so the EDGE->NODE / Sec 6.2 per-position-w question is now ESCALATED + OPEN,
+and the D2 grid / family-lock / R1-M5 runs are HELD. NEXT = Benjamin's ruling on that question; then D3 (FOMC); v0.7.2 R3; the M5 +
 eight-cell capstone (the eight-cell matrix needs RE-DERIVATION under R2-as-diagnostic). Three
 SOURCE-PAPER soundness findings recorded this program (the framework being "vulnerable in the right
 way"): the Sec 6 capacity-fixture erratum (v0.6.0); the Thm 5.1 selective-compression unsoundness for
@@ -111,7 +113,7 @@ the operational and cross-domain theory ON TOP of this validated signal.
 
 ---
 
-## 3. Repository architecture (current = v0.7, HEAD `df025a3`)
+## 3. Repository architecture (current = v0.7, HEAD `3042fe2`)
 
 ### 3.1 Pipeline (the spine of the induced-weight path)
 
@@ -667,7 +669,19 @@ Pre-registers R1 for D2 (Pfam, CC0) -- the LOAD-BEARING R1 domain (R1 = PRIMARY)
 - **M5 partition (6.4):** coherence-bearing = catalytic + fold-defining + top-conservation-quintile; noise = surface-exposed non-functional + bottom-conservation-quintile. Documented biology, fixed at pre-reg.
 - **Carried:** the R1 spec guard; R1 PRIMARY; R2 diagnostic; R3 (6.5: in-silico relaxed-selection vs BLOSUM-equivalence-class relabeling) deferred to its own step.
 
-Two numbers FLAGGED for Benjamin / the data survey: the entropy-baseline MARGIN and the FAMILY COUNT + stratification list. NEXT gated step = the D2 DATA SURVEY.
+Two numbers FLAGGED for Benjamin / the data survey: the entropy-baseline MARGIN and the FAMILY COUNT + stratification list. **SUPERSEDED-IN-STATUS by Section 8.7** -- the survey RAN and the design then advanced through a conservation-tautology rework + a framing-S premise check + a coevolution-coupling pilot; the entropy-baseline / family-count numbers are PARKED behind the now-open edge->node question.
+
+### 8.7 D2 beta-line -- survey + framing-S EMPTY + coupling pilot (intermediate) + B' FAIL -> edge->node escalation (pre-reg `4d7a7c6`..`3042fe2`)
+
+The D2 build did NOT proceed to the locked R1 grid (8.6); a chain of PRE-REGISTERED adversarial checks redirected it, and it is now HELD on an open structural question. Authoritative: `pre_registration.md` 2026-06-24 D2 entries (rework `4d7a7c6`, resolution `b528a04`, dual-transposition redesign `84d5787`, coupling-pilot + B' pre-reg `3042fe2`); apparatus `scripts/pilot_d2_coupling.py` + `scripts/pilot_d2_bprime.py`; all pilot data gitignored. Pins: InterPro 109.0; PDB `1djc`; IQ-TREE 3.1.2 site rates as the Rate4Site-style stand-in (the phylo-tool pin is still open); N=2000, seed 0; 90%-redundancy filter skipped for the pilot.
+
+- **Survey (API-only):** enumerated 30134 Pfam entries -> 27961 domain/family candidates; M-CSA-seeded catalytic axis -> 274 confirmed-catalytic families -> 253 with `alignment:full >= 500` (CATH folds balanced); non-catalytic half GO-seeded + THIN. `candidate_pool.tsv` = 271 families (gitignored).
+- **Pre-reg amendments (rework/resolution/redesign):** the entropy-baseline control was PROMOTED from R1-only to the PRIMARY gate across R1 + M5; ortholog ordering pinned (fixed/UniProt-acc -> then a PINNED RANDOM PERMUTATION; phylo-order REJECTED for circularity with the phylo-derived target); subsample-to-N locked; family selection re-oriented to add a coevolution/contact axis; a dual-transposition pilot (framing S vs framing P) pre-registered.
+- **Framing-S PREMISE CHECK (PF13354; the load-bearing finding):** the locked marginal-relative K1-K5 + A1, on a real Pfam alignment (2000 orthologs x 248 positions), produce ESSENTIALLY FLAT per-position `w` -- K2/K3 PERFECTLY flat (std 0), K1/K4 near-flat; NO proxy beats the column-entropy baseline (the entropy-baseline gate would reject ALL); the conservation-tautology premise is largely FALSE for these proxies -- they do NOT track conservation, they are EMPTY. Mechanism: A1 single-position LOO over ~248 positions barely moves the (~0) marginal-relative coherence -> rho~0 -> w~0.5. (K5 infeasible at N=2000: 673 s/eval.)
+- **DECISION (Benjamin):** D2 coherence = cross-POSITION COUPLING (coevolution), NOT per-site conservation. Establish the beta SIGNAL exists before redesigning the KxA instrument.
+- **Coupling pilot (PF13354; contacts + MIp as COMPARISON-COMPRESSIONS, Sec 6.4 idiom, NOT an oracle):** Meff 1522/2000; 244/248 cols -> `1djc:A`; 644 contacts (Cb-Cb < 8A, |i-j| >= 5); APC-corrected MIp. A (top-L MIp PAIR precision 0.131 vs base 0.022 vs conservation-product 0.016) PASS; C (Spearman(s_i, conservation) -0.338; vs inv-tol +0.016) PASS; B (Spearman(s_i, contact_degree) +0.101 vs conservation +0.430) FAIL. VERDICT = INTERMEDIATE: the pairwise coevolution signal is REAL, strong, conservation-INDEPENDENT (A, C), but the per-position SUM s_i is a WEAK contact predictor (B).
+- **B' (pre-registered, burial-controlled edge->node):** node aggregations s_max / s_top5 / s_cnt from the existing MIp; burial = `HSExposureCB` (EXP_HSE_B_U) on `1djc:A`; partial Spearman(., contact_degree | burial) vs conservation's. RESULT = **B'-FAIL**: the burial confound was REAL (contact_degree ~ burial +0.784; conservation's contact prediction drops +0.430 -> +0.143 once burial-controlled), but NO aggregation beats conservation's burial-controlled partial (s_max +0.020, s_top5 +0.026, s_cnt -0.012, all < +0.143). The edge->node projection LOSES the signal.
+- **ESCALATION (the pre-registered B'-FAIL decision; OPEN for Benjamin):** coevolution is EDGE-valued; CIT induced-`w` is NODE-valued (Sec 6.2 per-position `w`). No tested node-projection recovers per-position contact structure beyond burial-confounded conservation -> Sec 6.2's per-position-w construction is UNDER STRAIN for D2. beta stays a CANDIDATE, NOT locked into D2. The open question: a faithful edge->node projection (an untried aggregation / a graph-centrality on the MIp matrix) vs an intrinsically-EDGE-valued `w` (a departure from Sec 6.2) vs D2 cannot realize beta at per-position granularity. The D2 KxA grid, the family lock, and the R1/M5/R2 production runs are HELD pending the ruling.
 
 ---
 
