@@ -78,8 +78,21 @@ Weights are either user-supplied or induced from data:
   read-only I_C diagnostic REJECTED a property-dependent-representation explanation (the 3 negative-Delta seeds are
   NOT high-I_C; ranks [12,1,17], Spearman -0.25 n.s.), so the K2b near-miss is genuine borderline NOISE. Option
   (e)(i) (hold-encoding-constant) stays the recorded-but-UNJUDGED next control (see 2026-06-24 amendment). A3==A1
-  on D1 (Pearson singletons); pre-reg line 791 corrected (K1/K5 were NOT alphabet-agnostic). Sequenced next:
-  v0.7.1 R1; v0.7.2 R3; then D2 (Pfam, CC0), D3 (FOMC), M5 + capstone.
+  on D1 (Pearson singletons); pre-reg line 791 corrected (K1/K5 were NOT alphabet-agnostic). PROGRAM REFRAME (2026-06-24 amendment, epistemics NOT results): D1's role recast as ESTIMATOR
+  COVERAGE-CALIBRATION vs known ground truth -- the finding is DIFFERENTIAL coverage with K5 (parsing) MOST
+  COMPLETE -- ASYMMETRIC, not compositional: K5 widest aperture (A,B,C,D), modeling-trio gapped {A,D},
+  compression {A,C}, A universal; the union-recovers-all is CARRIED BY K5, NOT a composition (D2/D3 action:
+  weight parsing widest, treat the trio/compression as specialized/confirmatory; the ranking itself is
+  provisional -- single seed 7000, 16% T). So the D1 `R2>0.6` commitment is SUPERSEDED IN STATUS (not
+  deleted, not edited). R2 reclassified DIAGNOSTIC: coverage-capped -- corroborating on convergence,
+  NON-FALSIFYING on divergence (0.6/0.4 stay as a convergence flag; grid unchanged, still runs). R1 (persistence)
+  + the v0.6.2 selective-compression FUNCTIONAL win ELEVATED to PRIMARY cross-domain evidence (functional
+  convergence -- w doing the same work -- NOT weight-vector matching). R1 SPEC GUARD (pre-registered):
+  functional convergence = PER-ESTIMATOR functional validity (each w predicts persistence, clean yes/no)
+  AGGREGATED, NOT cross-estimator agreement on predictions (else R2's coverage-ambiguity returns in a functional
+  costume; R1 escapes the ceiling by not requiring cross-estimator AGREEMENT, not by being coverage-free).
+  Eight-cell matrix needs re-derivation under R2-as-diagnostic (capstone-pending). Sequenced next: v0.7.1 R1 (now PRIMARY); v0.7.2 R3; then D2 (Pfam, CC0),
+  D3 (FOMC), M5 + capstone.
 - Tests: 235 fast + 98 slow + 18 very_slow (1 xfail). v0.7.0: 13 D1-structure + 35 categorical-proxy +
   8 categorical-ablation + 8 R2/cross-tab. v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
   v0.5.5: noise-only counterfactual
