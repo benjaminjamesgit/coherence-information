@@ -107,12 +107,14 @@ Weights are either user-supplied or induced from data:
   (contact_degree~burial +0.78; conservation's contact prediction drops +0.43->+0.14 burial-controlled), and NO
   edge->node node-aggregation (s_max/s_top5/s_cnt) beats conservation's burial-controlled partial -> the edge->node
   projection LOSES the signal. The pre-registered B'-FAIL decision ESCALATES the Sec 6.2 per-position-w EDGE->NODE
-  question (coevolution is edge-valued, induced-w is node-valued). Check B2 (graph-structural node projections --
-  eigenvector centrality / PageRank / top-L-degree from the MIp graph; `scripts/pilot_d2_b2.py`) is PRE-REGISTERED
-  as the LAST node-valued attempt before an edge-valued w (branch A) is forced. NEXT = run B2; B2-PASS -> Sec 6.2
-  node-w survives -> node-valued joint-proxy design; B2-FAIL -> edge-valued w FORCED -> corpus-admissibility check
-  (bounded/monotone/coarse-grain/Shannon-recovery@w=1) before any edge build. The D2 KxA grid / family-lock /
-  R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
+  question (coevolution is edge-valued, induced-w is node-valued). Check B2 (graph-structural node projections of the
+  MIp graph; `scripts/pilot_d2_b2.py`) RAN + PASSED NARROWLY: g_pr (PageRank, d=0.85) burial-controlled partial
+  Spearman(., contact_degree|burial) = +0.151 BEATS conservation's +0.143 (g_eig +0.092, g_topL +0.052 both FAIL) ->
+  Sec 6.2 NODE-VALUED w SURVIVES, edge-valued branch A NOT forced. CAVEATS: razor-thin (+0.008) on ONE family (the
+  pre-reg rule REQUIRES replication on >=1 more coevolution-rich family before any node-valued lock), and the recorded
+  prediction was INVERTED (g_topL failed, global PageRank flow passed). NEXT = replicate B2 on >=1 more family; if it
+  holds -> node-valued joint-proxy design; if not -> edge-valued w (branch A) + corpus-admissibility check. The D2 KxA
+  grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -221,8 +223,9 @@ per-site-rate substitution tolerance + conservation-tautology confound check). D
 rework/resolution/redesign + a framing-S premise check (proxies EMPTY) + a coupling pilot (INTERMEDIATE: pairwise
 coevolution real + conservation-independent, per-position projection weak); check B' RAN + FAILED (no edge->node
 node-aggregation beats burial-controlled conservation -> the edge->node projection loses the signal). B2 (graph-structural
-node projections: eigenvector/PageRank/top-L-degree) PRE-REGISTERED as the last node-valued attempt before edge-valued w
-(branch A). NEXT = run B2; PASS -> node-valued joint-proxy design; FAIL -> edge-valued-w corpus-admissibility check, escalate.
+node projections) RAN + PASSED NARROWLY (g_pr/PageRank partial +0.151 > conservation +0.143; g_eig/g_topL fail; thin +0.008,
+single family, prediction inverted) -> Sec 6.2 NODE-VALUED w SURVIVES (edge-valued branch A NOT forced). NEXT = replicate B2 on
+>=1 more family; holds -> node-valued joint-proxy design; not -> edge-valued-w corpus-admissibility check.
 D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
