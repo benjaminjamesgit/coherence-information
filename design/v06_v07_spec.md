@@ -21,7 +21,7 @@ disambiguates it as information-sensitive WITHIN a property + concentration-bias
 d-matrix confirms K1 FAILS / K2 PASSES; the concentration confound is parked for D2/D3 behind a pre-registered
 emission-concentration-HOMOGENEITY check. **D2 (Pfam) R1 PRE-REGISTERED (Section 8.6):** ML per-site-rate
 substitution tolerance + the conservation-tautology confound check (entropy-baseline contrast). See
-`pre_registration.md` (2026-06-23 / 2026-06-24 amendments) for the authoritative record. Version remains 0.6.2 (v0.7.0 not yet shipped).
+`pre_registration.md` (2026-06-23 / 2026-06-24 amendments) for the authoritative record. Version 0.7.1 (the v0.7 line -- D1 build + decoupling control + the reframe + R1 calibration + the D2 pre-registration -- shipped + tagged `v0.7.1` on 2026-06-24; cross-domain VALIDATION is still in progress, D2 next).
 
 **WHERE WE ARE (continuation pointer).** Shipped this line: v0.6.0 capacity estimator, v0.6.1
 selective coder (Thm 5.1 repaired), v0.6.2 win-margin empirics. v0.7.0 D1 is BUILT + record-corrected;
@@ -717,7 +717,7 @@ solver, the concavity result, and the practical streaming coder appear in NONE o
   `w != 1` (both directions); `H_w` demoted to a measure, the coder rebuilt against `H(Z)`.
 - **Stale `pyproject.toml` markers docstring** -- names only "K_5 LZ76", predates K3/K4 and
   the noise tests. Cosmetic; left as-is.
-- **v0.6 program SHIPPED (v0.6.0 / 0.6.1 / 0.6.2, 2026-06-23)** -- all locked + released. **v0.7.0 D1
+- **v0.6 program SHIPPED (v0.6.0 / 0.6.1 / 0.6.2, 2026-06-23); v0.7 line SHIPPED + tagged as `v0.7.1` (2026-06-24)** -- all locked + released. **v0.7.0 D1
   BUILT + record-corrected; the decoupling control BUILT + RUN; the v0.7 program REFRAMED; v0.7.1 R1 BUILT
   + RUN + CLOSED; D2 (Pfam) R1 PRE-REGISTERED** (commits `d9eb3b5`, `823928a`, `f1d1da3`, `7cca0c5`,
   `231fd94`, `8277bdb`, `3ea5c50`, `d840553`, `bbd081c`; v0.7.1 R1 `90a3211` / `346f700` / `95d85ff` /

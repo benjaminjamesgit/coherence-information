@@ -39,7 +39,7 @@ Weights are either user-supplied or induced from data:
 
 ## Current state
 
-- Version `0.6.2` (pyproject + README). v0.6 operational-theorem program COMPLETE: v0.6.0 capacity
+- Version `0.7.1` (pyproject + README + CITATION.cff; tagged 2026-06-24). v0.6 operational-theorem program COMPLETE: v0.6.0 capacity
   estimator, v0.6.1 selective coder (Thm 5.1 repaired), v0.6.2 Selective Compression empirics.
 - Proxies (K_n): K1 compression-delta (zstd), K2 n-gram MDL, K3 neural prequential
   (single-layer GRU), K4 MDL-HMM (factorized-Bernoulli HMM, two-part MDL selection over
@@ -56,7 +56,7 @@ Weights are either user-supplied or induced from data:
 - Empirics (v0.6.2): falsifiable win-margin — selective coder compresses 31-49% below the weight-blind
   lossless rate at zero retention cost on coherence-structured sources; saving = 0 at the boundary.
   arith Delta_frac >= WIN_MARGIN=0.20 on iid/Gilbert-Elliott/TCUN substrates (calibrated like T_NOISE).
-- v0.7 (IN PROGRESS, cross-domain / Metacoherence; version still `0.6.2`, not yet shipped): v0.7.0 D1
+- v0.7 (cross-domain / Metacoherence; v0.7.0 D1 + v0.7.1 R1 SHIPPED + tagged `v0.7.1` 2026-06-24; cross-domain VALIDATION still in progress -- D2 next): v0.7.0 D1
   BUILT + record-corrected (slices 1-3, committed `823928a` + `f1d1da3`; full v0.7 chain `d9eb3b5`..`bbd081c`). D1 generator `cit/data/hsmm_d1.py`
   (seeds 7000..7019); categorical marginal-relative K1-K5 `cit/proxies/categorical.py`; categorical A1/A2/A3
   `cit/ablations/categorical.py`; `cit/induce_cat.py`; R2 + cross-tab `cit/metacoherence.py` (incl.

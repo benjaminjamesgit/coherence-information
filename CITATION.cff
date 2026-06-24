@@ -11,8 +11,8 @@ abstract: >-
 authors:
   - family-names: James
     given-names: Benjamin
-version: 0.6.2
-date-released: "2026-06-23"
+version: 0.7.1
+date-released: "2026-06-24"
 url: "https://github.com/benjaminjamesgit/coherence-information"
 repository-code: "https://github.com/benjaminjamesgit/coherence-information"
 license: Apache-2.0
