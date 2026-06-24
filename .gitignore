@@ -45,8 +45,9 @@ htmlcov/
 *.parquet
 *.npz
 
-# External domain data (CC0 / public-domain inputs staged locally for D2/D3 -- not tracked)
+# External domain data (CC0 / public-domain inputs fetched locally for D2/D3 -- not tracked)
 Data/
+data/
 
 # Claude Code (local settings; previously only ignored by machine-global config)
 .claude/
