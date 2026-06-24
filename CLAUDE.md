@@ -98,8 +98,10 @@ Weights are either user-supplied or induced from data:
   (20-seed disambiguation: information-sensitive WITHIN a property, concentration-biased ACROSS), and the partial
   proxy d-matrix (K1 FAILS -0.386 / K2 PASSES +0.986) makes the confound concrete (passing == weighting the sharp
   feature D, NOT tracking persistence-relevance). The concentration confound is PARKED for D2/D3 with a pre-registered
-  emission-concentration-HOMOGENEITY check. Sequenced next: D2 (Pfam, CC0) -- the load-bearing R1 domain; then D3
-  (FOMC), R3, M5 + capstone.
+  emission-concentration-HOMOGENEITY check. D2 (Pfam, CC0) R1 PRE-REGISTERED (`df025a3`; ML per-site-rate
+  substitution tolerance + the conservation-tautology confound check; two numbers flagged for the data-survey).
+  Sequenced next: the D2 DATA SURVEY (lock the family list + the entropy-baseline margin), then the D2 build;
+  then D3 (FOMC), R3, M5 + capstone.
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -203,6 +205,8 @@ RE-DERIVATION under R2-as-diagnostic (capstone-pending). v0.7.1 R1 BUILT + RUN +
 necessary-not-sufficient AND MECHANISM-CONFOUNDED; cost ordering D-LED (information-sensitive within property,
 concentration-biased across, 20-seed disambiguation); partial proxy d-matrix K1 FAILS / K2 PASSES; concentration
 confound parked for D2/D3 (emission-concentration-homogeneity check pre-registered first); the full R1 grid
-(K3/K4/K5, A2) deferred (predictable/confounded/slow). NEXT = D2 (Pfam, CC0), the LOAD-BEARING R1 domain; then
-D3 (FOMC), R3, M5 + capstone. Deferred (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
+(K3/K4/K5, A2) deferred (predictable/confounded/slow). D2 (Pfam, CC0) R1 PRE-REGISTERED (`df025a3`; ML
+per-site-rate substitution tolerance + conservation-tautology confound check). NEXT = the D2 DATA SURVEY (lock
+the family list + the entropy-baseline margin), then the D2 build; then D3 (FOMC), R3, M5 + capstone. Deferred
+(not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.

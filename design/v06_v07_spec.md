@@ -1,9 +1,10 @@
 # CIT Architecture & Design Spec -- v0.6-v0.7 reference
 
-**Status:** living design reference. Current through HEAD = `bbd081c` (2026-06-24): the v0.5
+**Status:** living design reference. Current through HEAD = `df025a3` (2026-06-24): the v0.5
 robustness program and the v0.6 operational-theorem program are SHIPPED; v0.7.0 (cross-domain D1)
-is BUILT + record-corrected, the DECOUPLING CONTROL is BUILT + RUN, and the v0.7 PROGRAM has been
-REFRAMED. The decoupling control (modeling-on-byte-stream crossings K3b/K2b, A1, full-T, 20 seeds)
+is BUILT + record-corrected, the DECOUPLING CONTROL is BUILT + RUN, the v0.7 PROGRAM has been
+REFRAMED, **v0.7.1 R1 (persistence) is BUILT + RUN + CLOSED** (as calibration; Section 8.5), and
+**D2 (Pfam) R1 is PRE-REGISTERED** (Section 8.6). The decoupling control (modeling-on-byte-stream crossings K3b/K2b, A1, full-T, 20 seeds)
 returned verdict INCONCLUSIVE / necessary-not-sufficient: K3b modeling-confident (n_M 20/20, median
 Delta +0.506), K2b unstable (17/20, one seed short of 18/20); a pre-registered read-only I_C diagnostic
 REJECTED a property-dependent-representation explanation, so K2b's near-miss is genuine NOISE; control
@@ -12,16 +13,24 @@ D1's role is recast from R2-pass/fail to ESTIMATOR COVERAGE-CALIBRATION vs known
 DIFFERENTIAL coverage with K5/parsing MOST COMPLETE, ASYMMETRIC not compositional); R2 is reclassified
 DIAGNOSTIC (corroborating on convergence, NON-FALSIFYING on divergence -- the 0.6/0.4 numbers are KEPT as
 a convergence flag, not a gate); R1 (persistence) + the v0.6.2 selective-compression functional win are
-ELEVATED to PRIMARY cross-domain evidence (falsifiability RELOCATED to R1/R3). See `pre_registration.md`
-(2026-06-23 / 2026-06-24 amendments) for the authoritative record. Version remains 0.6.2 (v0.7.0 not yet shipped).
+ELEVATED to PRIMARY cross-domain evidence (falsifiability RELOCATED to R1/R3). **v0.7.1 R1 RESULT (Section 8.5):**
+a read-only re-read of the locked D1 generator found its regime path is EMISSION-INDEPENDENT (the Sec 5.4
+drift->transition coupling is NOT instantiated), so D1 R1 = INSTRUMENT-CALIBRATION, necessary-not-sufficient
+AND MECHANISM-CONFOUNDED; the decoder-free log-likelihood-cost magnitude is D-LED (a 20-seed diagnostic
+disambiguates it as information-sensitive WITHIN a property + concentration-biased ACROSS), and a partial proxy
+d-matrix confirms K1 FAILS / K2 PASSES; the concentration confound is parked for D2/D3 behind a pre-registered
+emission-concentration-HOMOGENEITY check. **D2 (Pfam) R1 PRE-REGISTERED (Section 8.6):** ML per-site-rate
+substitution tolerance + the conservation-tautology confound check (entropy-baseline contrast). See
+`pre_registration.md` (2026-06-23 / 2026-06-24 amendments) for the authoritative record. Version remains 0.6.2 (v0.7.0 not yet shipped).
 
 **WHERE WE ARE (continuation pointer).** Shipped this line: v0.6.0 capacity estimator, v0.6.1
 selective coder (Thm 5.1 repaired), v0.6.2 win-margin empirics. v0.7.0 D1 is BUILT + record-corrected;
 the decoupling control is BUILT + RUN (verdict INCONCLUSIVE, Section 8.3); the v0.7 program is REFRAMED
-(Section 8.4: D1 -> coverage-calibration, R2 -> diagnostic, R1/functional -> PRIMARY). NEXT = v0.7.1 R1
-(persistence) under the new R1 SPEC GUARD (functional convergence = per-estimator functional validity
-AGGREGATED, NOT cross-estimator agreement on predictions); then v0.7.2 R3; D2 (Pfam, CC0); D3 (FOMC);
-the M5 + eight-cell capstone (the eight-cell matrix needs RE-DERIVATION under R2-as-diagnostic). Three
+(Section 8.4: D1 -> coverage-calibration, R2 -> diagnostic, R1/functional -> PRIMARY). v0.7.1 R1 is now
+CLOSED as calibration (Section 8.5; the R1 SPEC GUARD held -- per-estimator functional validity AGGREGATED,
+NOT cross-estimator agreement); D2 (Pfam) R1 is PRE-REGISTERED (Section 8.6). NEXT = the D2 DATA SURVEY
+(lock the family list + the entropy-baseline margin), then the D2 build; then D3 (FOMC); v0.7.2 R3; the M5 +
+eight-cell capstone (the eight-cell matrix needs RE-DERIVATION under R2-as-diagnostic). Three
 SOURCE-PAPER soundness findings recorded this program (the framework being "vulnerable in the right
 way"): the Sec 6 capacity-fixture erratum (v0.6.0); the Thm 5.1 selective-compression unsoundness for
 w!=1 (v0.6.1, repaired to the merged-source floor H(Z)); and the R2-as-cross-extractor-convergence
@@ -50,8 +59,9 @@ lock-in, not success.
 Sections 1-6 describe what exists and the working method. Section 7 (v0.6 operational theorems) is
 now BUILT and shipped (capacity / selective coder / win-margin). Section 8 (v0.7 cross-domain) holds
 the D1 build (8.1, COMPLETE -- retained for reference), D1 lessons + risks (8.2), the decoupling-control
-RESULT (8.3), and the v0.7 PROGRAM REFRAME (8.4). The ACTIVE FRONTIER is now v0.7.1 R1 (persistence)
-under the reframe's R1 spec guard, with R2 running as a diagnostic. Sections 9-10 are the M-conditions
+RESULT (8.3), the v0.7 PROGRAM REFRAME (8.4), the v0.7.1 R1 RESULT (8.5), and the D2 R1 PRE-REGISTRATION (8.6).
+The ACTIVE FRONTIER is now the D2 (Pfam) build -- the load-bearing R1 domain -- gated on the data survey; R1
+is CLOSED on D1 as calibration, with R2 running as a diagnostic. Sections 9-10 are the M-conditions
 and source documents; 11-12 are open issues and notation.
 
 ---
@@ -101,7 +111,7 @@ the operational and cross-domain theory ON TOP of this validated signal.
 
 ---
 
-## 3. Repository architecture (current = v0.7, HEAD `bbd081c`)
+## 3. Repository architecture (current = v0.7, HEAD `df025a3`)
 
 ### 3.1 Pipeline (the spine of the induced-weight path)
 
@@ -131,9 +141,11 @@ choice of K and A does not change the rho signal's structure.
 | Ablations (v0.7 categorical) | `cit/ablations/categorical.py` | A1/A2/A3 categorical (uniform-over-alphabet replacement). |
 | Induction (v0.7) | `cit/induce_cat.py` | `induce_weights_cat` (threads the alphabet to proxy + ablation). |
 | Metacoherence (v0.7) | `cit/metacoherence.py` | the 5x3 R2 grid + property-recovery cross-tab + `partition_diagnostic`; AND the decoupling metric (Section 3.8): `crossing_delta`, twin-excluded nine-cell `concordance_verdict`, `decoupling_control_verdict`, `compute_decoupling_run`, `DECOUPLE_*` constants. |
-| Run drivers (v0.7) | `scripts/run_metacoherence_grid.py`, `scripts/run_decoupling_control.py` | the R2-grid CI job + the 20-seed decoupling-control run driver. |
+| Persistence (v0.7.1 R1) | `cit/persistence_d1.py` | the D1 R1 apparatus (Section 8.5): additive sibling generator `stream_with_emission_dists` (re-runs the locked generation BIT-EXACT + exposes the per-step emission distributions), `generate_perturbed_stream` (RNG-preserving single-feature corruption), the decoder-free `persistence_cost_table` (sustained marginal-relative log-likelihood-cost magnitude), numpy `cohens_d` + B=1000 bootstrap, `validation_gate`, `compute_r1_run`. Locked `generate_stream` untouched. |
+| Run drivers (v0.7) | `scripts/run_metacoherence_grid.py`, `scripts/run_decoupling_control.py` | the R2-grid CI job + the 20-seed decoupling-control run driver. (v0.7.1 R1 cheap grid ran inline; no driver written.) |
 | Artifact (v0.7) | `results/decoupling_control/` | committed `verdict.json` + 20 `seed_*.json` + run scripts (`results/.gitignore` excludes transient logs/errs/tmps). |
-| Tests | `tests/test_*.py` | 14 files (see 3.7). |
+| Artifact (v0.7.1) | `results/r1_persistence/` | `cost_table_T50000.json` (the estimator-agnostic 20-seed cost table, reused) + `d_matrix_cheap.json` (the partial proxy d-matrix: K1 FAILS / K2 PASSES). |
+| Tests | `tests/test_*.py` | 15 files (see 3.7). |
 | Design | `design/multi_feature_substrate.md`, `design/v06_v07_spec.md` (this file) | locked v0.5 substrate memo + this spec. |
 
 ### 3.3 The contracts (stable interfaces v0.6 must respect)
@@ -181,7 +193,7 @@ was found UNSOUND for non-constant w (Thm 5.1; Section 7.3).
 
 ### 3.7 Tests and gating
 
-Fourteen test files. Total **379 tests: 261 fast + 100 slow + 18 very_slow (1 xfail = Seam 1).**
+Fifteen test files. Total **390 tests: 272 fast + 100 slow + 18 very_slow (1 xfail = Seam 1).**
 
 | File | Covers |
 |------|--------|
@@ -199,6 +211,7 @@ Fourteen test files. Total **379 tests: 261 fast + 100 slow + 18 very_slow (1 xf
 | `test_metacoherence_r2.py` | v0.7.0: R2 + cross-tab machinery (spearman incl. zero-variance NaN; `recovered_properties`; `partition_diagnostic` +0.43 bound). |
 | `test_crossing_proxies.py` | v0.7.0 decoupling control: K3b/K2b byte-stream crossings -- shared-with-K1 representation, marginal-relative, recover A/D on D1 (6 fast + 1 slow). |
 | `test_decoupling_control.py` | v0.7.0 decoupling control: the metric -- twin-excluded `crossing_delta`, 18/20 x two-band assignment, the TOTAL nine-cell concordance, end-to-end pipeline (20 fast + 1 slow). |
+| `test_r1_persistence.py` | v0.7.1 R1 (Section 8.5): bit-exact sibling generator, RNG-preserving perturbation, the validation gate (distractors ~0, f0/A above them), documented-null f2/f5, determinism, Cohen's d helper (11 fast). |
 
 **Gating** (`pyproject.toml addopts = -m 'not slow and not very_slow'`):
 - **fast** (default `pytest`, ~70s): everything cheap (form B / K1 / K2 proxies and their A1/A3/A2, the boundary spine, the noise-falsifiability tests, the v0.7 categorical D1 / R2 / decoupling-metric tests).
@@ -487,12 +500,14 @@ the SOUND `H(Z)` footing (the floor is `H(Z)`, NOT `H_w`).
 
 ## 8. v0.7 -- Cross-domain validation (Metacoherence)
 
-> **STATUS (HEAD `bbd081c`).** D1 is BUILT; the decoupling control is BUILT + RUN (verdict INCONCLUSIVE
-> -- Section 8.3); and the v0.7 PROGRAM has been REFRAMED (Section 8.4): D1's role is ESTIMATOR
-> COVERAGE-CALIBRATION (not R2 pass/fail), R2 is a non-falsifying DIAGNOSTIC, and R1 + the v0.6.2
-> functional win are PRIMARY. The architecture below (M5, the eight-cell matrix, the locked statistical
-> thresholds) stands as the PLAN; read the R2-as-gate language in 8.1-8.2 as SUPERSEDED by 8.4 (R2 is now
-> a convergence flag, not a falsification gate) and the eight-cell matrix as pending re-derivation.
+> **STATUS (HEAD `df025a3`).** D1 is BUILT; the decoupling control is BUILT + RUN (verdict INCONCLUSIVE
+> -- Section 8.3); the v0.7 PROGRAM is REFRAMED (Section 8.4): D1's role is ESTIMATOR COVERAGE-CALIBRATION
+> (not R2 pass/fail), R2 is a non-falsifying DIAGNOSTIC, and R1 + the v0.6.2 functional win are PRIMARY.
+> **v0.7.1 R1 (persistence) is BUILT + RUN + CLOSED as CALIBRATION** (Section 8.5: necessary-not-sufficient
+> AND mechanism-confounded; D-led; partial d-matrix K1 FAILS / K2 PASSES). **D2 (Pfam) R1 is PRE-REGISTERED**
+> (Section 8.6). The architecture below (M5, the eight-cell matrix, the locked statistical thresholds) stands
+> as the PLAN; read the R2-as-gate language in 8.1-8.2 as SUPERSEDED by 8.4 (R2 is now a convergence flag, not
+> a falsification gate) and the eight-cell matrix as pending re-derivation.
 
 The cross-domain architecture from Metacoherence. Tests that the SAME `rho` signal recovers across
 distinct domain substrates `D1, D2, D3`. **v0.7.0 LOCKED 2026-06-23** (pre_registration.md: the
@@ -626,6 +641,34 @@ two grounds for demoting R2 each hold INDEPENDENT of the D1 outcome.
   R2 as a coverage annotation); the source-locked 51-cell Bonferroni accounting carries over but its
   falsification budget now concentrates on R1/R3. Capstone-pending, NOT resolved here.
 
+### 8.5 v0.7.1 R1 (persistence) -- RESULT: D1 R1 = calibration (necessary-not-sufficient, mechanism-confounded)
+
+**Built + run + closed** (`90a3211` pre-reg -> `346f700` build-time amendment -> `95d85ff` apparatus + finding -> `7963eb5` closer). Authoritative record: `pre_registration.md`, the 2026-06-24 v0.7.1 R1 entries.
+
+**Substrate finding (read-only, verified by line number).** A re-read of the locked D1 generator found the regime path is EMISSION-INDEPENDENT: `_sojourn_states` draws pure negbinom dwells + uniform jumps, fixed BEFORE the emission loop; drift is post-hoc and feeds only f4. So the Metacoherence Sec 5.4 drift->transition coupling is NOT instantiated, and D1 "persistence" reduces to REGIME-INFERENCE structure, not D-driven survival. Consequence: the source's `tau_rec` regime-decoder is DEFERRED (no Viterbi in-repo; HSMM not HMM), and the PRIMARY measure is the DECODER-FREE sustained marginal-relative log-likelihood-cost MAGNITUDE; the perturbation is generative + RNG-preserving (states + non-target features bit-identical), with f1/f3 recorded per-state-uniform (condition on own latents, marginalize cross-feature relations).
+
+**Apparatus validated (the calibration deliverable).** `cit/persistence_d1.py` (Section 3.2); 11 fast tests. The validation gate PASSED: distractors ~0 (the marginal-relative computation correctly refuses the skewed Zipf/low-freq marginals), and the relational B / coalitional C are per-feature-invisible by design.
+
+**The D-led finding, disambiguated at 20 seeds.** Cost ordering: f4(D) ~ 1.72, f0(A) ~ 0.28, B/C/distractors ~0; D leads A on 20/20 seeds, ratio ~6.7. A pre-registered seed-variability diagnostic (reads fixed before the numbers) = MIXED: the measure is information-sensitive WITHIN a property (Spearman(A_cost, I_A) = +0.835) AND concentration-biased ACROSS (I_A ~ I_D yet D costs ~6.7x because its per-step emission is sharper). NOT "peakedness not information."
+
+**Mechanism-confound (the partial proxy d-matrix).** Cheap cells only (timing-justified: K4 x A1 ~100 min / 20 seeds, K3/K5 worse; the full grid + A2 deferred -- predictable, confounded, slow): K1xA1/A3 d = -0.386 FAIL (D=f4 in K1's high-w on 0/20 seeds -- K1 misses D); K2xA1/A3 d = +0.986 PASS (D in high-w on 20/20). So "passing R1 on D1" == "weighting the sharp feature D," coinciding with the persistence-designated feature for the CONCENTRATION reason, NOT persistence-relevance. D1 R1 is therefore necessary-not-sufficient AND MECHANISM-CONFOUNDED: it validates the apparatus + confirms coverage, NOT that `w` tracks persistence.
+
+**STANDING D2/D3 dependency.** The magnitude measure is concentration-sensitive; the cross-property confound bites ONLY under heterogeneous emission concentration. Resolution before D2/D3 is CONDITIONAL: check emission-concentration HOMOGENEITY first; if comparable, the measure is fine as-is; if heterogeneous, info-normalize. Parked, pre-registered.
+
+### 8.6 D2 (Pfam) R1 -- PRE-REGISTERED (`df025a3`; design only, NOT built)
+
+Pre-registers R1 for D2 (Pfam, CC0) -- the LOAD-BEARING R1 domain (R1 = PRIMARY). Authoritative: `pre_registration.md`, the 2026-06-24 D2 entry. Transcribed from Meta-coherence Sec 6 with Benjamin's (c)/(d) rulings locked:
+
+- **Substrate (6.1):** 20-30 Pfam families, 4-axis EQUAL stratification (ortholog depth `>= 500` @90% redundancy; structural CATH/SCOP all-a / all-b / a-b / a+b; GO functional enzymatic / structural / regulatory / signaling; ~half catalytic). The exact count + family list are FLAGGED for the data survey.
+- **Stream (6.2):** ortholog-indexed 21-letter (20 aa + gap) position-by-ortholog matrices; the 5x3 grid runs unchanged; the R1 bootstrap resamples ORTHOLOGS (not time).
+- **R1 measure (6.3, LOCKED):** per-position mutation tolerance = ML PER-SITE RATE (Rate4Site-style, CONTINUOUS -- not integer substitution counts, which tie/degrade the Spearman; independent-contrasts rejected as a continuous-trait category mismatch); R1 = per-family Spearman(`w`, INVERSE tolerance), ortholog-resampling bootstrap, cross-family aggregate vs the Sec 8 threshold. EMPIRICAL, not likelihood-based -> the D1 concentration confound does NOT carry. DETERMINISM DEPARTURE: D2/D3 use SOFTWARE-PINNED reproducibility (MSA release + tree-inference + rate tool + versions + params + pinned per-family tree), NOT bit-exact -- a recorded scope change for D2/D3 only (D1 / v0.6 stay bit-exact).
+- **Conservation-tautology confound check (load-bearing; pre-registered FIRST):** inverse substitution tolerance ~ column conservation / low entropy, which a compression `w` may track definitionally -> R1 risks the "does `w` detect low-entropy columns" near-tautology. PRIMARY control = ENTROPY-BASELINE CONTRAST (does `w`'s Spearman exceed a pure column-entropy baseline-`w` by a pre-registered MARGIN -- the project's native baseline-relative idiom; margin FLAGGED for Benjamin); CORROBORATING = conservation-stratified within-bin R1; partial Spearman dropped; CONCORDANCE RULE (surviving only if BOTH clear; disagreement = CONFOUND-AMBIGUOUS, a named outcome); DISCONFIRMER (collapse to baseline => conservation-confounded, "compressors find conserved columns," NOT functional-persistence evidence).
+- **Pfam = comparison compression, NOT adjudicator (4.4 / 6.4):** three SEPARATED uses -- M5 partition (documented catalytic/structural residues), R1 measure (substitution tolerance), Pfam conservation scores (a parallel R2 compression); `w`-vs-Pfam divergence is an informative finding, never an induced-`w` failure.
+- **M5 partition (6.4):** coherence-bearing = catalytic + fold-defining + top-conservation-quintile; noise = surface-exposed non-functional + bottom-conservation-quintile. Documented biology, fixed at pre-reg.
+- **Carried:** the R1 spec guard; R1 PRIMARY; R2 diagnostic; R3 (6.5: in-silico relaxed-selection vs BLOSUM-equivalence-class relabeling) deferred to its own step.
+
+Two numbers FLAGGED for Benjamin / the data survey: the entropy-baseline MARGIN and the FAMILY COUNT + stratification list. NEXT gated step = the D2 DATA SURVEY.
+
 ---
 
 ## 9. Weight admissibility (M-conditions) -- the principled-quantity layer
@@ -675,14 +718,19 @@ solver, the concavity result, and the practical streaming coder appear in NONE o
 - **Stale `pyproject.toml` markers docstring** -- names only "K_5 LZ76", predates K3/K4 and
   the noise tests. Cosmetic; left as-is.
 - **v0.6 program SHIPPED (v0.6.0 / 0.6.1 / 0.6.2, 2026-06-23)** -- all locked + released. **v0.7.0 D1
-  BUILT + record-corrected; the decoupling control BUILT + RUN; the v0.7 program REFRAMED** (commits
-  `d9eb3b5`, `823928a`, `f1d1da3`, `7cca0c5`, `231fd94`, `8277bdb`, `3ea5c50`, `d840553`, `bbd081c`). The
-  decoupling control RAN -> verdict INCONCLUSIVE / necessary-not-sufficient (Section 8.3): K3b
-  modeling-confident (20/20), K2b unstable (17/20); a read-only I_C diagnostic REJECTED property-dependence,
-  so K2b's near-miss is genuine NOISE. v0.7 PROGRAM REFRAMED (Section 8.4): D1 = coverage-calibration
-  (differential, K5 most complete, asymmetric not compositional); R2 = non-falsifying DIAGNOSTIC; R1 + the
-  v0.6.2 functional win = PRIMARY (with the R1 spec guard); eight-cell matrix needs re-derivation. v0.7.1
-  (R1), v0.7.2 (R3), D2/D3, and the M5 + eight-cell capstone remain PLANNING until their own dated amendments.
+  BUILT + record-corrected; the decoupling control BUILT + RUN; the v0.7 program REFRAMED; v0.7.1 R1 BUILT
+  + RUN + CLOSED; D2 (Pfam) R1 PRE-REGISTERED** (commits `d9eb3b5`, `823928a`, `f1d1da3`, `7cca0c5`,
+  `231fd94`, `8277bdb`, `3ea5c50`, `d840553`, `bbd081c`; v0.7.1 R1 `90a3211` / `346f700` / `95d85ff` /
+  `7963eb5`; D2 pre-reg + docs `df025a3`). The decoupling control RAN -> verdict INCONCLUSIVE /
+  necessary-not-sufficient (Section 8.3): K3b modeling-confident (20/20), K2b unstable (17/20); a read-only
+  I_C diagnostic REJECTED property-dependence, so K2b's near-miss is genuine NOISE. v0.7 PROGRAM REFRAMED
+  (Section 8.4): D1 = coverage-calibration (differential, K5 most complete, asymmetric not compositional);
+  R2 = non-falsifying DIAGNOSTIC; R1 + the v0.6.2 functional win = PRIMARY (with the R1 spec guard);
+  eight-cell matrix needs re-derivation. v0.7.1 R1 is BUILT + RUN + CLOSED as CALIBRATION (Section 8.5:
+  necessary-not-sufficient + mechanism-confounded, D-led, partial d-matrix K1 FAILS / K2 PASSES); D2 (Pfam)
+  R1 is PRE-REGISTERED (Section 8.6; ML per-site-rate tolerance + the conservation-tautology confound check;
+  two numbers flagged for the data survey). The D2 BUILD (gated on the data survey), D3, v0.7.2 (R3), and the
+  M5 + eight-cell capstone remain PLANNING until their own dated amendments.
 - **Decoupling control (e)(i) -- PENDING / UNJUDGED.** Hold ONE encoding constant across all five proxies.
   Known distortion: K1/K5 cannot go categorical-native, so (e)(i) forces the modeling proxies onto the byte
   stream (the same axis from the opposite anchor). Not executed; the INCONCLUSIVE-as-noise verdict stands
