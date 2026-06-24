@@ -1304,4 +1304,25 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 
 **Discipline.** DESIGN + dated amendment + a standalone reused-artifact measurement; NO KxA grid, NO proxy changes, NO joint-proxy build; nothing in `data/` committed (gitignored). The pre-registration (this entry) is committed + pushed BEFORE B' is run. Append-only, ASCII.
 
+### 2026-06-24 -- v0.7.2 D2 (Pfam) B' FAIL recorded + B2 graph-projection PRE-REGISTRATION: the LAST node-valued attempt before edge-valued w (branch A)
+
+**What this is.** A dated, append-only amendment recording that the pre-registered B' check FAILED (no NAIVE partner-aggregation of the MIp coupling signal -- sum/max/top5/count -- beats burial-controlled conservation; result `B'-FAIL` in `scripts/pilot_d2_bprime.py`: s_max +0.020 / s_top5 +0.026 / s_cnt -0.012 all < conservation's burial-controlled partial +0.143) and PRE-REGISTERING B2 -- graph-STRUCTURAL node projections of the coupling graph -- with thresholds FIXED here, BEFORE B2 is run (sec 8: pre-register before implementation; committed + pushed before the B2 run). DESIGN + a standalone measurement that REUSES the existing MIp `.npz` (`data/pfam/pilot_coupling_PF13354.npz`; NO MIp recompute); SAME family PF13354, SAME mapped-244 positions, SAME burial control. B2 is the LAST node-valued attempt before an EDGE-VALUED `w` (branch A) is FORCED. Nothing in `data/` committed.
+
+**(a) B2 = graph-structural node projections.** Motivated by B'-FAIL on NAIVE partner-aggregations: B2 tests whether the coupling-GRAPH TOPOLOGY (not per-node partner summaries) recovers a node-valued `w`, BEFORE conceding Sec 6.2 and forcing an edge-valued `w`.
+
+**(b) Projections (node-valued; from MIp with weights = max(APC-MIp, 0), diagonal 0).**
+  - g_eig = EIGENVECTOR CENTRALITY (leading eigenvector of the weighted adjacency; numpy).
+  - g_pr = PAGERANK (power iteration, damping 0.85; numpy).
+  - g_topL = per-position MEMBERSHIP COUNT in the top-L MIp pairs (L = #positions) -- node degree in the top-L coevolution graph; the direct A->node bridge.
+
+**(c) Bar (IDENTICAL to B').** Burial = `HSExposureCB` on `1djc:A`; B2-PASS iff AT LEAST ONE projection has partial-Spearman(g, contact_degree | burial) BOTH > 0 AND > conservation's burial-controlled partial (computed IN-RUN, NOT hardcoded). Report raw + partial per projection + the conservation reference.
+
+**(d) SPECIFIC PREDICTION (recorded, NOT gating).** The GLOBAL centralities g_eig / g_pr likely FAIL by the same sparse-strong-pair washout that sank the naive aggregations; g_topL is the only one with a real chance (it RESTRICTS to the contact-enriched top-L pairs, where pilot check A passed).
+
+**(e) DECISION RULE.**
+  - B2-PASS -> Sec 6.2 NODE-VALUED `w` SURVIVES; beta node-buildable via the passing projection; NEXT = node-valued joint-proxy design (SEPARATE; confirm on >= 1 more coevolution-rich family BEFORE any lock).
+  - B2-FAIL -> the node-projection space is EXHAUSTED; an EDGE-VALUED `w` (branch A) is FORCED; NEXT = a corpus-admissibility check for an edge-valued `w` (boundedness / monotonicity / coarse-graining / Shannon-recovery at `w=1`) BEFORE any edge design; escalate to Benjamin.
+
+**Discipline.** DESIGN + dated amendment + a standalone reused-`.npz` measurement; NO KxA grid, NO joint-proxy, NO edge-valued-`w` build; nothing in `data/` committed (gitignored). The pre-registration (this entry) is committed + pushed BEFORE B2 is run. Append-only, ASCII.
+
 
