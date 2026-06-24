@@ -91,10 +91,17 @@ Weights are either user-supplied or induced from data:
   functional convergence = PER-ESTIMATOR functional validity (each w predicts persistence, clean yes/no)
   AGGREGATED, NOT cross-estimator agreement on predictions (else R2's coverage-ambiguity returns in a functional
   costume; R1 escapes the ceiling by not requiring cross-estimator AGREEMENT, not by being coverage-free).
-  Eight-cell matrix needs re-derivation under R2-as-diagnostic (capstone-pending). Sequenced next: v0.7.1 R1 (now PRIMARY); v0.7.2 R3; then D2 (Pfam, CC0),
-  D3 (FOMC), M5 + capstone.
-- Tests: 261 fast + 100 slow + 18 very_slow = 379 (1 xfail). v0.7.0: 13 D1-structure + 35 categorical-proxy
-  + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
+  Eight-cell matrix needs re-derivation under R2-as-diagnostic (capstone-pending). v0.7.1 R1 BUILT + RUN + CLOSED
+  as CALIBRATION (necessary-not-sufficient AND MECHANISM-CONFOUNDED): D1's regime path is emission-independent (the
+  Sec 5.4 drift->transition coupling is NOT instantiated), so D1 persistence = regime-inference structure; apparatus
+  `cit/persistence_d1.py` validated against ground truth; the decoder-free log-likelihood-cost magnitude is D-LED
+  (20-seed disambiguation: information-sensitive WITHIN a property, concentration-biased ACROSS), and the partial
+  proxy d-matrix (K1 FAILS -0.386 / K2 PASSES +0.986) makes the confound concrete (passing == weighting the sharp
+  feature D, NOT tracking persistence-relevance). The concentration confound is PARKED for D2/D3 with a pre-registered
+  emission-concentration-HOMOGENEITY check. Sequenced next: D2 (Pfam, CC0) -- the load-bearing R1 domain; then D3
+  (FOMC), R3, M5 + capstone.
+- Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
+  + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
   v0.5.5: noise-only counterfactual
   falsifiability (each off-diagonal pair structured >= 0.5 AND noise < 0.3, `T_NOISE=0.3`);
@@ -191,6 +198,11 @@ COVERAGE-CALIBRATION (DIFFERENTIAL coverage, K5/parsing MOST COMPLETE, ASYMMETRI
 reclassified DIAGNOSTIC (0.6/0.4 kept as a convergence flag, non-falsifying on divergence); R1 (persistence)
 + the v0.6.2 selective-compression functional win ELEVATED to PRIMARY (per-estimator functional validity
 AGGREGATED, NOT cross-estimator prediction-agreement -- the R1 spec guard). Eight-cell matrix needs
-RE-DERIVATION under R2-as-diagnostic (capstone-pending). NEXT = v0.7.1 R1 (now PRIMARY); v0.7.2 R3; D2
-(Pfam, CC0); D3 (FOMC); M5 + capstone. Deferred (not pre-judged): the A2-Shapley rescue verdict; the
+RE-DERIVATION under R2-as-diagnostic (capstone-pending). v0.7.1 R1 BUILT + RUN + CLOSED (`90a3211` pre-reg ->
+`346f700` build-time amendment -> `95d85ff` apparatus+finding -> `7963eb5` closer): D1 R1 = CALIBRATION,
+necessary-not-sufficient AND MECHANISM-CONFOUNDED; cost ordering D-LED (information-sensitive within property,
+concentration-biased across, 20-seed disambiguation); partial proxy d-matrix K1 FAILS / K2 PASSES; concentration
+confound parked for D2/D3 (emission-concentration-homogeneity check pre-registered first); the full R1 grid
+(K3/K4/K5, A2) deferred (predictable/confounded/slow). NEXT = D2 (Pfam, CC0), the LOAD-BEARING R1 domain; then
+D3 (FOMC), R3, M5 + capstone. Deferred (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
