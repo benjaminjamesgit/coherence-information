@@ -1872,3 +1872,98 @@ cross-domain coherence transmission (that requires the flow object + a real disj
 (sec 8). Records exactly the pre-committed gates; the fork outcome is read off the data. NO pin/constant VALUE
 changed; raw MI via canonical cit/information.py; numpy + math.lgamma only; NO DCA; NO real-domain data, NO flow
 object, NO lock. Nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2 / D-cal-2 PRE-REGISTRATION: the PINCER-ESCAPE test (coordinate-free SHAPE INVARIANT; does substrate-specific HIGHER-ORDER structure transmit without correspondence, beyond generic?)
+
+**What this is.** A dated, append-only PRE-REGISTRATION (thresholds fixed here; a build-time SMOKE TEST may AMEND
+this append-only BEFORE the official run, per the D-cal discipline). D-cal-2 extends D-cal to attack BOTH gating
+horns of THE PINCER at once (design/cross_domain_transfer.md Sec 4.5): GENERIC properties transmit trivially
+(horn 1, the empty result); substrate-specific WIRING needs a CORRESPONDENCE that imports priors (horn 2). A
+COORDINATE-FREE (permutation-invariant) SHAPE INVARIANT of the coupling field dodges BOTH -- no correspondence
+needed (horn 2), a high-dimensional shape not a scalar exponent (horn 1). The decisive question: does
+substrate-specific HIGHER-ORDER structure transmit COORDINATE-FREE and BEYOND generic statistics? SYNTHETIC
+calibration ONLY; numpy + canonical cit/information.py; reuses cit/data/hsmm_d1.py. Apparatus (Phase 2) =
+scripts/dcal2.py; outputs -> data/ (gitignored). NO real-domain data, NO flow object, NO metacoherence claim.
+NO pin/constant VALUE changed; nothing in data/ committed.
+
+**(a) CONSTRUCTION (LOCKED; extends D-cal -- key change: the coupling TOPOLOGY/strength PROFILE VARIES per
+latent, so the null = different specific structure, same process).** K = 8, F = 30, T = 50000. Per latent
+(seed): states = generate_stream(seed,T)[0]; construction RNG = numpy default_rng(seed*100003 + 7). The two
+encoders render the SAME latent feature array L (T,30); all features MARGINALLY UNIFORM.
+  - PAIRWISE part -- K_P = 6 disjoint coupled pairs over a randomly-assigned 12-feature subset (random partition
+    into 6 pairs). Per pair m: a per-latent strength q_m ~ Uniform[0.30, 0.95] and a shared base b_m ~ iid
+    Uniform[0,K); both features of pair m = b_m with prob q_m else an independent Uniform[0,K) draw -> within-pair
+    MI graded by q_m, marginally uniform. The strength PROFILE {q_m} is the latent-specific pairwise content.
+  - HIGHER-ORDER part -- K_H = 6 disjoint pure-3rd-order triples over the remaining 18 features (random partition
+    into 6 triples). Per triple t: a per-latent strength r_t ~ Uniform[0.30, 0.95], iid Uniform a,b, per-regime
+    offsets M_t ~ Uniform[0,K) (3 values); c = (a + b + M_t[states]) mod K with prob r_t else an independent
+    Uniform draw -> every within-triple pairwise MI ~ 0 (conditionally uniform), I(triple;regime) graded by r_t
+    (> 0.5 bits at high r_t), marginally uniform. The profile {r_t} is the latent-specific HIGHER-ORDER content.
+  - The strengths {q_m},{r_t} AND the feature->module assignment are drawn per latent (different latents =
+    different wiring AND different strength profile). Because the invariants are PERMUTATION-INVARIANT, the
+    assignment is irrelevant to them; the discriminating content is the STRENGTH PROFILE (a 6-vector pairwise,
+    a 6-vector higher-order). [F=30 = 12 pairwise + 18 higher-order features exactly.]
+  - TWO ENCODERS (identical to D-cal): per-feature random INJECTION pi_k (F x K) into [0,A_k), A_1 = 12 / A_2 =
+    10 (both >= K), emitting the primary symbol with prob MASS = 0.7 else Uniform over the other A_k-1 symbols;
+    fixed tables EMIT_SEED_1 = 10001 / EMIT_SEED_2 = 20002; enc1 noise seed = EMIT_SEED_1*7 + s, enc2 = EMIT_SEED_2*7 + s.
+
+**(b) COORDINATE-FREE SHAPE INVARIANTS (permutation-invariant; computed from the ENCODED streams only).**
+  - PAIRWISE invariant: the sorted eigenvalue spectrum of the F x F raw pairwise-MI matrix M_pair[i,j] =
+    coherence_weighted_mutual_information(., ones) (canonical), zero diagonal. Eigenvalues are permutation-
+    invariant (a permutation is an orthogonal similarity). Normalize the spectrum by its max absolute eigenvalue
+    (scale-free; removes the enc1-vs-enc2 alphabet-attenuation scale difference).
+  - HIGHER-ORDER invariant: the sorted eigenvalue spectrum of the F x F interaction-information matrix
+    W_HO[i,j] = max over k != i,j of max(I(i;j|k) - I(i;j), 0) -- positive synergy only (planted triples give
+    I(i;j|k) - I(i;j) > 0; pairwise common-cause copying gives <= 0 -> W_HO ~ 0 there). Zero diagonal; same
+    max-abs normalization. (I(i;j|k) and I(i;j) from the canonical / plug-in joints; SMOKE-TEST that W_HO ~ 0 on
+    pairwise-only structure and > 0 on the planted hypergraph -- the max-over-k positive-bias floor must sit well
+    below the triple signal, else amend the W_HO estimator append-only.)
+  - MATCH between two encodings = the L2 distance between their normalized sorted spectra (smaller = more
+    similar). NOTE: Spearman of sorted-eigenvalue vectors is DEGENERATE (~1 for any two monotone vectors) and is
+    NOT used -- a distance on the normalized spectra is the correct coordinate-free metric (the brief's
+    "1 - normalized-Wasserstein" alternative).
+
+**(c) ENSEMBLE NULL (across-latent -- carry the D-cal lesson; NOT a time-bootstrap).** N = 12 latents (seeds
+7000..7011). REAL pairs = (enc1(L(s)), enc2(L(s))) for each s (12). NULL cross-pairs = (enc1(L(si)), enc2(L(sj)))
+for i != j (132 -- different latent = different wiring, same process). Separation statistic = AUROC =
+P(null-pair distance > real-pair distance) over all 12 x 132 real-vs-null comparisons (AUROC 1.0 = real spectra
+strictly closer than null = clean transmission; 0.5 = indistinguishable = no transmission).
+
+**(d) PRE-COMMITTED READOUTS + THRESHOLDS.**
+  - (a) PAIRWISE positive control: PASS iff AUROC_pairwise > 0.90 (coordinate-free invariant DOES capture
+    pairwise coupling topology with no correspondence -- the bar that coordinate-free transfer works at all).
+  - (b) HIGHER-ORDER -- THE DECISIVE QUESTION (given (a) passes): ESCAPE iff AUROC_HO > 0.90 (substrate-specific
+    higher-order structure transmits coordinate-free AND beyond generic statistics -> the pincer ESCAPE EXISTS;
+    metacoherence potentially well-posed; this invariant is the object the real-domain test needs). PINCER HOLDS
+    iff AUROC_HO in [0.40, 0.65] (higher-order topology does NOT transmit coordinate-free -> the honest
+    descriptive negative). INTERMEDIATE (0.65 < AUROC_HO <= 0.90) -> reported honestly as partial transmission,
+    no clean branch.
+  - (c) PERMUTATION-INVARIANCE: relabel enc2's feature columns by a random permutation -> the invariants (sorted
+    spectra) are IDENTICAL (L2 distance < 1e-9). Confirms coordinate-free / no-correspondence.
+  - (d) NULL + generic equality: null distances are mutually consistent (the AUROC compares real vs null);
+    per-feature surface-marginal total-variation < 0.02 AND order-1 conditional-entropy relative difference <
+    0.02 (enc2 real-latent vs enc2 independent-latent).
+  - CONSTRUCTION SANITY (gate, reported): latent within-pair MI graded (min > 0.02); latent within-triple
+    pairwise MI max < 0.01 (~0); I(triple;regime) > 0.5 for the high-r_t triples; W_HO max on a pairwise-only
+    control << W_HO on the planted triples; topologies/strength-profiles VARY across latents.
+
+**(e) FORK.** (a) MUST pass (AUROC_pairwise > 0.90) -- else the coordinate-free invariant is too weak even for
+pairwise; FIX/ESCALATE the invariant (e.g. persistent homology) and AMEND. Given (a): (b) is the decisive
+escape/pincer readout (ESCAPE if AUROC_HO > 0.90; PINCER HOLDS if AUROC_HO in [0.40,0.65]; INTERMEDIATE
+otherwise). (c)+(d) gate validity (coordinate-free + generic-matched). If the spectral invariant proves too
+GENERIC (AUROC_HO ~ 0.5 because random equal-size graphs share spectra), that is the PINCER-HOLDS branch for the
+SPECTRAL invariant; the pre-registered escalation is a richer coordinate-free invariant (persistent-homology
+barcode), recorded as an amendment, NOT a silent swap.
+
+**(f) SMOKE-TEST-AND-AMEND (carried from D-cal).** Before the official run, smoke-test at a cheap T: (i)
+construction sanity (pairwise graded MI; triples pairwise-MI ~0 + I(triple;regime) > 0.5; W_HO ~0 on
+pairwise-only, > 0 on triples; strength profiles vary across latents); (ii) the invariants are
+permutation-invariant; (iii) a quick real-vs-null AUROC on both invariants to catch a construction/null/
+estimator confound. If a confound appears, AMEND this pre-reg append-only (documenting it as a
+construction/invariant/null fix, NOT a threshold-tune) and PUSH before the official run.
+
+**Discipline.** PRE-REGISTRATION only; the Phase-2 build + smoke-test + run (scripts/dcal2.py) follows AFTER
+this is committed + pushed (sec 8). SYNTHETIC only; COORDINATE-FREE (permutation-invariant) invariants only;
+across-latent ENSEMBLE null (NOT time-bootstrap); NO real-domain data, NO flow object, NO metacoherence claim,
+NO lock. NO pin/constant VALUE changed; raw MI / conditional MI via canonical cit/information.py + plug-in joints;
+numpy + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.

@@ -4,7 +4,10 @@
 > transmission metric remain OPEN. UPDATED 2026-06-25 (step 1) with VALIDATED well-posedness findings
 > (Sec 4: order-collapse generalization, the flow-object escape candidate, the corpus-gap correction;
 > strengthened constraint 4; the R1-persistence hook) and a GATING first experiment -- D-cal, a synthetic
-> transfer-machinery calibration (Sec 8), PRE-REGISTERED + RUN separately (pre_registration.md).
+> transfer-machinery calibration (Sec 8), PRE-REGISTERED + RUN -> MACHINERY VALIDATED (flat measure detects
+> planted pairwise / blind to planted higher-order; flow-object target set). STEP 2 (Sec 4.5 + 8b): THE
+> PINCER (generic-vs-correspondence) + the COORDINATE-FREE shape-invariant escape candidate; D-cal-2
+> pre-registered (does higher-order structure transmit coordinate-free, beyond generic? escape vs pincer-holds).
 > Opened 2026-06-25 by the D2 (Pfam) relational FALSIFICATION (the within-domain protein program is
 > exhausted as a coherence test: D2 recovered the field's pairwise-MI coevolution construct and nothing
 > beyond it; K_comp = affine(raw MI) is a theorem; see pre_registration.md step-7 and
@@ -141,6 +144,37 @@ sets the concrete bar (the flat measure is BLIND to planted higher-order shared 
 flow object must close); (2) construct + validate the flow object (next theory problem); (3) only then a
 real disjoint-prior domain pair. D-cal is step (1): a calibration, NOT a metacoherence claim.
 
+### 4.5 THE PINCER + the coordinate-free escape (the arc's deep finding; D-cal-2 = step 2)
+
+**THE PINCER.** Pulling the arc together, transmissible coherence is caught between TWO collapses:
+- HORN 1 (genericity). GENERIC properties -- entropy rate, mutual information, criticality / power-law
+  exponents, universality class -- transmit across domains TRIVIALLY because they are substrate-INDEPENDENT.
+  Two unrelated systems can share a critical exponent for unrelated reasons. Transmitting a generic
+  property is the EMPTY result (constraint 2). The flow object's scalar exponents (4.2) land HERE.
+- HORN 2 (correspondence). SUBSTRATE-SPECIFIC structure -- the actual wiring / coupling field -- IS the
+  coherence-relevant content, but COMPARING it across disjoint domains needs a CORRESPONDENCE (which feature
+  maps to which), and any such map imports priors -- the M5 / domain-translation phi problem (architecture C).
+  The wiring lands HERE.
+So D-cal validated the transfer statistic GIVEN a correspondence (the shared feature index), and left BOTH
+gating dependencies entangled: a higher-order measure (else the flat measure is the within-domain field
+statistic) AND correspondence-discovery (else no cross-domain comparison). The pincer is why naive routes fail.
+
+**THE COORDINATE-FREE ESCAPE CANDIDATE.** A single object can dodge BOTH horns at once: a COORDINATE-FREE
+(permutation-invariant) SHAPE INVARIANT of the coupling field -- e.g. the eigenvalue SPECTRUM of the coupling
+matrix, or (richer) a persistent-homology barcode / higher-order spectrum. Coordinate-free => needs NO
+correspondence (dodges horn 2); a high-dimensional SHAPE rather than a scalar exponent => not the generic
+universality statistic (dodges horn 1). The decisive, TESTABLE question: does substrate-specific HIGHER-ORDER
+structure transmit COORDINATE-FREE and BEYOND generic statistics -- i.e. does the cross-domain MATCH of the
+shape invariant beat a structured-noise null? That is D-cal-2 (pre_registration.md; Sec 8 pointer):
+  - real-pair (same latent, two disjoint encoders) match >> null (different latent = different wiring, same
+    process) on the HIGHER-ORDER invariant -> the pincer ESCAPE EXISTS; metacoherence is potentially
+    well-posed; the coordinate-free shape invariant is the object the real-domain test needs.
+  - real ~= null -> higher-order topology does NOT transmit coordinate-free -> the pincer HOLDS; metacoherence
+    -as-measurement may be ill-posed in this regime -> the honest DESCRIPTIVE landing (a clean negative).
+KNOWN RISK (smoke-test gated): the eigenvalue spectrum may itself be too GENERIC (random graphs of equal size
+share spectral bulk -> null match high). If so, escalate to a richer coordinate-free invariant (persistent
+homology) and record the escalation. D-cal-2 is calibration only -- synthetic, no real-domain data.
+
 ---
 
 ## 5. CANDIDATE DISJOINT-PRIOR DOMAIN PAIRS (CC scoping -- feasibility, encoding, surrogate; do NOT pick)
@@ -268,3 +302,24 @@ pairwise structure across disjoint vocabularies); (b) H: real ~= null on the H-c
 measure is BLIND to higher-order shared structure -- sets the bar the flow object must clear); (c) null
 ~= 0 for both, with generic statistics equal real-vs-null. FORK: (a)+(c) hold -> machinery VALIDATED,
 flow-object target set by (b); (a) fails -> the machinery is broken, fix before anything else.
+
+RESULT (2026-06-25, machinery VALIDATED; pre_registration.md D-cal RESULT entry): across-latent null ENSEMBLE
+(readout-fix amendment); real_P transfer +0.99 >> null +0.06 (the SAME encoders give a ~0 null -> the
+agreement is the shared latent, not an encoder artifact), real_H +0.15 ~= null +0.04 (flat measure BLIND to
+the higher-order coalition, which carries the latent at 3rd order), generic statistics matched < 0.02.
+Independently verified from scratch. -> the flow-object / higher-order target is SET (transmit H).
+
+## 8b. D-cal-2 -- the PINCER-ESCAPE test (coordinate-free shape invariant; Sec 4.5)
+
+D-cal-2 attacks BOTH gating horns at once with a COORDINATE-FREE (permutation-invariant) SHAPE INVARIANT of
+the coupling field: it needs NO correspondence (dodges horn 2) and, if higher-order and shape-valued, is
+richer than a generic exponent (dodges horn 1). Construction EXTENDS D-cal with the key change that the
+coupling TOPOLOGY (the strength PROFILE the coordinate-free invariant sees) VARIES across latents, so the null
+= different specific structure, same process. Invariants: the sorted eigenvalue SPECTRUM of (pairwise) the
+F x F raw-MI matrix and (higher-order) an F x F interaction-information matrix W_HO[i,j] = max_k [I(i;j|k) -
+I(i;j)] (~0 on pairwise structure, >0 on planted triples). MATCH = a permutation-invariant distance of the
+normalized spectra (Wasserstein/L2; NOT Spearman-of-sorted, which is degenerately ~1 for any two sorted
+vectors). Across-latent ENSEMBLE null (the D-cal lesson). DECISIVE readout (b): does the HIGHER-ORDER invariant
+match real >> null (the pincer ESCAPE) or real ~= null (the pincer HOLDS -- the honest descriptive landing)?
+Full pre-reg + thresholds + the smoke-test-and-amend protocol in pre_registration.md (dated 2026-06-25 D-cal-2
+entry). Synthetic calibration only; coordinate-free invariants only; NO real-domain data, NO flow object, NO lock.
