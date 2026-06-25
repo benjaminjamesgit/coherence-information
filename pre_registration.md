@@ -1690,3 +1690,89 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
   NET: D2 recovered the field's pairwise-MI coevolution construct and NOTHING beyond it. A clean "vulnerable in the right way" FALSIFICATION on data: the within-domain protein program is EXHAUSTED as a coherence test. The non-circular claim (metacoherence as a TRANSMISSIBLE pattern across DISJOINT-prior domains) is untouched by D2 and is the next test -- CROSS-DISJOINT-DOMAIN TRANSFER with a structured-noise null, NOT another within-domain proxy. Design draft: design/cross_domain_transfer.md (v0.7.3, OPEN).
 
 **Discipline.** FALSIFICATION record + apparatus commit (scripts/r1_null_probe.py). NO new run beyond the step-7 affine/residual verification (read-only on saved matrices/MIp). Records ONLY data-supported claims; the briefed -200*log2 N magnitude is CORRECTED against data ((c)), not transcribed. NO pin/constant VALUE changed; OLS-residual partials; raw MI bit-consistent with canonical cit/information.py; numpy + math.lgamma only; NO DCA; NO cross-domain build / fetch / lock (the v0.7.3 design is a DRAFT only). Nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 1 / D-cal PRE-REGISTRATION: synthetic transfer-machinery CALIBRATION (planted-signal; the cross-domain analog of D1)
+
+**What this is.** A dated, append-only PRE-REGISTRATION (thresholds fixed here, BEFORE the run) of D-cal,
+a SYNTHETIC planted-signal calibration that validates the cross-domain transfer MACHINERY and sets the bar
+a future measure must clear. D-cal is NOT a metacoherence claim; it uses NO real-domain data and NO flow
+object (the flow object is the separate theory step, design/cross_domain_transfer.md Sec 4.2). FLAT/pairwise
+transfer measure ONLY. Reuses cit/data/hsmm_d1.py for the latent + canonical cit/information.py for MI;
+numpy + math.lgamma only. Apparatus (Phase 2) = scripts/dcal.py; outputs -> data/ (gitignored). The design
+draft well-posedness findings (order-collapse generalization; flow-object escape candidate; corpus-gap
+correction; strengthened constraint 4; R1-persistence hook) were recorded in the same step (committed with
+this pre-reg). NO pin/constant VALUE changed; nothing in data/ committed.
+
+**PURPOSE.** Prove the transfer machinery (i) DETECTS a planted SHARED structure across two
+disjoint-vocabulary encodings (positive control P), (ii) is BLIND, with the FLAT pairwise measure, to a
+planted PURE-HIGHER-ORDER structure (the gap H -- sets the flow object's target), and (iii) REJECTS a
+generic-statistics-matched null.
+
+**(a) CONSTRUCTION (LOCKED).** K = 8 (symbol alphabet), F = 12 latent features, T = 50000.
+  - SHARED LATENT: states = cit/data/hsmm_d1.py generate_stream(seed, T)[0] (the HSMM regime path). A
+    per-latent construction RNG = numpy default_rng(seed*100003 + 7) draws all structure below. The two
+    encoders render the SAME latent feature array L (T,12); they differ ONLY in the emission map.
+  - P-COALITION (PAIRWISE positive control), features {0..5}: a shared base b_t ~ iid Uniform[0,K); a
+    per-latent copy-strength q_i ~ Uniform[0.2, 0.95] for each i in {0..5}; f_i = b_t with prob q_i else an
+    independent Uniform[0,K) draw. Then every f_i is MARGINALLY UNIFORM (b_t uniform), while the pairwise
+    coupling MI(f_i, f_j) is monotone in q_i*q_j (two features agree exactly when both copy the same b_t).
+    The 15 P-pairs carry a GRADED, LATENT-SPECIFIC coupling profile (the q vector is drawn per latent).
+  - H-COALITION (PURE-HIGHER-ORDER, the gap), two parity triples {6,7,8} and {9,10,11}: f6,f7 ~ iid
+    Uniform[0,K); f8 = (f6 + f7 + M1[states_t]) mod K; f9,f10 ~ iid Uniform[0,K); f11 = (f9 + f10 +
+    M2[states_t]) mod K; M1,M2 ~ per-regime Uniform[0,K) offsets (3 values each, per latent). By
+    construction EVERY pairwise MI within a triple is 0 (any single feature is conditionally uniform given
+    another), every feature is marginally uniform, but the TRIPLE jointly recovers the regime mask
+    M[states_t] -> the coalition encodes the shared latent at THIRD order only. (D1's own property C is a
+    2-feature additive mask with NONZERO pairwise MI -> NOT pure-higher-order -> H is built fresh here.)
+  - TWO ENCODERS: enc_k (k in 1,2) maps each feature f's latent symbol v to a surface symbol via a fixed
+    per-feature random INJECTION pi_k_f: [0,K) -> [0, A_k) with A_1 = 12, A_2 = 10 (disjoint alphabet
+    SIZES; injective since A_k >= K), emitting the primary symbol pi_k_f(v) with prob MASS = 0.7 else a
+    Uniform draw over the other A_k - 1 surface symbols. Emission tables FIXED across all latents, seeds
+    EMIT_SEED_1 = 10001, EMIT_SEED_2 = 20002 (independent of the latent and of each other). Disjoint
+    alphabets + independent scrambles => NO surface n-gram statistic is shared; the per-feature-pair MI
+    MATRIX (relabeling-invariant) is the only shared structure.
+  - REAL-PAIR (seed s): (enc1(L(s)), enc2(L(s))). NULL (seed s): (enc1(L(s)), enc2(L(s + 5000))) -- enc1
+    fixed, enc2 fed an INDEPENDENT latent; both via the SAME fixed emission maps. Because every latent
+    feature is marginally uniform and the emission maps are fixed, the per-feature surface MARGINALS and
+    order-1 entropy rate are EQUAL real-vs-null by construction (confirmed numerically in (c)).
+  - SEEDS: real latents 7000..7004; null enc2 latents 12000..12004. Primary (headline) seed = 7000.
+
+**(b) FLAT TRANSFER MEASURE (the ONLY measure tested).** For an encoder output O (T,F) compute the raw
+  pairwise MI for every feature-pair via CANONICAL cit/information.py coherence_weighted_mutual_information
+  on the empirical joint with weights = ones (clean Shannon plug-in, no APC). Coupling vector = the MI over
+  a specified pair-set. P-transfer = Spearman(enc1[15 P-pairs], enc2[15 P-pairs]); H-transfer = Spearman
+  over the 6 within-triple H-pairs; global = Spearman over all 66 pairs. CI: block-bootstrap over TIME
+  (block = MEAN_DWELL = 200, B = 1000, BOOT_SEED = 0) on the primary seed; the 5-seed spread is the
+  across-latent robustness.
+
+**(c) PRE-COMMITTED READOUTS + THRESHOLDS (fixed here).**
+  - (a) POSITIVE CONTROL (P): PASS iff real_P 95% block-bootstrap CI LOWER bound > 0.5 AND real_P 95% CI
+    lies ENTIRELY ABOVE the null_P 95% CI; corroborated by 5-seed mean real_P > 0.5 exceeding 5-seed mean
+    null_P by a clear margin. -> the machinery detects a planted PAIRWISE structure across disjoint
+    vocabularies.
+  - (b) THE GAP (H): PASS iff |real_H| < 0.3 AND the real_H and null_H 95% CIs OVERLAP (the CI of
+    real_H - null_H includes 0). -> with the FLAT measure, real ~= null on the pure-higher-order coalition;
+    the flat measure is BLIND to the higher-order shared structure. Sets the bar the future flow object
+    MUST clear (transmit H: real_H >> null_H).
+  - (c) NULL REJECTION: PASS iff null_P AND null_H 95% CIs INCLUDE 0 (|means| < 0.2) AND generic statistics
+    are EQUAL real-vs-null: per-feature surface-marginal total-variation distance < 0.02 (each encoder) AND
+    per-feature order-1 conditional-entropy relative difference < 0.02. -> any P-detection is the shared
+    LATENT, not a shared generic statistic.
+  - CONSTRUCTION SANITY (gate, reported -- NOT the fork): on the LATENT (pre-encoding) the 15 P-pairs MI are
+    graded, all > 0.02 bits and clearly ranked; the 6 H-pairs MI are < 0.01 bits (~ the finite-sample floor)
+    and << the P-pairs; and the per-triple coalition recovery I(triple ; regime) > 0.5 bits (H carries the
+    shared latent at third order). If any H-pair MI is NOT ~0, the construction is WRONG -> fix before
+    claiming (b).
+
+**(d) FORK.** (a)+(b)+(c) ALL hold -> D-cal machinery VALIDATED and the flow-object TARGET is set by (b)
+  (the flat measure transmits P but is blind to H; the flow object must make real_H >> null_H). (a) FAILS ->
+  the transfer machinery is BROKEN (cannot detect even a planted pairwise structure across disjoint
+  vocabularies) -> fix the machinery before anything else. (b) FAILS in the direction real_H >> null_H -> H
+  is not pure-higher-order (a construction bug) -> re-examine the H-coalition.
+
+**Discipline.** PRE-REGISTRATION only (thresholds fixed); the Phase-2 build+run (scripts/dcal.py) follows
+  AFTER this is committed + pushed (sec 8). SYNTHETIC only; FLAT/pairwise transfer measure ONLY (the flow
+  object is a separate theory step, NOT here); D-cal is CALIBRATION, not a metacoherence claim. NO real-domain
+  data, NO flow object, NO decisions past calibration. NO pin/constant VALUE changed; raw MI via canonical
+  cit/information.py; numpy + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). Append-only,
+  ASCII.

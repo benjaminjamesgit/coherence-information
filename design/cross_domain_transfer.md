@@ -1,11 +1,14 @@
 # Cross-domain transfer -- DESIGN DRAFT (v0.7.3)
 
-> **STATUS: DRAFT. OPEN. DECISIONS PENDING Benjamin + advisor.**
-> This is a design draft to iterate on -- NOT a pre-registration, NOT a build, NO dataset fetched,
-> NO code run, NO lock. Opened 2026-06-25 by the D2 (Pfam) relational FALSIFICATION (the within-domain
-> protein program is exhausted as a coherence test: D2 recovered the field's pairwise-MI coevolution
-> construct and nothing beyond it; K_comp = affine(raw MI) is a theorem; see pre_registration.md step-7
-> and design/relational_edge_w.md Sec 7). Nothing here is committed beyond this prose. ASCII-only.
+> **STATUS: DRAFT. OPEN. DECISIONS PENDING Benjamin + advisor.** Real-domain architecture / pair /
+> transmission metric remain OPEN. UPDATED 2026-06-25 (step 1) with VALIDATED well-posedness findings
+> (Sec 4: order-collapse generalization, the flow-object escape candidate, the corpus-gap correction;
+> strengthened constraint 4; the R1-persistence hook) and a GATING first experiment -- D-cal, a synthetic
+> transfer-machinery calibration (Sec 8), PRE-REGISTERED + RUN separately (pre_registration.md).
+> Opened 2026-06-25 by the D2 (Pfam) relational FALSIFICATION (the within-domain protein program is
+> exhausted as a coherence test: D2 recovered the field's pairwise-MI coevolution construct and nothing
+> beyond it; K_comp = affine(raw MI) is a theorem; see pre_registration.md step-7 and
+> design/relational_edge_w.md Sec 7). No real-domain data, no flow object, no lock. ASCII-only.
 
 ---
 
@@ -40,11 +43,16 @@ re-describe the local field). The test must live in the transfer.
    transfer. The evaluated quantity must be a property of A->B (or of an A,B-shared invariant), not of
    A alone or B alone.
 
-4. **NO MI-COLLAPSE TRAP.** Whatever coherence MEASURE is used must NOT be an analytic transform of a
-   single generic statistic. This is the K_comp = affine(MI) lesson made into a pre-flight GATE: before
-   any transmission claim, regress the chosen measure on each domain's single generic statistic (k-mer
-   MI, co-occurrence MI, pairwise coupling) and CONFIRM it is not a monotone/affine function of it. A
-   measure that collapses cannot witness transmission -- it would only transmit the generic statistic.
+4. **NO MI-COLLAPSE TRAP (STRENGTHENED -- full generic-statistic panel).** The coherence MEASURE must
+   NOT be an analytic transform of ANY single generic statistic. This is the K_comp = affine(MI) lesson
+   made into a pre-flight GATE -- and the order-collapse generalization (Sec 4.1) shows a single statistic
+   is not enough to exclude: before any transmission claim, regress the chosen measure against the FULL
+   PANEL {pairwise MI, total correlation, entropy rate, global compressibility, power-law / criticality
+   exponent, support / fractal dimension} and CONFIRM it is non-affine (non-monotone) in EACH, with a
+   SHARED surviving residual that is what transmits cross-domain. A measure affine in any one panel member
+   transmits only that statistic. NOTE (validated): architecture B's "scale-free signature" (Sec 3) IS a
+   generic-criticality statistic (a power-law/critical exponent) -- so it is the HIGHEST-collapse-risk
+   candidate, NOT the safe lean; it must clear this gate before it is trusted.
 
 ---
 
@@ -66,7 +74,11 @@ test whether the invariants MATCH across A,B where the surrogates do NOT.
   field already reports.
 - *Feasibility:* the most tractable null structure (compute invariant on real-A, real-B, surrogate-A,
   surrogate-B; the claim is real-A ~ real-B AND both != surrogates). Best fit for the multi-scale
-  signature (Sec 4). CC's tentative lean -- BUT Benjamin/advisor rules (Sec 6).
+  signature (Sec 4). **REVISED (validated 2026-06-25): NOT the safe lean.** A "scale-free recursive
+  signature" (curvature / C-spectrum / critical exponent) IS itself a generic-criticality statistic, so
+  it is the HIGHEST-collapse-risk of the three (strengthened constraint 4) -- two domains can share a
+  power-law exponent for entirely unrelated reasons. It is viable ONLY if the invariant is the
+  coarse-graining-FLOW object (Sec 4.2), not a static spectral scalar. Benjamin/advisor rules (Sec 6).
 
 **(C) DOMAIN-TRANSLATION phi (the spec's M5).** Construct phi: A -> B preserving coherence up to a
 monotone transform; test induced-w compatibility under phi.
@@ -77,21 +89,57 @@ monotone transform; test induced-w compatibility under phi.
 
 ---
 
-## 4. THE DEEP OPEN PROBLEM (flagged prominently)
+## 4. THE DEEP OPEN PROBLEM (flagged prominently) -- and why "higher order" does not escape
 
 Within each domain the FLAT FIRST-ORDER measure reduces to the field statistic (D2: -> MI; and any flat
 pairwise measure on a symbol stream -> co-occurrence MI). So transmitting the flat measure would be
 transmitting the generic statistic -- "statistics is universal," the empty result constraint (2) guards
-against. The transmissible representation is therefore LIKELY the RECURSIVE / MULTI-SCALE coherence (the
-deferred higher-order: couplings-of-couplings, motifs, cross-scale reinforcement -- design/relational_edge_w.md
-Sec 8), NOT the flat pairwise measure.
+against.
 
-**The cross-domain question and the multi-scale question may be the SAME question.** If so, the
-cross-domain test is BLOCKED on first defining and validating the recursive/higher-order coherence
-measure. This is the gating dependency -- it must be settled before (or as) any cross-domain build:
-either (a) the multi-scale measure is defined first and the cross-domain test is its first real
-application, or (b) a cross-domain test on the flat measure is run ONLY as a NEGATIVE control to confirm
-the flat measure DOES collapse (transmits only the generic statistic), motivating the multi-scale step.
+### 4.1 ORDER-COLLAPSE GENERALIZATION (VALIDATED 2026-06-25; 2 verifier agents + corpus audit)
+
+The K_comp = N*MI + penalty theorem (step 7) is term-for-term GENERAL: the KT codelength of a k-WAY
+joint = N*(order-k information) + sparsity penalty (the same L_KT(c) = N*Hhat(c) + pen(c) expansion
+applied to the k-way contingency table). Concretely, an order-k compression coupling
+[ sum_i L_KT(marg_i) - L_KT(joint_k) ] = N*TC_k + net_penalty, where TC_k is the order-k total
+correlation / multi-information. So building the multi-scale measure BY ANALOGY to the k=2 case -- e.g.
+a nested C_rel_k = sum_S w(S) * TC(S) over higher-order feature sets S -- simply REPRODUCES the collapse
+ONE ORDER UP: pairwise MI -> total correlation -> O-information. "Higher order" does NOT escape the
+MI-collapse trap; it RELOCATES it to a higher-order generic statistic. (This is why constraint 4 was
+strengthened to the full panel: any FIXED-order information statistic is collapsible.) The escape, if any,
+is a structure CLASS that is PROVABLY NOT an analytic transform of the order-k information statistic at
+ANY fixed k.
+
+### 4.2 THE ESCAPE CANDIDATE -- a coarse-graining / renormalization FLOW object (next THEORY problem)
+
+The candidate that is not a fixed-order joint statistic: how C TRANSFORMS under COARSE-GRAINING -- the
+deferred c-merge made dynamical. The transmissible object would be the FLOW (the trajectory of C, or of
+the induced weights, as the substrate is recursively coarse-grained), and its scale-INVARIANT features:
+a fixed point, a critical exponent OF THE FLOW (not a static power-law fit), an anomalous dimension. The
+corpus has the scaffolding but never operationalized it: Formal Foundations of Adaptive Coherence Sec 6
+defines an RG-style flow g(l) = beta(l) lambda(l) with an anomalous dimension eta (per Benjamin's corpus
+audit; the doc is external -- see [[cit-theory-sources]]). Constructing and validating this flow object
+is the genuine NEXT THEORY PROBLEM (Benjamin + advisor) -- it is NOT this step and NOT in scope for D-cal.
+
+### 4.3 STATUS of the multi-scale measure -- a CORPUS GAP to be CONSTRUCTED (draft correction)
+
+Earlier framing called the recursive/multi-scale measure a "deferred higher-order" asset. That is
+CORRECTED: it is a CORPUS GAP to be CONSTRUCTED, not a deferred-but-specified quantity. Specifically:
+(i) the multi-scale measure is NOT yet defined anywhere in the corpus or this repo; (ii) Delta^2 C is
+TEMPORAL arbitration (recursive-stability dynamics over time), NOT a measurement-layer coherence object --
+the corpus is explicit that M6 / Delta^2 C "do not enter the measurement layer"; (iii) a naively NESTED-C
+(C of couplings of couplings) is exactly the collapse-UP of Sec 4.1, not an escape. So the recursive
+measure must be BUILT (likely as the flow object of 4.2), and that build is a prerequisite for a
+non-empty cross-domain test on REAL domains.
+
+### 4.4 The cross-domain question and the multi-scale question may be the SAME question
+
+If the only non-collapsing transmissible representation is the flow object (4.2), the real-domain
+cross-domain test is BLOCKED on first constructing it. The gating order is therefore: (1) D-cal --
+validate the transfer MACHINERY on synthetic planted signal with the FLAT measure (this step, Sec 8); it
+sets the concrete bar (the flat measure is BLIND to planted higher-order shared structure -- the gap the
+flow object must close); (2) construct + validate the flow object (next theory problem); (3) only then a
+real disjoint-prior domain pair. D-cal is step (1): a calibration, NOT a metacoherence claim.
 
 ---
 
@@ -161,11 +209,18 @@ FIRST, then a multi-scale invariant on Pair 2/3 -- but this is for Benjamin/advi
 3. **WHAT COUNTS AS "TRANSMIT".** A pre-specified metric + the structured-noise null it must beat
    (invariant match within a fixed tolerance where surrogates fail / a weight-prediction AUROC beating
    the surrogate null / ...). This must be FIXED before any data is fetched (the pre-reg discipline).
-4. **THE MULTI-SCALE DEPENDENCY (gating).** Is the cross-domain test BLOCKED on first defining the
-   recursive/higher-order coherence measure (Sec 4)? If the flat measure collapses to the field
-   statistic in EACH domain, transmitting it is empty -- so do we (a) define the multi-scale measure
-   first and make cross-domain its first application, or (b) run a flat-measure cross-domain test ONLY as
-   a negative collapse-control? This may be the FIRST thing to settle.
+   **The metric MUST include a cross-domain PERSISTENCE (R1) hook (validated 2026-06-25):** transmission
+   alone is an R2-type agreement claim, and a pure R2-pass with no functional/persistence content lands in
+   the framework's OWN "ontologically-empty closure" cell (R1-fail / R2-pass -- structure that agrees but
+   does no work). The metric must therefore require that the transmitted coherence PREDICTS persistence /
+   functional structure in the TARGET domain (an R1-edge analog on B), not merely that the A and B
+   coherence vectors correlate.
+4. **THE MULTI-SCALE DEPENDENCY (gating; partly resolved).** Sec 4 establishes that any fixed-order
+   information statistic collapses (4.1), so the escape is the flow object (4.2), which is a CORPUS GAP to
+   construct (4.3). The gating order (4.4) is: (1) D-cal -- validate the transfer machinery + set the bar
+   on the FLAT measure (Sec 8, pre-registered); (2) construct + validate the flow object (next theory
+   problem); (3) a real disjoint-prior pair. OPEN for Benjamin/advisor: confirm this order, and whether
+   the flow-object construction is taken up before any real-domain work.
 5. **THE NO-MI-COLLAPSE PRE-FLIGHT GATE.** Adopt the K_comp = affine(MI) lesson as a mandatory gate:
    before any transmission claim, regress the chosen coherence measure on each domain's single generic
    statistic and confirm it is NOT an affine/monotone transform. (A measure that fails this gate cannot
@@ -182,3 +237,34 @@ FIRST, then a multi-scale invariant on Pair 2/3 -- but this is for Benjamin/advi
   push the pre-reg -> run -> report -> HOLD. Reuse saved artifacts where a domain is already in-repo.
   ASCII-only in code payloads. DCA / inverse-covariance stays EXCLUDED as the Pearlian cut (P3). Nothing
   in data/ committed.
+
+---
+
+## 8. D-cal -- the GATING first experiment (synthetic transfer-machinery CALIBRATION)
+
+D-cal is the cross-domain analog of D1: SYNTHETIC PLANTED-SIGNAL calibration that validates the transfer
+MACHINERY and sets the concrete bar a future measure must clear. It is NOT a metacoherence claim and uses
+NO real-domain data and NO flow object (that is the separate theory step of Sec 4.2).
+
+PURPOSE -- prove the transfer machinery (i) DETECTS a planted SHARED structure across two
+disjoint-vocabulary encodings, (ii) is BLIND, with the FLAT pairwise measure, to a planted PURE-HIGHER-
+ORDER structure (this sets the flow object's target), and (iii) REJECTS a generic-statistics-matched null.
+
+CONSTRUCTION (full thresholds in pre_registration.md, dated 2026-06-25 D-cal entry):
+- Reuse cit/data/hsmm_d1.py for the shared latent regime trajectory T. Plant, in a derived latent feature
+  array: (P) a GRADED PAIRWISE-coupled coalition (positive control -- nonzero, ranked pairwise MI), and
+  (H) a PURE-HIGHER-ORDER coalition (parity triples: every pairwise MI ~ 0 by construction, but the joint
+  recovers the latent regime mask -- VERIFIED near-zero, since D1's own property C is a 2-feature additive
+  mask with NONZERO pairwise MI and is therefore NOT pure-higher-order, so H is built fresh).
+- TWO ENCODERS render the SAME latent through stochastic emission maps with DISJOINT surface alphabets +
+  independent scrambling, so NO surface n-gram statistic is shared but the latent (P and H) is identical.
+- REAL-PAIR = (enc1(T), enc2(T)); NULL = (enc1(T_a), enc2(T_b)) with independent latents, per-feature
+  marginals + entropy rate matched real-vs-null by construction (confirmed numerically).
+- FLAT TRANSFER MEASURE (the only one tested here): per-encoder feature-pair raw-MI vector (canonical
+  cit/information.py, w=ones); transfer = Spearman(enc1 vector, enc2 vector), block-bootstrap CI.
+
+READOUTS (pre-committed): (a) P: real transfer >> null on the P-coalition pairs (machinery detects planted
+pairwise structure across disjoint vocabularies); (b) H: real ~= null on the H-coalition pairs (the flat
+measure is BLIND to higher-order shared structure -- sets the bar the flow object must clear); (c) null
+~= 0 for both, with generic statistics equal real-vs-null. FORK: (a)+(c) hold -> machinery VALIDATED,
+flow-object target set by (b); (a) fails -> the machinery is broken, fix before anything else.
