@@ -2074,3 +2074,66 @@ the pincer is NOT confirmed; a richer coordinate-free invariant is the indicated
 construction is the locked scripts/dcal2.py. Corrects an over-/mis-stated interpretation, NOT a number (the 0.684
 stands; its MEANING is corrected). NO pin/constant VALUE changed; MI/conditional MI via canonical cit/information.py;
 numpy only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2b / D-cal-2-TOPO PRE-REGISTRATION: a RICHER coordinate-free invariant suite (numpy-only topology) -- can it close the 0.684 -> 1.000 gap (escape) or does the correspondence horn HOLD for higher-order?
+
+**What this is.** A dated, append-only PRE-REGISTRATION (thresholds fixed here; a build-time SMOKE TEST may AMEND
+append-only before the official run). The D-cal-2 RESULT CORRECTION (above) established that the higher-order
+STRUCTURE transmits at AUROC 1.000 WITH correspondence while the coordinate-free eigenvalue SPECTRUM gives only
+0.684 -- a spectral-instrument ceiling. D-cal-2-TOPO tests whether a RICHER coordinate-free (permutation-invariant)
+invariant of the W_HO weighted graph closes the 0.684 -> 1.000 gap. NUMPY-ONLY: the from-scratch forms below need
+NO persistent-homology library (and NO network). Reuses the LOCKED D-cal-2 construction (scripts/dcal2.py:
+latent_features, make_encoder, encode, w_ho_matrix) over the same 12 latents + 2 encoders + across-latent ENSEMBLE
+null. Apparatus (Phase 2) = scripts/dcal2_topo.py; outputs -> data/ (gitignored). SYNTHETIC only; NO real-domain
+data, NO metacoherence claim, NO lock. NO pin/constant VALUE changed; nothing in data/ committed.
+
+**(a) COORDINATE-FREE TOPOLOGICAL INVARIANTS (permutation-invariant; from the encoded W_HO matrix only; max-abs
+normalized to remove the enc1-vs-enc2 alphabet-scale difference).**
+  - H0 BARCODE (single-linkage merge heights): union-find over the W_HO edges sorted by DESCENDING weight; record
+    the F-1 merge heights (the weight at which two components join), sorted, padded with 0 if the graph is a forest.
+    Captures the clustering hierarchy. Permutation-invariant.
+  - H1 BETTI-1 CURVE: over a normalized threshold grid t in linspace(0,1,50), beta1(t) = E(t) - F + C(t) where
+    E(t) = #edges with normalized weight >= t and C(t) = #connected components of that subgraph on all F vertices
+    (isolated vertices counted). The vector [beta1(t)] captures loop topology (no boundary reduction needed).
+    Permutation-invariant.
+  - TRIANGLE-WEIGHT DISTRIBUTION (the most principled here -- the planted higher-order coupling lives in 3-cliques):
+    for every triple (i,j,k), TMIN = min(W[i,j],W[i,k],W[j,k]) and TGEO = (W[i,j]*W[i,k]*W[j,k])**(1/3); the sorted
+    (descending) multiset of TMIN (and, separately, TGEO) over all C(F,3) triples. The planted triples have all 3
+    edges hot -> top TMIN values ~ the strength profile; non-planted triples have >=1 cold edge -> TMIN ~ noise.
+    Permutation-invariant. (To suppress the long noise tail, the MATCH uses the sorted TOP-3*K_H entries = top-18.)
+  - MATCH between two encodings = the L2 distance between their (max-normalized) invariant vectors, per invariant;
+    plus the BEST (max AUROC) across the suite. (The H1 curve and H0 barcode are compared as full vectors; the
+    triangle distributions as their sorted top-18.)
+
+**(b) ENSEMBLE + BASELINES.** Same 12 latents (7000..7011), 12 REAL pairs + 132 NULL cross-pairs, AUROC =
+P(null-dist > real-dist). PRINTED FOR CONTEXT (NOT the readout): the coordinate-free SPECTRUM AUROC (~0.684, the
+FLOOR) and the W_HO MATRIX-WITH-CORRESPONDENCE AUROC (~1.000, the CEILING; aligned upper-tri, Frobenius-normalized
+L2) -- these reproduce the correction diagnostic and bracket the readout.
+
+**(c) PRE-COMMITTED READOUT + FORK.** For each topological invariant report the higher-order coordinate-free AUROC;
+the headline = the BEST across the suite.
+  - ESCAPE iff ANY coordinate-free invariant AUROC > 0.90: substrate-specific HIGHER-ORDER structure transmits
+    COORDINATE-FREE and beyond generic -> the PINCER is DODGED for higher-order too; the coordinate-free shape
+    invariant is the object the real-domain test needs; proceed toward a real disjoint-prior pair (Benjamin).
+  - CORRESPONDENCE-HORN HOLDS iff ALL coordinate-free invariants cap well below the 1.000 ceiling and near the
+    spectral floor (best AUROC <= 0.68 + a small margin, say <= 0.72): coordinate-free invariants GENERICALLY cannot
+    recover the higher-order topology that IS present (1.0 with correspondence) -> DEEP FINDING: coordinate-free
+    transfer works for PAIRWISE but FAILS for the genuinely-recursive HIGHER-ORDER structure; metacoherence of the
+    higher-order requires correspondence-discovery after all.
+  - INTERMEDIATE (best AUROC in (0.72, 0.90]) -> reported honestly as partial coordinate-free recovery, no clean
+    branch; the gap is narrowed but not closed.
+  VALIDITY GATES (must hold): permutation-invariance exact (relabel enc2 features -> each invariant identical, L2 <
+  1e-9); each invariant picks up the planted triples on the LATENT (smoke sanity); generic statistics matched
+  real-vs-null (per-feature marginal TV < 0.02, order-1 entropy-rate rel-diff < 0.02 -- carried from D-cal-2).
+
+**(d) SMOKE-TEST-AND-AMEND.** Before the official run, smoke at a cheap T: perm-invariance exact for each invariant;
+each invariant separates planted vs non-planted triples on the latent; reproduce the (i) spectrum-floor and (ii)
+matrix-with-correspondence-ceiling baselines; a quick real-vs-null AUROC per invariant. If a confound appears (an
+invariant not perm-invariant, a normalization artifact, a degenerate match), AMEND append-only (documenting it as
+an invariant/normalization fix, NOT a threshold-tune) and PUSH before the official run.
+
+**Discipline.** PRE-REGISTRATION only; the Phase-2 build + smoke + run (scripts/dcal2_topo.py) follows AFTER this is
+committed + pushed (sec 8). SYNTHETIC only; COORDINATE-FREE (permutation-invariant) invariants only; NUMPY-ONLY (NO
+persistent-homology library, NO network); across-latent ENSEMBLE null; NO real-domain data, NO metacoherence claim,
+NO lock. NO pin/constant VALUE changed; MI / conditional MI via canonical cit/information.py + plug-in joints; numpy
++ math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.
