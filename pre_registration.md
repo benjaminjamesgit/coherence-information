@@ -2137,3 +2137,61 @@ committed + pushed (sec 8). SYNTHETIC only; COORDINATE-FREE (permutation-invaria
 persistent-homology library, NO network); across-latent ENSEMBLE null; NO real-domain data, NO metacoherence claim,
 NO lock. NO pin/constant VALUE changed; MI / conditional MI via canonical cit/information.py + plug-in joints; numpy
 + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2b / D-cal-2-TOPO RESULT: ESCAPE -- a richer coordinate-free TOPOLOGICAL invariant transmits HIGHER-ORDER structure at AUROC ~0.98 (no correspondence); the spectrum was just a poor instrument
+
+**What this is.** Dated, append-only RESULT for the D-cal-2-topo pre-registration above. Apparatus
+scripts/dcal2_topo.py (numpy-only topology; reuses the LOCKED scripts/dcal2.py construction + W_HO). Pre-reg +
+apparatus committed + pushed BEFORE this run (sec 8). SMOKE (T=10000, 6 latents) validated the apparatus
+(perm-invariance 7e-15; baselines reproduce) but gave best topo AUROC only ~0.66 -- the official T=50000 run
+OVERTURNS that (the smoke was estimation-noise-limited). Independently verified by a from-scratch reimplementation
+of the H0-barcode + triangle invariants. NO pin/constant VALUE changed; nothing in data/ committed.
+
+**(a) RESULT (T=50000, 12-latent ensemble; 12 real + 132 null cross-pairs).**
+  | invariant | AUROC | real dist | null dist | role |
+  | --- | --- | --- | --- | --- |
+  | eigenvalue SPECTRUM (the step-2 pre-reg invariant) | 0.684 | 0.248 | 0.349 | FLOOR (poor instrument) |
+  | H0 BARCODE (single-linkage merge heights) | 0.983 | 0.181 | 0.564 | ESCAPE |
+  | TRIANGLE_MIN (sorted top-18 per-triple min) | 0.978 | 0.145 | 0.413 | ESCAPE |
+  | TRIANGLE_GEO (sorted top-18 per-triple geom-mean) | 0.951 | 0.195 | 0.448 | ESCAPE |
+  | BETTI-1 CURVE | 0.501 | - | - | fails (a poor instrument too) |
+  | MATRIX with CORRESPONDENCE | 1.000 | 0.168 | 0.978 | CEILING |
+  Perm-invariance: max L2 over invariants = 4.05e-15 (< 1e-9). Generic statistics matched real-vs-null (carried
+  from D-cal-2: per-feature marginal TV 0.010, entropy-rate rel-diff 0.003).
+
+**(b) INTERPRETATION (the FORK outcome = ESCAPE).** Three coordinate-free (permutation-invariant) TOPOLOGICAL
+invariants -- the H0 barcode (clustering hierarchy) and the per-triple triangle-weight distributions -- recover the
+HIGHER-ORDER coupling structure at AUROC 0.95-0.98, CLOSING the corrected 0.684 -> 1.000 gap to within 0.02-0.05 of
+the with-correspondence CEILING, with NO correspondence (perm-invariance exact to 4e-15). So substrate-specific
+HIGHER-ORDER structure TRANSMITS COORDINATE-FREE and BEYOND generic statistics (which are matched real-vs-null):
+the PINCER is DODGED for higher-order too. Combined with the D-cal-2 PAIRWISE result (AUROC 1.000), BOTH pairwise
+and higher-order coupling structure transmit coordinate-free -> the CORRESPONDENCE horn is dodgeable for both ->
+metacoherence is POTENTIALLY WELL-POSED, and the coordinate-free SHAPE INVARIANT of the coupling field (H0 barcode /
+triangle-weight distribution) is the object a real-domain test needs. The earlier "0.684 = pincer/intermediate"
+reading was an INSTRUMENT artifact (the eigenvalue spectrum is a poor coordinate-free reduction); the corrected
++ now-answered question is: a BETTER coordinate-free instrument recovers the structure (escape).
+
+**(c) HONEST CAVEATS (kept; this is calibration, not a metacoherence claim).**
+  - The escape is via SPECIFIC invariants: H0 barcode (0.983), triangle_min (0.978), triangle_geo (0.951) escape;
+    the eigenvalue spectrum (0.684) and the Betti-1 curve (0.501) do NOT. "The escape EXISTS" = SOME coordinate-free
+    invariant achieves it; invariant CHOICE matters (the H0/clique-targeted invariants beat the spectral ones).
+  - DATA-QUALITY dependence: smoke T=10000 gave best ~0.66 (noise-limited), official T=50000 gives ~0.98. The escape
+    needs enough samples for clean W_HO interaction-information estimation; at low T the invariant is noise-capped.
+    (This is why the smoke-based prediction of pincer-holds was wrong -- recorded honestly.)
+  - CONSTRUCTION scope: the higher-order TOPOLOGY is fixed (6 disjoint triangles); the latent-varying coordinate-free
+    content is the strength PROFILE + assignment. The invariants recover the strength profile coordinate-free. A
+    construction that VARIES THE HYPERGRAPH TOPOLOGY across latents (different numbers/sizes of hyperedges) would be a
+    stronger test (the invariants would then have topology, not just strength, to discriminate) -- a recorded further
+    calibration, NOT done here.
+
+**(d) SCOPE / NEXT.** SYNTHETIC calibration only; coordinate-free invariants only; numpy-only. NO real-domain data,
+NO metacoherence claim, NO lock. The escape shows the coordinate-free route is VIABLE for higher-order (necessary,
+not sufficient, for the real test). NEXT (Benjamin + advisor): either the topology-varying calibration (caveat (c)),
+or -- given both horns are now shown dodgeable on synthetic ground -- the first REAL disjoint-prior domain pair with
+the coordinate-free shape invariant (H0 barcode / triangle distribution of the coupling field) as the transmission
+metric + a structured-noise null. HOLD.
+
+**Discipline.** RESULT record. Pre-reg + apparatus committed + pushed BEFORE this run (sec 8); smoke validated the
+apparatus; the smoke-vs-official reversal recorded honestly (NOT hidden). Independently verified from scratch.
+Records exactly the pre-committed gates + the ESCAPE branch read off the data. NO pin/constant VALUE changed; numpy
+only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.

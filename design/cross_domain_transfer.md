@@ -7,9 +7,10 @@
 > transfer-machinery calibration (Sec 8), PRE-REGISTERED + RUN -> MACHINERY VALIDATED (flat measure detects
 > planted pairwise / blind to planted higher-order; flow-object target set). STEP 2 (Sec 4.5 + 8b): THE
 > PINCER (generic-vs-correspondence) + the COORDINATE-FREE shape-invariant escape candidate; D-cal-2
-> RAN: PAIRWISE transmits coordinate-free CLEANLY (AUROC 1.0); the higher-order eigenvalue-SPECTRUM gave 0.684 but
-> that is a SPECTRAL-INSTRUMENT ceiling (the structure is present at AUROC 1.0 WITH correspondence) -- the PINCER is
-> NOT confirmed; step 2b tests a RICHER coordinate-free (numpy-only topological) invariant for the 0.68 -> 1.0 gap.
+> RAN -> ESCAPE on synthetic ground: PAIRWISE transmits coordinate-free CLEANLY (AUROC 1.0), and step 2b's RICHER
+> coordinate-free TOPOLOGICAL invariants (H0 barcode 0.983, triangle-min 0.978) close the higher-order gap that the
+> eigenvalue spectrum (0.684) could not -- so BOTH pincer horns are dodgeable; the coordinate-free shape invariant is
+> the candidate real-domain transmission metric. (Calibration only; data-quality- and construction-scope-caveated.)
 > Opened 2026-06-25 by the D2 (Pfam) relational FALSIFICATION (the within-domain protein program is
 > exhausted as a coherence test: D2 recovered the field's pairwise-MI coevolution construct and nothing
 > beyond it; K_comp = affine(raw MI) is a theorem; see pre_registration.md step-7 and
@@ -183,8 +184,10 @@ pincer; the pincer is NOT confirmed). The dichotomy above is therefore SHARPENED
 holds" in general, but "can a RICHER coordinate-free invariant recover the structure that IS present (1.0 with
 correspondence)?" -- escape if some coordinate-free invariant > 0.90; correspondence-horn-HOLDS if all
 coordinate-free invariants cap near the spectral 0.684 despite the 1.0 with-correspondence ceiling. (Note: the
-1.0 ceiling USES the correspondence = horn 2; coordinate-free invariants must recover it WITHOUT.) Step 2b tests
-this with a numpy-only topological invariant suite (no PH library needed).
+1.0 ceiling USES the correspondence = horn 2; coordinate-free invariants must recover it WITHOUT.) Step 2b tested
+this with a numpy-only topological invariant suite (no PH library needed) -> ANSWER = ESCAPE: H0-barcode 0.983 /
+triangle-min 0.978 close the gap (the spectrum's 0.684 was just a poor instrument), so the higher-order structure
+DOES transmit coordinate-free. Both horns dodgeable on synthetic ground (data-quality- and construction-caveated).
 
 ---
 
@@ -350,3 +353,15 @@ Betti-1 curve / triangle-weight distribution -- numpy-only, NO persistent-homolo
 0.684 -> 1.000 gap closes (escape bar 0.90). If any coordinate-free invariant > 0.90 -> ESCAPE (pincer dodged for
 higher-order too); if all cap near 0.684 -> the correspondence horn HOLDS for the genuinely-recursive higher-order
 structure (the deep finding). Apparatus scripts/dcal2.py (+ dcal2_topo.py for step 2b).
+
+STEP 2b RESULT (2026-06-25; pre_registration.md D-cal-2-TOPO RESULT) = ESCAPE. At T=50000 three coordinate-free
+TOPOLOGICAL invariants close the 0.684 -> 1.000 gap: H0 barcode (single-linkage merge heights) AUROC 0.983,
+triangle-min 0.978, triangle-geo 0.951 -- the eigenvalue spectrum (0.684) and a Betti-1 curve (0.501) do NOT, so
+INSTRUMENT CHOICE matters. All permutation-invariant to 4e-15; generic statistics matched. So substrate-specific
+HIGHER-ORDER structure transmits COORDINATE-FREE and beyond generic -> the PINCER is DODGED for higher-order too;
+combined with the pairwise AUROC 1.000, BOTH horns are dodgeable on synthetic ground -> metacoherence is POTENTIALLY
+WELL-POSED, with the coordinate-free shape invariant (H0 barcode / triangle distribution of the coupling field) as
+the real-domain transmission metric. CAVEATS (honest): the escape needs enough data for clean W_HO estimation
+(smoke T=10000 gave ~0.66; the smoke-based pincer-holds prediction was WRONG); the construction fixes the
+higher-order TOPOLOGY (6 disjoint triangles, varying strengths+assignment) -> a topology-varying calibration is a
+recorded further test. Calibration only, NOT a metacoherence claim.
