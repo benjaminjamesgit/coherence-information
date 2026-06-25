@@ -241,7 +241,11 @@ DONE (verified):
   +0.745 (PF00026), both >= 0.5 (the +0.540/+0.748 figures are the burial-defined-subset
   long-range raw); STRENGTHENS under partialling conservation-product AND burial-product
   (+0.583->+0.651, +0.775->+0.852); consensus edges out-predict either alone on contacts
-  (~11x base). (Recorded at git b28aefe.)
+  (~11x base). (Recorded at git b28aefe.) CAVEAT (step-6 refinement): "two genuinely distinct DENSE
+  paradigms" is REAL convergence but OVERSTATED -- at the RAW level K_comp ~= raw MI (Spearman +0.99),
+  so this is APC-MIp vs near-raw-MI = the SAME Shannon-plug-in paradigm differing by the APC
+  correction, NOT two distinct philosophies. Within a single domain K_comp and MIp cannot be teased
+  apart (shared finite-sample bias); a genuinely distinct paradigm requires CROSS-DOMAIN transfer.
 - FORMAL-ADMISSIBILITY (step-2) RETRACTED (v0.7.2 step 3): the PASS was TAUTOLOGICAL (check B
   hardcoded np.ones; the pair-overlap risk was never probed) AND verified the WRONG object (the
   441-joint-symbol edge-w now retracted in Sec 4). The corrected relational functional (Sec 4) +
@@ -267,34 +271,50 @@ DONE (verified):
   (pre-reg + RESULT 2026-06-25 step-3; apparatus scripts/relational_formalism_test.py.)
 - c3/c1 RULED (step 4, 2026-06-25): BASE = RAW I (base/weight separation, foundation P7);
   NORMALIZER = sum I; c-merge DEFERRED. Beyond-background MIp / max(MIp,0) base [c3-gamma] RETRACTED.
-- R1-EDGE (step 4/5, the PRIMARY cross-domain signature): PILOT PASS, adversarially verified.
-  Induced edge-w predicts PHYLOGENY-CORRECTED coupling PERSISTENCE (median raw MI across K=8
-  phylo-independent subclades) on BOTH pilot families x BOTH estimators -- long-range SEPARATED
-  partial K_MI +0.426/+0.418, K_comp +0.567/+0.477 (>0). Genuine COUPLING (w_mi conservation-
-  ORTHOGONAL, Spearman ~0.02-0.05), NOT the conservation-circularity that sank node-w; cross-
-  paradigm corroborated. Three verification upgrades are DEFAULTS now: SEPARATED control (the
-  conservation-PRODUCT control LEAKS -- a cons-only null passes it harder), POSITION-BLOCK bootstrap
-  (the pair-bootstrap CI was ~10x too tight), complementary-arm reading (K_MI MIp-circular but
-  cons-clean; K_comp algorithmic but cons-loaded; both clear the separated control). STATUS =
-  pilot/calibration, NOT locked: PF00026's partition is a degenerate caterpillar, so phylo-
-  decorrelation rests on ~1.5 families -> GATE = a clean-tree THIRD family. LOCKED = PF00348
-  (8a7c:A @1.2A, 242 cols, K_eff=6 balanced max-clade 32%); replication run PENDING.
-  (pre-reg + RESULT 2026-06-25 step-5; apparatus scripts/r1_edge.py + scripts/select_third_family.py.)
+- R1-EDGE (steps 4-6, the PRIMARY cross-domain signature): PILOT PASS, then the beyond-MI part
+  FALSIFIED by its own null. Induced edge-w predicts PHYLOGENY-CORRECTED coupling PERSISTENCE (median
+  raw MI across K=8 phylo-independent subclades) on all THREE families -- long-range SEPARATED
+  partial(w, persistence | cons_i,cons_j,bur_i,bur_j) > 0, position-block CI excluding 0,
+  conservation-CLEAN on the load-bearing K_MI arm. Third family PF00348 (8a7c:A @1.2A, K_eff=6 BALANCED
+  -- the antidote to PF00026's caterpillar; deterministic outcome-independent selection, 27 skips,
+  scripts/select_third_family.py) generalizes. Defaults: SEPARATED control (the cons-PRODUCT control
+  leaks), POSITION-BLOCK bootstrap (pair-bootstrap was ~10x too tight), pinv->OLS-residual partial fix
+  (the step-5 +0.903 cons-null leak was a pinv-under-collinearity artifact). STEP-6 NARROWINGS: (i)
+  sigma-induction is a RANK NO-OP -> the signatures test the ESTIMATOR, not the weight MAGNITUDES (the
+  I_w_rel/C_rel functional is empirically UNTESTED); (ii) an advisor 'K_comp~=MIp redundant' premise was
+  FALSE (K_comp retains +0.43/+0.26/+0.40 beyond APC-MIp, +0.34/+0.18/+0.39 beyond RAW MI) -> RETRACTED.
+  DECISIVE NULL-PROBE (adversarially verified 4-agent): K_comp's beyond-raw-MI persistence is a
+  MARGINAL-BIAS ARTIFACT on ALL 3 families -- a structured-noise surrogate (destroys within-subclade
+  coupling, preserves marginals + subclade phylogeny) reproduces/exceeds the real partial (REAL
+  +0.34/+0.18/+0.39 vs surrogate +0.27/+0.22/+0.46, z +6.3/-7.3/-11.7). MECHANISM: K_comp ~= raw MI
+  (Spearman +0.99), NOT a distinct paradigm -> the 'beyond-MI residual' is degenerate + shared
+  finite-sample marginal bias. SURVIVES = MIp coevolution persists across subclades conservation-clean
+  (the FIELD's standard MI re-described, NOT compression-specific coherence; a genuine gain over node-w's
+  conservation-circularity). CONCLUSION (pre-reg fork, on DATA): CONCEDE the beyond-MI finding as
+  within-domain noise; the decisive test is CROSS-DISJOINT-DOMAIN TRANSFER with a structured-noise null,
+  NOT another within-domain proxy (K_pred WRONG -- within one domain everything collapses to MIp + shared
+  bias). apparatus scripts/r1_edge.py + r1_edge_family3.py + r1_null_probe.py + select_third_family.py.
+  (pre-reg + RESULT 2026-06-25 steps 4/5/6.)
 
 NEXT (each PRE-REGISTERED before run; Benjamin chooses order):
 1. [DISCHARGED by steps 3-4] The two step-2 follow-ups are resolved (441-vs-21 convention MOOT --
    scalar edge MI; I via canonical cit/information.py; overlap closed by the handshake S3), and the
    open choices are RULED: c1 = sum I, c3 = RAW I (step 4); c-merge DEFERRED until coarse-graining
    is exercised.
-2. [PILOT PASS, step 4/5 -- see DONE] R1-edge predicts phylo-corrected coupling PERSISTENCE on both
-   pilot families x both estimators (conservation-orthogonal, cross-paradigm corroborated). REMAINING:
-   run the LOCKED clean-tree THIRD family PF00348 (the generalization gate) -> a pass firms the
-   PRIMARY signature.
+2. [CLOSED, steps 4-6 -- see DONE] R1-edge PILOT-PASSED on all 3 families (incl. the clean-tree
+   PF00348), but its DECISIVE null-probe FALSIFIED the beyond-raw-MI part as a marginal-bias artifact
+   (K_comp ~= raw MI, Spearman +0.99). What SURVIVES is MIp coevolution persisting across subclades,
+   conservation-clean -- the field's standard signal re-described, NOT a compression-specific coherence
+   signal beyond MI.
 3. M5-edge: contact-vs-non-contact AUROC across more families; MUST control burial-product
    (it beats MIp on PF13354). The edge admissibility gate.
 4. R3-edge: GRADED selection-pressure sweep (P5) -- structural reorganizes edge-w, interpretive
    (BLOSUM relabel) does not. NEVER binary do-operation.
-5. HARDEN R2: add K_pred (predictive estimator) for the full 3-paradigm convergence.
+5. [SUPERSEDED, step 6] "HARDEN R2 with K_pred for the 3-paradigm convergence" is the WRONG move:
+   the null-probe showed that within a SINGLE domain everything collapses to MIp + shared finite-sample
+   bias (K_comp ~= raw MI), so another within-domain proxy adds nothing. The decisive test of the
+   multi-proxy construct is CROSS-DISJOINT-DOMAIN TRANSFER with a structured-noise null (D3 / a
+   structurally disjoint domain), NOT a third within-domain proxy.
 
 DISCIPLINE: pre-register (thresholds fixed) -> commit+push pre-reg -> run -> report -> HOLD.
 Two pilot families until Benjamin locks a list. No full grid before pilot confirmation +

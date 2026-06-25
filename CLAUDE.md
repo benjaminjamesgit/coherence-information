@@ -152,8 +152,27 @@ Weights are either user-supplied or induced from data:
   tested at w != 1). The two step-2 FOLLOW-UPS are DISCHARGED (441-vs-21 convention MOOT -- scalar edge weight now; I via
   canonical; overlap closed by the handshake). S7/S8 EVIDENCE (Benjamin rules, NOT decided here): raw-I base favored (sum MIp
   NEGATIVE, ~60% edges MIp<0 -> MIp base leaves [0,1]) + sum-I normalizer favored (C_rel 0.57/0.59 in [0,1]); c1/c3/c-merge
-  OPEN. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD; next relational component (R1/M5/graded-R3-edge / K_pred) =
-  Benjamin's call. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
+  OPEN. STEP 4-6 (R1-edge = the PRIMARY signature, then its null): c3/c1 RULED (step 4: BASE = raw I [base/weight separation, P7];
+  NORMALIZER = sum I; c-merge DEFERRED; beyond-background MIp / max(MIp,0) [c3-gamma] RETRACTED). R1-EDGE (does induced edge-w predict
+  PHYLOGENY-CORRECTED coupling PERSISTENCE = median raw MI across K=8 phylo-independent subclades): PILOT PASS on PF13354/PF00026 +
+  the clean-tree THIRD family PF00348 (8a7c:A @1.2A, K_eff=6 BALANCED; deterministic outcome-independent selection, 27 skips
+  recorded, scripts/select_third_family.py); long-range SEPARATED partial(w, persistence | cons_i,cons_j,bur_i,bur_j) > 0 with
+  position-block CI excluding 0, conservation-CLEAN on the K_MI arm. Apparatus scripts/r1_edge.py + r1_edge_family3.py; adversarially
+  verified (3x). STEP-6 NARROWINGS: (i) sigma-induction is a RANK NO-OP -> the signatures test the ESTIMATOR not the weight
+  magnitudes (the I_w_rel/C_rel functional stays empirically untested); (ii) an advisor 'K_comp~=MIp redundant' premise was FALSE
+  (K_comp retains +0.43/+0.26/+0.40 beyond APC-MIp, +0.34/+0.18/+0.39 beyond RAW MI) -> RETRACTED. APPARATUS FIX: pinv->OLS-residual
+  in partial_sep/partial_multi (the step-5 '+0.903 cons-null leak' was a pinv-under-collinearity artifact -> ~0). **NULL-PROBE RESULT
+  (the decisive within-domain test, adversarially verified 4-agent): K_comp's beyond-raw-MI persistence signal is a MARGINAL-BIAS
+  ARTIFACT (FALSIFIED) on ALL 3 families** -- a structured-noise surrogate (destroys within-subclade coupling, preserves
+  marginals + subclade phylogeny) reproduces/exceeds the real partial (REAL +0.34/+0.18/+0.39 vs surrogate +0.27/+0.22/+0.46,
+  z +6.3/-7.3/-11.7). MECHANISM: K_comp ~= raw MI (Spearman +0.99) -- NOT a distinct paradigm; the 'beyond-MI residual' is degenerate
+  noise + shared finite-sample marginal bias. This REFINES R2-edge step-1: 'two genuinely distinct paradigms converge' is REAL but is
+  APC-MIp vs near-raw-MI = the SAME Shannon-plug-in paradigm differing by APC, NOT two philosophies. SURVIVES: MIp coevolution
+  persists across subclades conservation-clean -- the FIELD's standard MI signal re-described, NOT compression-specific coherence.
+  CONCLUSION (pre-reg fork, on DATA): CONCEDE the beyond-MI finding as within-domain noise; the decisive test is CROSS-DISJOINT-DOMAIN
+  TRANSFER with a structured-noise null, NOT another within-domain proxy (K_pred WRONG -- within one domain everything collapses to
+  MIp + shared bias). apparatus scripts/r1_null_probe.py. The D2 KxA grid / family-lock / M5-R2 runs stay HELD; next = Benjamin's call
+  (cross-domain transfer test / D3). Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7; foundations design/relational_edge_w.md + relational_formalism.md.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -289,7 +308,12 @@ via canonical + non-trivial weight response; S2 non-collapse alpha~0 at independ
 exact <=7e-12; S4 monotonicity; S5 boundedness; S6 within-Dayhoff relabel-invariance; tested at w != 1). The two step-2
 follow-ups are DISCHARGED (441-vs-21 convention MOOT -- scalar edge weight; I via canonical; overlap closed by the handshake).
 S7/S8 EVIDENCE (Benjamin rules): raw-I base favored (sum MIp NEGATIVE, ~60% edges MIp<0) + sum-I normalizer favored (C_rel
-0.57/0.59 in [0,1]); c1/c3/c-merge OPEN. NEXT relational component = Benjamin's call (rule c1/c3/c-merge / R1-edge / M5-edge /
-graded R3-edge / K_pred). D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
+0.57/0.59 in [0,1]). c1/c3 RULED (raw-I base + sum-I; c-merge deferred). R1-EDGE = PRIMARY signature: PILOT PASS on 3 families incl.
+the clean-tree PF00348 (conservation-clean K_MI arm). STEP-6 NULL-PROBE (adversarially verified) FALSIFIED K_comp's beyond-raw-MI
+persistence as a MARGINAL-BIAS ARTIFACT (all 3 families; K_comp ~= raw MI Spearman +0.99 -> NOT a distinct paradigm; refines R2-edge's
+'distinct paradigms' framing). SURVIVES = MIp coevolution persists across subclades conservation-clean (the field's standard MI
+re-described, NOT compression-specific). CONCLUSION (pre-reg fork): CONCEDE the beyond-MI finding as within-domain noise; the decisive
+test is CROSS-DISJOINT-DOMAIN TRANSFER, NOT another within-domain proxy. NEXT = Benjamin's call (cross-domain transfer / D3). D2
+grid/family-lock/M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
