@@ -136,12 +136,15 @@ Weights are either user-supplied or induced from data:
   conservation-product + burial-product control (partial +0.651 / +0.852 vs raw +0.583 / +0.775), so it is NOT the
   agree-on-conserved/buried-pairs null. Caveat: top-L Jaccard MODEST (0.15/0.24, expected for genuinely distinct estimators);
   TWO families, no grid, no lock. The edge-valued direction is now supported by cross-paradigm convergence. RELATIONAL BUILD
-  step 2 = edge-w FORMAL-ADMISSIBILITY check PRE-REGISTERED (Phase-1 PUSHED, run HELD): a VERIFICATION (pre-fixed criteria,
-  not a hypothesis test) that edge-w = CIT-on-pair-features is an EXTENSION not a fork -- A boundedness / B Shannon-recovery
-  (w=1 collapse bit-level) / C coarse-graining (Dayhoff-6 Spearman>=0.7) / D monotonicity / E relabel-invariance / F
-  bootstrap-stability>=0.8, both families + estimators; key risk = pair-features OVERLAP (each position in L-1 pairs).
-  Standalone scripts/admissibility_edge.py. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 +
-  capstone. (Spec Section 8.7.)
+  step 2 = edge-w FORMAL-ADMISSIBILITY check RAN + PASSED (apparatus scripts/admissibility_edge.py; ADVERSARIALLY VERIFIED by
+  a 6-agent workflow, all numbers reproduced clean-room, estimators bit-exact to saved): edge-w = CIT-on-pair-features is an
+  EXTENSION not a fork -- A boundedness / B Shannon-recovery (0.0 both) / C coarse-graining (Dayhoff-6: K_MI 0.966/0.980,
+  K_comp 0.865/0.845, all >=0.7) / D monotonicity / E relabel-invariance (1.0) / F bootstrap-stability (K_MI 0.993/0.993,
+  K_comp 0.991/0.986, all >=0.8) ALL PASS both families + estimators; the pair-OVERLAP risk did not break any. TWO open formal
+  FOLLOW-UPS flagged (not blockers): (i) check B is algebraically tautological as-coded (recovery confirmed via the canonical
+  cit/information.py funcs, not B's path; rewire B) + the I_w 441-joint-vs-21-marginal weighting convention is unpinned
+  off-boundary; (ii) the overlap/partition-of-unity ACCOUNTING is NOT probed by A-F -> left OPEN. The D2 KxA grid /
+  family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -264,11 +267,13 @@ K_comp (MDL/KT compression edge coupling), DCA EXCLUDED as Pearlian -> R2-EDGE P
 PF13354 / +0.745 PF00026 >=0.5; consensus-edge contact precision beats each alone; convergence STRENGTHENS under
 conservation/burial control, partial +0.651/+0.852). Caveat top-L Jaccard modest (0.15/0.24); two families, no grid, no lock.
 Edge-valued direction supported by cross-paradigm convergence. RELATIONAL BUILD step 2 = edge-w FORMAL-ADMISSIBILITY check
-PRE-REGISTERED (Phase-1 PUSHED, run HELD; foundations design/relational_edge_w.md): VERIFICATION (pre-fixed criteria) that
-edge-w = CIT-on-pair-features is an EXTENSION not a fork -- checks A boundedness / B Shannon-recovery (w=1 collapse, bit-level)
-/ C coarse-graining (Dayhoff-6, Spearman>=0.7) / D monotonicity / E relabel-invariance (==1.0) / F bootstrap-stability (>=0.8),
-both families, both estimators; KEY RISK = pair-features OVERLAP (each position in L-1 pairs, not a partition). Standalone
-scripts/admissibility_edge.py. NEXT after = Benjamin's call (R1-edge / M5-edge / graded R3-edge / K_pred). D2
+RAN + PASSED (apparatus scripts/admissibility_edge.py; foundations design/relational_edge_w.md; ADVERSARIALLY VERIFIED by a
+6-agent workflow -- all numbers reproduced clean-room, estimators bit-exact to saved): edge-w = CIT-on-pair-features is an
+EXTENSION not a fork -- A/B(0.0)/C(Dayhoff-6 K_MI 0.97/0.98, K_comp 0.86/0.84 all>=0.7)/D/E(1.0)/F(0.99 all>=0.8) ALL PASS
+both families + estimators; the pair-OVERLAP risk broke none. TWO open formal follow-ups flagged (not blockers): (i) check B
+tautological as-coded (recovery confirmed via canonical cit/information.py, not B's path) + the I_w 441-vs-21 weighting
+convention unpinned off-boundary; (ii) the overlap/partition-of-unity ACCOUNTING is NOT probed by A-F (left OPEN). NEXT
+relational component = Benjamin's call (resolve I_w convention + overlap-accounting / R1-edge / M5-edge / graded R3-edge / K_pred). D2
 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.

@@ -1460,4 +1460,30 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 
 **Discipline.** DESIGN + dated amendment; criteria LOCKED HERE pre-computation; committed + pushed BEFORE the Phase-2 run (sec 8). TWO families; reuse matrices + the locked full-alphabet MIp baseline (recompute ONLY for the coarse/relabel alphabets + the bootstrap resamples); numpy-only; NO DCA; NO edge-ablation/R1/R3-edge build, NO grid, NO family-list lock. Nothing in `data/` committed (gitignored). Append-only, ASCII.
 
+### 2026-06-25 -- v0.7.2 D2 (Pfam) RELATIONAL BUILD step 2 RESULT: edge-w ADMISSIBLE-AS-EXTENSION (A-F all pass; adversarially verified; two formal follow-ups flagged)
+
+**What this is.** A dated, append-only RESULT record for the edge-w formal-admissibility check pre-registered immediately above. Apparatus = `scripts/admissibility_edge.py` (numpy + `math.lgamma`; reuses saved matrices + the saved full-alphabet MIp baseline; recompute confined to the coarse/relabel alphabets + the bootstrap resamples). All A-F results were ADVERSARIALLY VERIFIED by an independent multi-agent workflow (6 from-scratch verifiers + a synthesis critic); every reported number was reproduced by clean-room re-derivation. No pin / constant VALUE changed; nothing in `data/` committed (gitignored).
+
+**(a) RESULT (both families, both estimators K_MI = APC-MIp, K_comp = KT/MDL).**
+  | check | criterion | PF13354 (K_MI / K_comp) | PF00026 (K_MI / K_comp) |
+  | --- | --- | --- | --- |
+  | A boundedness | w in [0,1] exact | PASS / PASS | PASS / PASS |
+  | B Shannon recovery (w=1) | \|dH\|,\|dI\| < 1e-9 | 0.0 / 0.0 | 0.0 / 0.0 |
+  | C coarse-grain (Dayhoff-6) | Spearman >= 0.7 | 0.966 / 0.865 | 0.980 / 0.845 |
+  | D monotonicity | 0 inversions | PASS / PASS | PASS / PASS |
+  | E relabel-invariance | == 1.0 (1e-9) | 1.000 / 1.000 | 1.000 / 1.000 |
+  | F bootstrap stability (100x) | mean Spearman >= 0.8 | 0.993 / 0.991 | 0.993 / 0.986 |
+
+**(b) VERDICT = edge-`w` ADMISSIBLE-AS-EXTENSION.** A-F ALL pass on both families and both estimators. The pre-registered KEY RISK (pair-features OVERLAP -- each position in L-1 pairs) did NOT break boundedness, Shannon-recovery, coarse-grain stability, monotonicity, relabel-invariance, or resampling-stability. Edge-w = CIT-on-the-joint-pair-symbol is a clean EXTENSION of the H_w / I_w machinery, NOT a fork, for the formal properties tested.
+
+**(c) ADVERSARIAL VERIFICATION (6 verifiers, all CONFIRM; every number reproduced clean-room).** `estimators()` APC-MIp is BIT-EXACT to the saved baseline (max abs diff = 0.0); the matmul-shared joint-count trick matches `np.add.at` to <= 5e-13; K_comp matches `scripts/r2_edge.py` to 1.5e-11 (float-ordering only). No threshold was weakened (C is `>= 0.7`, F is `>= 0.8`); no REFUTE; no blocking bug.
+
+**(d) HONEST CAVEATS the verification surfaced (recorded, NOT folded into the PASS).**
+  - (i) Check B is ALGEBRAICALLY TAUTOLOGICAL as-coded (the inline H_w/I_w hardcode w via `np.ones_like`, so 0.0 is guaranteed by construction; it does NOT exercise the canonical `cit/information.py` `coherence_weighted_*` routines). Shannon recovery IS real -- the verifier confirmed it AGAINST the canonical functions (|dH|=0, |dI| <= 1.1e-16) -- but that guarantee comes from the independent check, not from B's code path. FOLLOW-UP: rewire B through `cit/information.py`.
+  - (ii) The I_w WEIGHTING CONVENTION is invisible at w=1: edge-w is stated over the 441 joint product-alphabet symbols, but canonical I_w weights the 21-symbol source marginal; these diverge off-boundary and coincide only at w=1. So `H_w`-over-the-joint-pair-symbol is confirmed a clean extension, but WHERE the edge weight attaches in I_w(X_i;X_j) is an OPEN formal point (not a blocker). FOLLOW-UP: pin the I_w-on-edges convention explicitly.
+  - (iii) The pre-registered KEY RISK (overlap -> not a partition -> possible accounting normalization) is NOT actually PROBED by A-F (all six treat eligible pairs as a flat independent list). Admissibility-as-extension is established for the formal properties tested; the edge-overlap / partition-of-unity ACCOUNTING is the next adjudication, LEFT OPEN. FOLLOW-UP: a partition-of-unity / overlap-accounting check.
+  - (iv) PIN literal deviation (minor, DEFENSIBLE): the script recomputes the full-alphabet MIp and uses it as the E/F reference (the pin says reuse the saved baseline). Adjudicated NON-substantive -- the recompute is BIT-EXACT to the saved array (diff 0.0), A/C/D + the K_MI baseline use the SAVED array, the saved npz is untouched, and E re-verified DIRECTLY against the saved MIp still holds to 3e-16. Plus one harmless dead line (`admissibility_edge.py:125`, an unused inv proxy; D correctly uses `|Spearman-1| < 1e-9`).
+
+**Discipline.** RESULT record + apparatus commit (`scripts/admissibility_edge.py`, committed as-verified; the dead line + the B-rewire are recorded follow-ups, deliberately NOT applied here). The Phase-1 pre-registration (above) was committed + pushed BEFORE this run (sec 8). NO pin / constant VALUE changed; numpy-only; NO DCA; NO edge-ablation / R1 / R3-edge build, NO grid, NO family-list lock; NO decision past admissibility. Nothing in `data/` committed (gitignored). Append-only, ASCII.
+
 

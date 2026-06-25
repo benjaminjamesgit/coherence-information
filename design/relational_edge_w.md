@@ -180,15 +180,25 @@ precision matrix P; partial = -P[x,y] / sqrt(P[x,x] P[y,y]).
 DONE (verified):
 - framing-S (per-position, factorized proxies) is EMPTY on real alignments.
 - node-valued w RETIRED -- fails the hardened phylo bar on BOTH families.
-- R2-edge PREMISE PASSES both families: Spearman(K_MI, K_comp) long-range +0.540 (PF13354),
-  +0.748 (PF00026), both >= 0.5; STRENGTHENS under partialling conservation-product AND
-  burial-product (+0.583->+0.651, +0.775->+0.852); consensus edges out-predict either alone
-  on contacts (~11x base). (Recorded at git b28aefe.)
+- R2-edge PREMISE PASSES both families: Spearman(K_MI, K_comp) long-range +0.542 (PF13354),
+  +0.745 (PF00026), both >= 0.5 (the +0.540/+0.748 figures are the burial-defined-subset
+  long-range raw); STRENGTHENS under partialling conservation-product AND burial-product
+  (+0.583->+0.651, +0.775->+0.852); consensus edges out-predict either alone on contacts
+  (~11x base). (Recorded at git b28aefe.)
+- FORMAL-ADMISSIBILITY (extension-not-fork) PASSES both families/both estimators (A-F;
+  adversarially verified, estimators bit-exact to saved): A boundedness, B Shannon recovery at
+  w=1 (|dH|=|dI|=0.0), C coarse-graining (Dayhoff-6: K_MI 0.966/0.980, K_comp 0.865/0.845, all
+  >=0.7), D monotonicity, E within-class relabel invariance (=1.0), F 100-bootstrap stability
+  (K_MI 0.993/0.993, K_comp 0.991/0.986, all >=0.8). The pair-OVERLAP risk broke none.
+  TWO OPEN FOLLOW-UPS: (i) check B is tautological as-coded + the I_w 441-joint-vs-21-marginal
+  weighting convention is unpinned off w=1 -- WHERE the edge weight attaches in I_w(X_i;X_j) is
+  open; (ii) the overlap / partition-of-unity ACCOUNTING is NOT yet probed. (Recorded at the
+  step-2 result commit.)
 
 NEXT (each PRE-REGISTERED before run; Benjamin chooses order):
-1. FORMAL-ADMISSIBILITY: verify edge-w = CIT-on-pair-features satisfies the induced-weights
-   commitments -- Shannon recovery at w=1 (numeric), coarse-graining consistency, monotonicity.
-   Confirms extension-not-fork before deeper build.
+1. RESOLVE the two admissibility follow-ups: pin the I_w-on-edges weighting convention (441-joint
+   vs 21-marginal) + rewire check B through cit/information.py; and a partition-of-unity /
+   edge-OVERLAP accounting check (each position in L-1 pairs).
 2. R1-edge: does high edge-w predict compensatory/coupled substitution (coupling persistence)?
    Conservation-independent. The load-bearing Adaptive-Realism cash-out on edges.
 3. M5-edge: contact-vs-non-contact AUROC across more families; MUST control burial-product
