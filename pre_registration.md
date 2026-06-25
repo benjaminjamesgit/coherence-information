@@ -2195,3 +2195,68 @@ metric + a structured-noise null. HOLD.
 apparatus; the smoke-vs-official reversal recorded honestly (NOT hidden). Independently verified from scratch.
 Records exactly the pre-committed gates + the ESCAPE branch read off the data. NO pin/constant VALUE changed; numpy
 only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2c / D-cal-2c CONTROL RESULT CORRECTION: the higher-order "escape" transmits the coupling-STRENGTH DISTRIBUTION (nominal + realized), NOT the higher-order WIRING -- the planted topologies are ISOMORPHIC so coordinate-free topology transmission was UNTESTABLE; the correspondence horn still HOLDS for the wiring
+
+**What this is.** Dated, append-only RESULT CORRECTION for the D-cal-2-topo ESCAPE entry above (which is
+SUPERSEDED-IN-STATUS, not edited). Apparatus scripts/dcal2c_control.py (a minimal fixed-strength override
+of the LOCKED dcal2 construction; reuses dcal2 / dcal2_topo machinery; numpy-only). Independently reproduced
+on the ACTUAL dcal2 construction (NOT advisor numbers transcribed -- see (f)). NO pin/constant VALUE changed;
+nothing in data/ committed.
+
+**(a) STRUCTURAL FACT (the construction's topology is isomorphic).** In dcal2.latent_features the higher-order
+features are h_feats = perm[2*K_P : 2*K_P+3*K_H].reshape(K_H,3): K_H=6 DISJOINT triples. So every latent's
+W_HO higher-order graph is exactly K_H=6 disjoint K3 triangles -- ALL 12 latents are ISOMORPHIC as (weighted)
+hypergraphs. The ONLY latent-specific coordinate-free content is then the edge-WEIGHT multiset (a function of
+the strength vector r). Coordinate-free TOPOLOGY / wiring transmission is therefore UNTESTABLE in this
+construction -- it was NOT tested. (Same for pairwise: K_P=6 disjoint edges, isomorphic across latents.)
+
+**(b) FIXED-STRENGTH control (official T=50000, 12-latent across-latent ensemble; q=r=linspace(0.35,0.92)
+identical for every latent, only the assignment varies).**
+  | invariant | escape (varying r) | fixed-strength | reads |
+  | --- | --- | --- | --- |
+  | PAIRWISE spectrum   | 1.000 | 0.562 | COLLAPSES -> read the pairwise STRENGTH multiset (eigvals = +-MI per disjoint edge), NOT topology |
+  | HIGHER-ORDER triangle_min | 0.978 | 0.935 | does NOT collapse at full T |
+  | HIGHER-ORDER H0_barcode   | 0.983 | 0.953 | does NOT collapse at full T |
+  Smoke (T=10000) DID collapse the higher-order (triangle_min 0.544, H0 0.561) -> the full-T residual is
+  data-driven, not a fixed structural channel. (The advisor predicted ~chance for fixed-strength higher-order;
+  that holds at smoke T but is REFUTED at full T -- see (c) for the mechanism, a refinement of the prediction.)
+
+**(c) REALIZATION-BROKEN control (DECISIVE; official T=50000).** Fix the nominal strengths AND give the two
+encoders INDEPENDENT plant realizations of the SAME latent (assignment + nominal strengths matched, only the
+realized sample sequences differ): triangle_min 0.470, H0_barcode 0.466 = CHANCE. So the full-T fixed-strength
+residual IS the SHARED LATENT REALIZATION -- the realized per-triangle interaction-strength distribution carried
+by the shared latent. It CANNOT be topology: the topology is provably isomorphic (a), and a constant-across-latents
+topology produces ZERO separation at any T. The full-T higher-order "escape" transmits a STRENGTH / WEIGHT
+DISTRIBUTION (the nominal strength multiset PLUS the finer realized per-triangle weight distribution), NOT the WIRING.
+
+**(d) CORRECTION (supersedes the D-cal-2-topo ESCAPE wording).** The recorded "both pincer horns dodgeable ->
+metacoherence potentially well-posed" is OVERSTATED. CORRECTED reading: the coordinate-free invariants transmit a
+coupling-STRENGTH DISTRIBUTION (a permutation-invariant, latent-specific summary); the higher-order WIRING (the
+corpus's recursive structural reinforcement -- WHICH features couple WHICH, the hypergraph itself) is UNTESTED here
+because the planted topologies are isomorphic. The PINCER's CORRESPONDENCE horn still HOLDS for the higher-order
+wiring; only a distributional summary escapes, and a coupling-strength distribution matching across domains is
+thin / generic-adjacent (a strength histogram is close to a generic statistic). The pairwise AUROC 1.000 carries
+the same caveat -- it read the pairwise STRENGTH multiset (collapsed under fixed strengths), so pairwise topology
+transmission is ALSO untested. What survives the correction: coordinate-free invariants CAN transmit a
+substrate-specific distributional summary across disjoint vocabularies (necessary, not sufficient); the wiring
+question is OPEN, to be settled by D-cal-3.
+
+**(e) LOAD-BEARING implication for D-cal-3 (the wiring test).** Closing the "strength channel" requires closing
+BOTH the nominal strength multiset AND the realized weight distribution -- the realization-broken control shows
+nominal-matching alone LEAKS at full T via the shared realization. So D-cal-3's smoke closure check (a
+strength-reading invariant, e.g. triangle-min sorted multiset, must give ~chance) MUST be run in the
+SHARED-realization transmission setting (the actual real-pair setting), not just with matched nominal strengths;
+if it leaks, AMEND the construction append-only (e.g. tighten / deterministically equalize the realized weights,
+or increase K_H so the sorted multiset is stable) BEFORE the official run. This is exactly the pre-registered
+smoke-test-and-amend gate.
+
+**(f) DISCIPLINE.** Independently reproduced on the ACTUAL dcal2 construction (the advisor's predicted "~chance"
+for fixed strengths was NOT transcribed -- I found 0.94 at full T and traced it via the realization-broken control
+to the shared realization, refining the prediction). An adversarial from-scratch verifier (a SEPARATE
+reimplementation, not importing dcal2) independently CORROBORATED the structural basis: isomorphic topology = True;
+varying-strength reproduces the escape (AUROC 0.968); and -- the key surprise -- fixed-NOMINAL-strength does NOT
+collapse (AUROC 0.941, matching my 0.935/0.953), so nominal-strength matching alone is insufficient. It did NOT run
+the realization-broken control; that control (mine) localizes the full-T residual to the SHARED realization (0.47
+chance). Coordinate-free invariants only; numpy-only; across-latent ensemble null. NO pin/constant VALUE changed;
+nothing in data/ committed (gitignored). Append-only, ASCII.
