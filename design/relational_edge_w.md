@@ -241,11 +241,15 @@ DONE (verified):
   +0.745 (PF00026), both >= 0.5 (the +0.540/+0.748 figures are the burial-defined-subset
   long-range raw); STRENGTHENS under partialling conservation-product AND burial-product
   (+0.583->+0.651, +0.775->+0.852); consensus edges out-predict either alone on contacts
-  (~11x base). (Recorded at git b28aefe.) CAVEAT (step-6 refinement): "two genuinely distinct DENSE
-  paradigms" is REAL convergence but OVERSTATED -- at the RAW level K_comp ~= raw MI (Spearman +0.99),
-  so this is APC-MIp vs near-raw-MI = the SAME Shannon-plug-in paradigm differing by the APC
-  correction, NOT two distinct philosophies. Within a single domain K_comp and MIp cannot be teased
-  apart (shared finite-sample bias); a genuinely distinct paradigm requires CROSS-DOMAIN transfer.
+  (~11x base). (Recorded at git b28aefe.) CAVEAT -- ILLUSORY (step-7 theorem): the "two genuinely
+  distinct DENSE paradigms converge" headline is ILLUSORY, not just overstated. K_comp = N_eff*(raw MI)
+  - KT_penalty is an EXACT algebraic identity (R^2 0.99, Spearman(rawMI,K_comp) +0.99), so the headline
+  long-range Spearman(K_MI,K_comp) +0.542/+0.745 == Spearman(rawMI, rawMI-APC) (Spearman(K_MI,rawMI)
+  +0.555/+0.786 ~= headline); removing raw MI from BOTH arms leaves a NEGATIVE residual correlation
+  -0.147/-0.445 -> there is NO second paradigm underneath the shared raw MI. K_MI=APC-MIp and K_comp are
+  ONE Shannon-plug-in family differing only by the APC correction; within a single domain they cannot be
+  teased apart, and a genuinely distinct paradigm requires CROSS-DOMAIN transfer. (The consensus-edge
+  contact-precision gain survives as an APC-vs-no-APC ensembling effect, not cross-paradigm corroboration.)
 - FORMAL-ADMISSIBILITY (step-2) RETRACTED (v0.7.2 step 3): the PASS was TAUTOLOGICAL (check B
   hardcoded np.ones; the pair-overlap risk was never probed) AND verified the WRONG object (the
   441-joint-symbol edge-w now retracted in Sec 4). The corrected relational functional (Sec 4) +
@@ -295,6 +299,27 @@ DONE (verified):
   NOT another within-domain proxy (K_pred WRONG -- within one domain everything collapses to MIp + shared
   bias). apparatus scripts/r1_edge.py + r1_edge_family3.py + r1_null_probe.py + select_third_family.py.
   (pre-reg + RESULT 2026-06-25 steps 4/5/6.)
+- STEP 7 -- D2 RELATIONAL LINE CLOSED AS A FALSIFICATION (2-agent adversarial verify: bit-exact
+  from-scratch reimplementation + adversarial break-search). The step-6 mechanism is now a THEOREM:
+  K_comp = N_eff*(raw MI) + (pen_i + pen_j - pen_ij) = N_eff*(raw MI) - KT_penalty, an EXACT identity
+  (<= 7e-12; OLS R^2 0.9937/0.9866/0.9880, slope/N_eff 1.025/1.041/1.060, Spearman +0.9966/+0.9926/+0.9930;
+  no subregime breaks the fit) -> K_comp is NOT a distinct estimator. PENALTY CORRECTION (the one
+  over-statement in the step-7 brief, fixed against data): the briefed "-200*log2 N" penalty is the right
+  SHAPE but ~3x too large (the 441-cell joint is ~62% EMPTY, so the offset is the occupancy-set effective
+  -parameter count ~-720 bits, NOT the 440-df asymptote -2100). RE-RETRACT step-6 narrowing-(ii): the
+  "+0.43 beyond APC-MIp" distinctness was JUST the APC background (K_comp ~= raw MI; APC-MIp = raw MI -
+  background), the "+0.34 beyond RAW MI" was the marginal-bias artifact -> BOTH step-6 framings (redundant
+  AND distinct) are superseded; ONE Shannon-plug-in family. P4 ("compression distinct from information")
+  UNSUPPORTED in D2 (the MDL edge proxy collapses to MI for a fixed finite alphabet; may hold for D1's
+  non-analytic zstd/LZ). ARC LEDGER (final) -- FALSIFIED/illusory: R2-edge convergence, K_comp-as-distinct,
+  P4-in-D2, any coherence-beyond-MI in proteins; SURVIVES: the relational FORMALISM (admissible T2 -- but
+  sigma-induction is a rank no-op so the weight MAGNITUDES stay UNTESTED), the node-w falsification, M5
+  standard-MI->contact AUROC ~0.80, the deflated R1 (the field's standard subclade-replicated MI coevolution,
+  conservation-clean). NET: D2 recovered the field's pairwise-MI coevolution construct and NOTHING beyond it
+  -- a clean "vulnerable in the right way" FALSIFICATION; the WITHIN-DOMAIN protein program is EXHAUSTED as a
+  coherence test. v0.7.2 D2 relational line CLOSED; v0.7.3 OPENED = cross-domain transfer DESIGN DRAFT
+  (design/cross_domain_transfer.md; OPEN -- pending Benjamin + advisor; NO build, NO data, NO lock).
+  apparatus scripts/r1_null_probe.py. (pre-reg + RESULT 2026-06-25 step 7.)
 
 NEXT (each PRE-REGISTERED before run; Benjamin chooses order):
 1. [DISCHARGED by steps 3-4] The two step-2 follow-ups are resolved (441-vs-21 convention MOOT --

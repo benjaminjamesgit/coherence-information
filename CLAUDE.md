@@ -58,7 +58,7 @@ Weights are either user-supplied or induced from data:
 - Empirics (v0.6.2): falsifiable win-margin — selective coder compresses 31-49% below the weight-blind
   lossless rate at zero retention cost on coherence-structured sources; saving = 0 at the boundary.
   arith Delta_frac >= WIN_MARGIN=0.20 on iid/Gilbert-Elliott/TCUN substrates (calibrated like T_NOISE).
-- v0.7 (cross-domain / Metacoherence; v0.7.0 D1 + v0.7.1 R1 SHIPPED + tagged `v0.7.1` 2026-06-24; cross-domain VALIDATION still in progress -- D2 next): v0.7.0 D1
+- v0.7 (cross-domain / Metacoherence; v0.7.0 D1 + v0.7.1 R1 SHIPPED + tagged `v0.7.1` 2026-06-24; cross-domain VALIDATION still in progress. **v0.7.2 D2 (Pfam) relational line CLOSED 2026-06-25 as a FALSIFICATION -- unreleased; K_comp = affine(raw MI), a theorem; within-domain coherence-beyond-MI NOT found; see the step-7 entry below. v0.7.3 OPENED = cross-domain transfer DESIGN DRAFT, OPEN.**): v0.7.0 D1
   BUILT + record-corrected (slices 1-3, committed `823928a` + `f1d1da3`; full v0.7 chain `d9eb3b5`..`bbd081c`). D1 generator `cit/data/hsmm_d1.py`
   (seeds 7000..7019); categorical marginal-relative K1-K5 `cit/proxies/categorical.py`; categorical A1/A2/A3
   `cit/ablations/categorical.py`; `cit/induce_cat.py`; R2 + cross-tab `cit/metacoherence.py` (incl.
@@ -166,13 +166,28 @@ Weights are either user-supplied or induced from data:
   ARTIFACT (FALSIFIED) on ALL 3 families** -- a structured-noise surrogate (destroys within-subclade coupling, preserves
   marginals + subclade phylogeny) reproduces/exceeds the real partial (REAL +0.34/+0.18/+0.39 vs surrogate +0.27/+0.22/+0.46,
   z +6.3/-7.3/-11.7). MECHANISM: K_comp ~= raw MI (Spearman +0.99) -- NOT a distinct paradigm; the 'beyond-MI residual' is degenerate
-  noise + shared finite-sample marginal bias. This REFINES R2-edge step-1: 'two genuinely distinct paradigms converge' is REAL but is
-  APC-MIp vs near-raw-MI = the SAME Shannon-plug-in paradigm differing by APC, NOT two philosophies. SURVIVES: MIp coevolution
-  persists across subclades conservation-clean -- the FIELD's standard MI signal re-described, NOT compression-specific coherence.
-  CONCLUSION (pre-reg fork, on DATA): CONCEDE the beyond-MI finding as within-domain noise; the decisive test is CROSS-DISJOINT-DOMAIN
-  TRANSFER with a structured-noise null, NOT another within-domain proxy (K_pred WRONG -- within one domain everything collapses to
-  MIp + shared bias). apparatus scripts/r1_null_probe.py. The D2 KxA grid / family-lock / M5-R2 runs stay HELD; next = Benjamin's call
-  (cross-domain transfer test / D3). Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7; foundations design/relational_edge_w.md + relational_formalism.md.)
+  noise + shared finite-sample marginal bias. **STEP 7 = D2 RELATIONAL LINE CLOSED AS A FALSIFICATION (2-agent adversarial verify:
+  bit-exact from-scratch reimplementation + adversarial break-search; both confirm).** (1) THEOREM: K_comp = N_eff*(raw MI) - KT_penalty,
+  an EXACT algebraic identity (verified <=7e-12; OLS R^2 0.987-0.994, slope/N_eff 1.02-1.06, Spearman +0.99) -> K_comp is NOT a distinct
+  estimator. The briefed '-200*log2 N' penalty is the right SHAPE but ~3x too large (it assumes the 440-df asymptote; the 441-cell joint is
+  ~62% EMPTY, so the offset is occupancy-set ~-720 bits -- CORRECTED against data, not transcribed). (2) RE-RETRACT step-6 narrowing-(ii):
+  the 'K_comp genuinely DISTINCT' reading is ITSELF wrong -- the '+0.43 beyond APC-MIp' was JUST the APC background (K_comp~=rawMI;
+  APC-MIp=rawMI-background), the '+0.34 beyond RAW MI' was the marginal-bias artifact; BOTH step-6 framings (redundant AND distinct) are
+  superseded -> ONE Shannon-plug-in family. (3) R2-edge convergence ILLUSORY: headline Spearman(K_MI,K_comp) +0.54/+0.74 = Spearman(rawMI,
+  rawMI-APC); residual after removing raw MI from BOTH arms is NEGATIVE -0.15/-0.45 -> no second paradigm underneath. (4) P4 ('compression
+  distinct from information') UNSUPPORTED in D2 (the MDL edge proxy collapses to MI for a fixed finite alphabet; may hold for D1's
+  non-analytic zstd/LZ, but untested by an MI-independent estimator in D2). ARC LEDGER -- FALSIFIED/illusory: R2-edge convergence,
+  K_comp-as-distinct, P4-in-D2, any coherence-beyond-MI in proteins. SURVIVES: the relational FORMALISM (admissible, a T2 result -- but
+  sigma-induction is a rank no-op so the I_w_rel/C_rel weight MAGNITUDES stay UNTESTED); the node-w falsification; M5 standard-MI->contact
+  AUROC ~0.80; R1 deflated ('MIp coevolution replicates across phylo-independent subclades, conservation-clean' = the FIELD's standard MI
+  signal re-described, NOT compression-specific). NET: D2 recovered the field's pairwise-MI coevolution construct and NOTHING beyond it --
+  a clean 'vulnerable in the right way' FALSIFICATION; the WITHIN-DOMAIN protein program is EXHAUSTED as a coherence test. The non-circular
+  claim (metacoherence = a TRANSMISSIBLE pattern across DISJOINT-prior domains, a property of the MAP between datasets) is untouched and is
+  the next test: CROSS-DISJOINT-DOMAIN TRANSFER with a structured-noise null, NOT another within-domain proxy (K_pred WRONG -- within one
+  domain everything collapses to MIp + shared bias). **v0.7.2 D2 relational line CLOSED; v0.7.3 OPENED = cross-domain transfer DESIGN DRAFT
+  (design/cross_domain_transfer.md; OPEN -- architecture / domain-pair / 'what counts as transmit' / the multi-scale dependency all pending
+  Benjamin + advisor; NO build, NO data, NO lock).** apparatus scripts/r1_null_probe.py. The D2 KxA grid / family-lock / M5-R2 runs stay HELD.
+  Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7; foundations design/relational_edge_w.md + relational_formalism.md + cross_domain_transfer.md.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -310,10 +325,19 @@ follow-ups are DISCHARGED (441-vs-21 convention MOOT -- scalar edge weight; I vi
 S7/S8 EVIDENCE (Benjamin rules): raw-I base favored (sum MIp NEGATIVE, ~60% edges MIp<0) + sum-I normalizer favored (C_rel
 0.57/0.59 in [0,1]). c1/c3 RULED (raw-I base + sum-I; c-merge deferred). R1-EDGE = PRIMARY signature: PILOT PASS on 3 families incl.
 the clean-tree PF00348 (conservation-clean K_MI arm). STEP-6 NULL-PROBE (adversarially verified) FALSIFIED K_comp's beyond-raw-MI
-persistence as a MARGINAL-BIAS ARTIFACT (all 3 families; K_comp ~= raw MI Spearman +0.99 -> NOT a distinct paradigm; refines R2-edge's
-'distinct paradigms' framing). SURVIVES = MIp coevolution persists across subclades conservation-clean (the field's standard MI
-re-described, NOT compression-specific). CONCLUSION (pre-reg fork): CONCEDE the beyond-MI finding as within-domain noise; the decisive
-test is CROSS-DISJOINT-DOMAIN TRANSFER, NOT another within-domain proxy. NEXT = Benjamin's call (cross-domain transfer / D3). D2
+persistence as a MARGINAL-BIAS ARTIFACT (all 3 families). STEP 7 = D2 RELATIONAL LINE CLOSED AS A FALSIFICATION (2-agent adversarial verify:
+bit-exact reimplementation + break-search): THEOREM K_comp = N_eff*(raw MI) - KT_penalty, an EXACT identity (<=7e-12; R^2 0.987-0.994,
+slope/N_eff ~1.0-1.06, Spearman +0.99) -> K_comp NOT a distinct estimator (the briefed -200*log2 N penalty is occupancy-set ~-720, CORRECTED
+against data); narrowing-(ii) RE-RETRACTED (the 'K_comp distinct' reading was JUST the APC background; ONE Shannon-plug-in family); R2-edge
+convergence ILLUSORY (headline = Spearman(rawMI, rawMI-APC); residual after removing raw MI from BOTH arms NEGATIVE -0.15/-0.45 -> no second
+paradigm); P4 ('compression distinct from information') UNSUPPORTED in D2 (the MDL edge proxy collapses to MI for fixed finite alphabet; may
+hold for D1's non-analytic zstd/LZ). ARC LEDGER -- FALSIFIED/illusory: R2-edge convergence, K_comp-as-distinct, P4-in-D2, any
+coherence-beyond-MI in proteins; SURVIVES: the relational FORMALISM (admissible T2 -- weight MAGNITUDES untested, sigma-induction a rank
+no-op), the node-w falsification, M5 standard-MI->contact AUROC ~0.80, the deflated R1 (the field's standard subclade-replicated MI
+coevolution, conservation-clean). NET: D2 recovered the field's pairwise-MI coevolution construct and NOTHING beyond it -- the WITHIN-DOMAIN
+protein program is EXHAUSTED. The decisive test is CROSS-DISJOINT-DOMAIN TRANSFER with a structured-noise null, NOT another within-domain
+proxy. **v0.7.2 D2 relational line CLOSED; v0.7.3 OPENED = cross-domain transfer DESIGN DRAFT (design/cross_domain_transfer.md; OPEN --
+architecture / domain-pair / 'what counts as transmit' / multi-scale dependency pending Benjamin + advisor; NO build/data/lock).** D2
 grid/family-lock/M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
