@@ -2260,3 +2260,117 @@ collapse (AUROC 0.941, matching my 0.935/0.953), so nominal-strength matching al
 the realization-broken control; that control (mine) localizes the full-T residual to the SHARED realization (0.47
 chance). Coordinate-free invariants only; numpy-only; across-latent ensemble null. NO pin/constant VALUE changed;
 nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2c PHASE 2 / D-cal-3 PRE-REGISTRATION: the WIRING test -- does the higher-order TOPOLOGY transmit coordinate-free when the strength channel is CLOSED (nominal AND realized)?
+
+**What this is.** Dated, append-only PRE-REGISTRATION (committed + pushed BEFORE the run). Step 2c showed the
+coordinate-free "escape" rode the coupling-STRENGTH DISTRIBUTION (nominal + realized, via the shared latent
+realization), NOT the wiring -- and the dcal2 topologies were ISOMORPHIC (6 disjoint triangles) so coordinate-free
+WIRING transmission was UNTESTABLE. D-cal-3 closes the strength channel and varies the topology NON-isomorphically,
+to test the corpus-central object (the WIRING / recursive structural reinforcement) directly. Synthetic calibration
+only; numpy + canonical cit/information.py (reused via dcal2); coordinate-free (permutation-invariant) invariants
+only; across-latent ENSEMBLE null. NO real-domain data, NO metacoherence claim, NO lock.
+
+**QUESTION.** Does the higher-order WIRING transmit COORDINATE-FREE when the strength-profile channel is CLOSED
+(both the nominal strength multiset AND the realized per-edge weight distribution)?
+
+**CONSTRUCTION (scripts/dcal3.py).** Reuse the dcal2 encoders + W_HO machinery (F=30, K=8, A1=12/A2=10, MASS=0.7,
+12 latents 7000-7011, T=50000, across-latent ensemble null).
+  - VARY the TOPOLOGY non-isomorphically. Per latent draw a higher-order hypergraph with a FIXED count K_H=6
+    triples but a RANDOM OVERLAP / motif structure (a per-latent random mix of DISJOINT, CHAINED [share one
+    vertex in a path], and STAR [share a hub vertex] triples) so the isomorphism class (motif/cycle/Betti
+    profile) DIFFERS across latents. Same wiring within a latent (both encoders); different across latents.
+    VERIFIED non-isomorphic in the smoke (per-latent motif-count vectors differ).
+  - CLOSE the STRENGTH channel by a DETERMINISTIC coupling. At every planted triple set c = (fa + fb) % K
+    deterministically (fa, fb uniform iid). Population interaction-information II(a;b;c) = log2 K for EVERY
+    hyperedge in EVERY latent, so the realized W_HO edge-weight multiset is matched across latents at the
+    REALIZED level, not just nominally. This is the step-2c lesson: matching NOMINAL strengths alone LEAKS via
+    the shared realization (fixed-strength control: higher-order stayed 0.94, realization-broken -> 0.47); a
+    deterministic coupling makes the realized weights realization-INDEPENDENT, closing the channel. The strength
+    multiset is thus trivially identical (all hyperedges == log2 K), so a strength-reading invariant must give
+    ~chance, leaving the TOPOLOGY (which features couple, the motif structure) as the ONLY coordinate-free signal.
+  - All features marginally uniform; the two encoders disjoint (A1=12 / A2=10); generic statistics matched
+    real-vs-null < 0.02 (per-feature marginal TV, entropy-rate rel-diff).
+
+**INVARIANTS (coordinate-free, permutation-invariant, numpy-only).** The step-2b topological suite (H0 barcode,
+Betti-1 curve, triangle distribution [min/geo], eigenvalue spectrum) PLUS a GRAPHLET / MOTIF census of the
+thresholded W_HO graph -- a sorted (permutation-invariant) small-subgraph count vector (e.g. degree histogram +
+triangle / path / star / wedge counts) -- the most WIRING-sensitive coordinate-free invariant. MATCH = L2 distance
+between max-normalized invariant vectors. Separation = AUROC over 12 real + 132 null cross-pairs.
+
+**READOUT.** Higher-order coordinate-free AUROC per invariant + the best. BASELINES: triangle-min (the strength
+reader -- MUST be ~chance here = closure confirmation) and matrix-with-correspondence (the ceiling, with the
+shared feature index = horn 2). The spectrum/H0/motif invariants are now TOPOLOGY readers (strength is constant).
+
+**SMOKE GATES (verified before the official run; AMEND append-only + push if ANY fails).**
+  (i)   hypergraphs NON-isomorphic: per-latent motif-count vectors differ across latents.
+  (ii)  strength channel CLOSED: triangle-min (sorted weight multiset) AUROC ~chance (<=0.65) in the SHARED-
+        realization transmission setting (NOT the realization-broken setting -- the real pair shares the latent,
+        so closure must hold there). This is the load-bearing gate; if it leaks, amend the construction (e.g.
+        share fa,fb sequences across latents so the realized weights are bit-identical) before the official run.
+  (iii) perm-invariance of every invariant exact (<1e-9).
+  (iv)  matrix-with-correspondence ceiling reproduced (high AUROC -- the structure IS present with correspondence).
+
+**FORK (pre-committed; read off the official run).**
+  - ANY coordinate-free invariant AUROC > 0.90 WITH the strength channel closed (triangle-min ~chance) -> the
+    higher-order WIRING transmits coordinate-free, beyond generic AND beyond the strength channel -> a GENUINE
+    pincer escape for the corpus-central recursive structure -> metacoherence of the WIRING is potentially
+    well-posed; the coordinate-free motif/topology invariant is the real-domain transmission metric.
+  - ALL coordinate-free invariants ~chance (while the ceiling stays high) -> the higher-order WIRING does NOT
+    transmit coordinate-free -> the CORRESPONDENCE HORN HOLDS for the recursive structure; only distributional
+    (strength) summaries escape -> a SHARP NEGATIVE: higher-order metacoherence needs correspondence-discovery.
+  - INTERMEDIATE (best in (0.65,0.90]) -> partial; no clean branch; report honestly.
+
+**DISCIPLINE.** Synthetic only; coordinate-free / numpy-only; strengths MATCHED across latents (the whole point);
+across-latent ensemble null; pre-reg append-only; nothing in data/ committed; SMOKE-test (esp. verify the strength
+channel is closed) + honest amend BEFORE the official run; Phase-1 push precedes this Phase-2 run; INDEPENDENTLY
+verify the load-bearing AUROCs from scratch before recording. NO real-domain data, NO metacoherence claim, NO lock.
+ASCII, append-only.
+
+### 2026-06-25 -- v0.7.3 D-cal-3 SMOKE-TEST AMENDMENT (append-only): the strength channel does NOT close with a plain deterministic coupling (realized weight is ENTANGLED with the wiring); CLOSED via GF(8) ORTHOGONAL sources (exact pairwise balance) + a shuffled base (entropy-rate match) + WL-distinct wiring selection (non-isomorphism). NO fork threshold changed.
+
+**What this is.** Dated, append-only SMOKE amendment to the D-cal-3 pre-registration above (committed + pushed
+BEFORE the official run, per the pre-registered smoke-amend gate). The smoke (T=10000, 6 latents) surfaced a
+CASCADE of construction confounds; each was fixed honestly, none by tuning the FORK (the >0.90 / <=0.65 decision
+rule is UNCHANGED -- the amendments change only the CONSTRUCTION to satisfy the pre-registered closure gate (ii)).
+
+**Confound 1 -- a plain deterministic coupling does NOT close the strength channel.** The pre-reg construction
+(deterministic c=(src1+src2)%K, PER-LATENT sources) FAILED gate (ii): triangle_min AUROC 0.867 (want <=0.65), even
+though sink-determinacy = exactly 3.0 bits. Diagnosis: the deterministic coupling fixes the POPULATION II (= log2 K)
+but the finite-sample II ESTIMATE leaks via the source-pair realization, shared between a latent's two encoders
+(the step-2c shared-realization mechanism). The realized weight multiset is ENTANGLED with the wiring -- each
+triangle's weight attaches to its source-pair, which IS the topology.
+  - AMENDMENT 1a (global RANDOM sources) made closure WORSE (triangle_min 0.950): per-pair weights become stable
+    GLOBAL fingerprints that identify the wiring. Confirms the entanglement: closure needs every coupling to have
+    EXACTLY equal realized weight.
+  - AMENDMENT 1b (GF(8) ORTHOGONAL sources -- ADOPTED). source_p = u XOR (alpha_p . v) over GF(8), alpha_p the 8
+    elements {0..7}. For ANY pair the 2x2 map [[1,alpha_p],[1,alpha_q]] has det = alpha_p XOR alpha_q != 0 ->
+    invertible -> (B_p,B_q) EXACTLY uniform -> II(B_p; B_q; B_p XOR B_q) = exactly 3 bits for EVERY pair. All
+    triangles interchangeable -> triangle_min multiset identical across latents -> STRENGTH CHANNEL CLOSED even
+    through the encoder (smoke triangle_min 0.417 ~ chance, real 0.049/null 0.044). The sink uses GF(8) addition
+    (XOR). M_GLOBAL = 8 (the 8 GF(8) multipliers).
+
+**Confound 2 -- the periodic base broke generic equality.** The (u,v) enumeration was periodic (period 64) ->
+source features temporally structured (low entropy rate) while noise features iid (high) -> entropy-rate rel-diff
+0.296, FAILING gate (iv). FIX (AMENDMENT 2): SHUFFLE the balanced base (shared seed) -> sources temporally iid
+(full entropy rate, matched to noise) while EXACT pairwise balance is preserved (each combo count = Teff/64).
+Fixed: entropy-rate rel-diff 0.0044; marginal TV 0.0221 (<0.02 at full T -- Teff=49984, ~sqrt(5) tighter).
+
+**Confound 3 -- random wirings collapse into few isomorphism classes.** With K_H=6 triangles over 8 sources, random
+wirings often coincide (gate (i): only 3/6 distinct). A degenerate (isomorphic) null would understate wiring
+transmission. FIX (AMENDMENT 3): select the 12 wirings to be mutually NON-ISOMORPHIC via a Weisfeiler-Leman color-
+refinement signature of the abstract (noise-free) wiring graph. WL is a strong, permutation-invariant ISOMORPHISM
+invariant chosen specifically because it is INDEPENDENT of the 5 tested coordinate-free readouts (no selection bias
+toward spectrum/motif) -- it selects on GROUND-TRUTH structure, the legitimate "different latents = different wiring"
+setup (as D1/D-cal select distinct latent classes). Result: 12/12 WL-distinct wirings (smoke 6/6, 0 isomorphic pairs).
+
+**SMOKE GATES (T=10000, 6 latents) NOW ALL PASS.** (i) non-iso 6/6 WL-distinct (0 iso pairs); (ii) closure
+triangle_min 0.417 ~ chance; (iii) perm-invariance 1.24e-15; (iv) generic equality TV 0.0221 / entropy-rate 0.0044;
+ceiling matrix-corr 1.000 (structure present WITH correspondence). The coordinate-free TOPOLOGY invariants are
+INTERMEDIATE at smoke T (spectrum 0.806, motif_census 0.800, H0_barcode 0.744) -- as in step-2b, smoke T is
+noise-limited; the official T=50000 + 12 latents (12 real + 132 null) determines the FORK.
+
+**Discipline.** Smoke-amend cascade recorded honestly (NOT hidden); NO FORK threshold changed; the amendments make
+the construction satisfy the pre-registered closure gate (ii) (GF(8) orthogonal = exact strength closure), fix
+generic equality (shuffle), and ensure genuine non-isomorphism (WL, bias-free). Apparatus scripts/dcal3.py committed
++ pushed BEFORE the official run. NO pin/constant VALUE changed; nothing in data/ committed. ASCII, append-only.
