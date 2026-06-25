@@ -7,7 +7,9 @@
 > transfer-machinery calibration (Sec 8), PRE-REGISTERED + RUN -> MACHINERY VALIDATED (flat measure detects
 > planted pairwise / blind to planted higher-order; flow-object target set). STEP 2 (Sec 4.5 + 8b): THE
 > PINCER (generic-vs-correspondence) + the COORDINATE-FREE shape-invariant escape candidate; D-cal-2
-> pre-registered (does higher-order structure transmit coordinate-free, beyond generic? escape vs pincer-holds).
+> RAN: PAIRWISE transmits coordinate-free CLEANLY (AUROC 1.0); the higher-order eigenvalue-SPECTRUM gave 0.684 but
+> that is a SPECTRAL-INSTRUMENT ceiling (the structure is present at AUROC 1.0 WITH correspondence) -- the PINCER is
+> NOT confirmed; step 2b tests a RICHER coordinate-free (numpy-only topological) invariant for the 0.68 -> 1.0 gap.
 > Opened 2026-06-25 by the D2 (Pfam) relational FALSIFICATION (the within-domain protein program is
 > exhausted as a coherence test: D2 recovered the field's pairwise-MI coevolution construct and nothing
 > beyond it; K_comp = affine(raw MI) is a theorem; see pre_registration.md step-7 and
@@ -174,6 +176,15 @@ shape invariant beat a structured-noise null? That is D-cal-2 (pre_registration.
 KNOWN RISK (smoke-test gated): the eigenvalue spectrum may itself be too GENERIC (random graphs of equal size
 share spectral bulk -> null match high). If so, escalate to a richer coordinate-free invariant (persistent
 homology) and record the escalation. D-cal-2 is calibration only -- synthetic, no real-domain data.
+WHAT THE RUN SHOWED (2026-06-25, corrected): exactly this known risk fired -- the higher-order eigenvalue spectrum
+was too generic (AUROC 0.684), but a diagnostic established the higher-order STRUCTURE is fully present and
+transmits at AUROC 1.000 WITH correspondence (so the 0.684 is a SPECTRAL-INSTRUMENT ceiling, NOT a structural
+pincer; the pincer is NOT confirmed). The dichotomy above is therefore SHARPENED: it is NOT "escape vs pincer
+holds" in general, but "can a RICHER coordinate-free invariant recover the structure that IS present (1.0 with
+correspondence)?" -- escape if some coordinate-free invariant > 0.90; correspondence-horn-HOLDS if all
+coordinate-free invariants cap near the spectral 0.684 despite the 1.0 with-correspondence ceiling. (Note: the
+1.0 ceiling USES the correspondence = horn 2; coordinate-free invariants must recover it WITHOUT.) Step 2b tests
+this with a numpy-only topological invariant suite (no PH library needed).
 
 ---
 
@@ -323,3 +334,19 @@ vectors). Across-latent ENSEMBLE null (the D-cal lesson). DECISIVE readout (b): 
 match real >> null (the pincer ESCAPE) or real ~= null (the pincer HOLDS -- the honest descriptive landing)?
 Full pre-reg + thresholds + the smoke-test-and-amend protocol in pre_registration.md (dated 2026-06-25 D-cal-2
 entry). Synthetic calibration only; coordinate-free invariants only; NO real-domain data, NO flow object, NO lock.
+
+RESULT + CORRECTION (2026-06-25; pre_registration.md D-cal-2 RESULT + RESULT CORRECTION entries). (a) PAIRWISE
+positive control AUROC 1.000 -- a coordinate-free eigenvalue-spectrum invariant transmits pairwise topology with
+NO correspondence (perm-invariance exact to 2e-15; generic statistics matched < 0.02). So the CORRESPONDENCE horn
+is dodgeable in principle for pairwise structure (what D-cal could not show). (b) HIGHER-ORDER eigenvalue-spectrum
+AUROC 0.684 -- but this is a coordinate-free SPECTRAL-INSTRUMENT ceiling, NOT a structural finding: an independent
+diagnostic shows the higher-order STRUCTURE transmits PERFECTLY when compared element-wise WITH correspondence
+(W_HO matrix aligned by feature index, AUROC 1.000; encoded-vs-latent-truth 1.000) -- the structure is intact and
+faithfully encoded; the spectrum merely DISCARDS the topology (which features participate in which triple), keeping
+only the generic strength multiset. So the PINCER is NOT confirmed for higher-order and the genericity horn is NOT
+established; the question is OPEN with the coordinate-free INSTRUMENT as the limiter (the 1.0 ceiling is achieved
+WITH correspondence = horn 2). NEXT (step 2b Phase 2): a RICHER coordinate-free TOPOLOGICAL invariant (H0 barcode /
+Betti-1 curve / triangle-weight distribution -- numpy-only, NO persistent-homology library) to test whether the
+0.684 -> 1.000 gap closes (escape bar 0.90). If any coordinate-free invariant > 0.90 -> ESCAPE (pincer dodged for
+higher-order too); if all cap near 0.684 -> the correspondence horn HOLDS for the genuinely-recursive higher-order
+structure (the deep finding). Apparatus scripts/dcal2.py (+ dcal2_topo.py for step 2b).

@@ -2027,3 +2027,50 @@ independently verified from scratch. Records exactly the pre-committed gates + t
 the INTERMEDIATE branch is read off the data (not forced to escape or pincer). NO pin/constant VALUE changed;
 MI / conditional MI via canonical cit/information.py + plug-in joints; numpy + math.lgamma only; NO DCA. Nothing
 in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2b / D-cal-2 RESULT CORRECTION: the 0.684 is a coordinate-free SPECTRAL-INVARIANT ceiling, NOT a structural/pincer finding -- the higher-order STRUCTURE transmits at AUROC 1.000 WITH correspondence
+
+**What this is.** Dated, append-only CORRECTION to the D-cal-2 RESULT entry above. The recorded framing -- "higher-
+order transmits only PARTIALLY (AUROC 0.684, INTERMEDIATE)" -- is MISLEADING: it conflated a lossy coordinate-free
+INSTRUMENT (the eigenvalue spectrum) with a STRUCTURAL/transmission limit. INDEPENDENTLY REPRODUCED (own diagnostic,
+NOT transcribed; reuses scripts/dcal2.py's locked construction over the 12 locked latents at T=50000): the
+higher-order STRUCTURE is fully present and faithfully encoded; the eigenvalue spectrum is the bottleneck. NO
+pin/constant VALUE changed; nothing in data/ committed.
+
+**(a) THE DIAGNOSTIC (three AUROCs on the SAME W_HO interaction-information matrices; real = same-latent dist,
+null = cross-latent dist; 12 real + 132 null).**
+  | comparison | AUROC | real dist | null dist | meaning |
+  | --- | --- | --- | --- | --- |
+  | (i) coordinate-free SPECTRUM (enc1 vs enc2) | 0.684 | 0.248 | 0.349 | the pre-registered invariant -- partial only |
+  | (ii) W_HO MATRIX with CORRESPONDENCE (enc1 vs enc2, aligned upper-tri, Frobenius-normalized L2) | 1.000 | 0.168 | 0.978 | the higher-order STRUCTURE transmits PERFECTLY when aligned by feature index |
+  | (iii) encoded enc1 vs LATENT-TRUTH W_HO with correspondence | 1.000 | 0.670 | 1.288 | the encoding is FAITHFUL to the latent ground truth |
+
+**(b) WHAT THIS CORRECTS.**
+  - The 0.684 is a coordinate-free SPECTRAL-INVARIANT ceiling, NOT "higher-order transmits partially" and NOT a
+    structural or pincer finding. The higher-order structure is INTACT in both encodings (ii = 1.000) and faithful to
+    the latent truth (iii = 1.000); the eigenvalue spectrum simply DISCARDS the topology (which features participate in
+    which triple), keeping only the strength multiset, which is too generic across latents.
+  - The earlier "5-invariant fair-shot" (recorded in the D-cal-2 RESULT) tested ONLY SPECTRAL invariants
+    (eigenvalue-spectrum / sorted-edge variants) -- it correctly established the SPECTRAL ceiling but MISLABELED it as
+    structural. There is a full AUROC-1.0 of structure available to recover.
+  - Therefore the PINCER is NOT confirmed for higher-order, and the GENERICITY horn is NOT established. The question is
+    OPEN with the coordinate-free INSTRUMENT as the limiting factor. The richer coordinate-free invariant (step 2b
+    Phase 2) is the indicated next move, with a QUANTIFIED target: close the 0.684 -> 1.000 gap; escape bar 0.90.
+
+**(c) HONEST NUANCE (kept, not over-claimed).** The (ii)/(iii) AUROC = 1.000 is achieved WITH CORRESPONDENCE -- it
+uses the shared feature index (both synthetic encoders share feature indices). That shared index IS horn 2 of the
+pincer (the correspondence a real cross-domain pair lacks). So the corrected open question is precise: can a
+COORDINATE-FREE (no-correspondence) invariant recover the higher-order structure that is provably present
+(1.000 with correspondence)? The spectrum recovers it only partially (0.684). Whether a RICHER coordinate-free
+invariant closes the gap is genuinely OPEN -- neither the escape (some coordinate-free invariant > 0.90) nor the
+pincer-holds (all coordinate-free invariants capped near 0.684) is established yet. Step 2b Phase 2 tests it.
+
+**(d) PROPAGATION.** The "intermediate/partial" wording is corrected in design/cross_domain_transfer.md (the
+D-cal-2 RESULT in Sec 8b + Sec 4.5), README, CLAUDE.md to: "coordinate-free SPECTRAL ceiling (0.684); the
+higher-order structure is present at AUROC 1.0 WITH correspondence; the coordinate-free instrument is the limiter;
+the pincer is NOT confirmed; a richer coordinate-free invariant is the indicated next test."
+
+**Discipline.** CORRECTION record; independently reproduced (own diagnostic, advisor numbers NOT transcribed); the
+construction is the locked scripts/dcal2.py. Corrects an over-/mis-stated interpretation, NOT a number (the 0.684
+stands; its MEANING is corrected). NO pin/constant VALUE changed; MI/conditional MI via canonical cit/information.py;
+numpy only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.
