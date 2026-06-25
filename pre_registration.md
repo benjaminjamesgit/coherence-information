@@ -1967,3 +1967,63 @@ this is committed + pushed (sec 8). SYNTHETIC only; COORDINATE-FREE (permutation
 across-latent ENSEMBLE null (NOT time-bootstrap); NO real-domain data, NO flow object, NO metacoherence claim,
 NO lock. NO pin/constant VALUE changed; raw MI / conditional MI via canonical cit/information.py + plug-in joints;
 numpy + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2 / D-cal-2 RESULT: coordinate-free transfer WORKS for pairwise (AUROC 1.00) but higher-order transmits only PARTIALLY (AUROC 0.68, INTERMEDIATE) -- neither a clean escape nor a clean pincer; persistent-homology escalation DEFERRED
+
+**What this is.** Dated, append-only RESULT for the D-cal-2 pincer-escape test pre-registered above. Apparatus
+scripts/dcal2.py (numpy + canonical cit/information.py; reuses cit/data/hsmm_d1.py). SMOKE TEST (T=10000, 6
+latents) VALIDATED the construction + apparatus and found NO confound requiring an amendment (the one smoke
+miss -- generic-equality TV 0.024 > 0.02 -- was a low-T artifact that resolved at T=50000, TV 0.010); the
+official run is T=50000, 12-latent ensemble (12 real pairs + 132 null cross-pairs). Independently verified by a
+from-scratch reimplementation of the construction + invariants + AUROC. NO pin/constant VALUE changed; nothing
+in data/ committed.
+
+**(a) RESULT (T=50000; all validity gates pass; the higher-order readout is INTERMEDIATE).**
+  | gate | numbers | verdict |
+  | --- | --- | --- |
+  | construction sanity | latent pairwise-module MI 0.20..2.00 (graded); within-triple pairwise MI max 0.0010 (~0); I(triple;regime) 0.43..1.31 bits (high-r > 0.5); strength profiles vary across latents; W_HO max on pairwise pairs 0.034 << on triple pairs 1.05 | PASS |
+  | (a) PAIRWISE positive control | AUROC_pairwise = 1.000 (real spectrum-dist 0.046 vs null 0.748) | PASS (>0.90) |
+  | (b) HIGHER-ORDER (decisive) | AUROC_HO = 0.684 (real 0.249 vs null 0.349) | INTERMEDIATE (0.65 < 0.684 <= 0.90) |
+  | (c) permutation-invariance | relabel enc2 features -> pairwise spectrum L2 dist 2.1e-15 | PASS (<1e-9) |
+  | (d) null + generic equality | per-feature marginal TV 0.0100, order-1 entropy-rate rel-diff 0.0026 | PASS (<0.02) |
+
+**(b) INTERPRETATION (the FORK outcome -- a NUANCED, honest landing).**
+  - (a) PASSES PERFECTLY: a COORDINATE-FREE (permutation-invariant) shape invariant -- the eigenvalue spectrum
+    of the pairwise-MI matrix -- transmits the PAIRWISE coupling topology across two disjoint-alphabet encoders
+    with NO correspondence (AUROC 1.000, perm-invariance exact to 2e-15). So the PINCER's correspondence horn
+    (horn 2) IS dodgeable in principle: substrate-specific pairwise structure can be compared cross-encoding
+    without a feature map. This is a genuine positive (it is what D-cal could not show -- D-cal needed the shared
+    feature index).
+  - (b) is the DECISIVE question and the answer is INTERMEDIATE, not a clean branch: the HIGHER-ORDER coupling
+    profile transmits only PARTIALLY coordinate-free (AUROC 0.684 -- above chance 0.5, so there is a real weak
+    signal, but far below the 0.90 escape bar and far below the pairwise 1.000). It is NOT the clean ESCAPE
+    (would need > 0.90) and NOT the clean PINCER-HOLDS (would need <= 0.65). Smoke (T=10000) gave AUROC_HO 0.589;
+    the rise to 0.684 at 5x the data shows part of the weakness was estimation noise masking a real (but weak)
+    higher-order coordinate-free signal -- the W_HO interaction-information matrix is intrinsically noisier and
+    lower-magnitude than the pairwise-MI matrix.
+  - ROBUSTNESS of the partial ceiling (fair-shot check, recorded BEFORE concluding): at smoke T, FIVE feasible
+    coordinate-free higher-order invariants were compared -- the pre-registered normalized W_HO eigenvalue
+    spectrum (0.589) was the BEST; unnormalized spectrum 0.489, normalized sorted edge-weights 0.583,
+    unnormalized edge-weights 0.500, top-8 eigenvalues 0.500. No feasible (non-persistent-homology) invariant
+    materially beat the pre-registered one, so the partial-transmission ceiling is NOT an artifact of a poor
+    feasible invariant choice.
+
+**(c) THE PINCER STATUS + the DEFERRED escalation.** The escape is REAL for pairwise structure and PARTIAL (not
+clean) for higher-order via the feasible SPECTRAL invariant. The pre-registered escalation -- a richer
+coordinate-free invariant (PERSISTENT HOMOLOGY barcode of the coupling complex) -- is the path to test whether
+higher-order can be pushed from partial (0.68) into the escape regime (> 0.90). It is DEFERRED / HELD: it needs
+a persistent-homology library (none installed; scipy absent) or a from-scratch Vietoris-Rips build -- a separate
+heavy step, Benjamin's call. So D-cal-2's landing: the COORDINATE-FREE route is VIABLE (pairwise transmits
+coordinate-free, cleanly), the HIGHER-ORDER question is OPEN at INTERMEDIATE (partial transmission via spectral
+invariants; PH is the next probe), and the PINCER is NOT cleanly escaped NOR cleanly confirmed at this step.
+
+**(d) SCOPE / WHAT THIS IS NOT.** SYNTHETIC calibration only; COORDINATE-FREE (permutation-invariant) invariants
+only; across-latent ENSEMBLE null. NO real-domain data, NO flow object, NO metacoherence claim, NO lock. The
+higher-order escape (PH) and any real disjoint-prior domain pair remain gated to Benjamin + advisor. HOLD.
+
+**Discipline.** RESULT record. Pre-reg committed + pushed BEFORE this run (sec 8); smoke-test validated the
+construction (no amendment needed -- the only smoke miss was a low-T artifact that resolved at T=50000);
+independently verified from scratch. Records exactly the pre-committed gates + the fair-shot variant diagnostic;
+the INTERMEDIATE branch is read off the data (not forced to escape or pincer). NO pin/constant VALUE changed;
+MI / conditional MI via canonical cit/information.py + plug-in joints; numpy + math.lgamma only; NO DCA. Nothing
+in data/ committed (gitignored). Append-only, ASCII.
