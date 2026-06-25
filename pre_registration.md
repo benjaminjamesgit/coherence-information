@@ -1827,3 +1827,48 @@ threshold-tune-to-pass: a wrong null MODEL (time-bootstrap on one latent) replac
 ensemble; the construction sanity + positive-control strength were already passing. SYNTHETIC only; FLAT measure
 only; NO real-domain data, NO flow object. NO pin/constant VALUE changed; raw MI via canonical cit/information.py;
 numpy + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 1 / D-cal RESULT: transfer machinery VALIDATED; the flat measure detects planted PAIRWISE structure across disjoint vocabularies and is BLIND to planted PURE-HIGHER-ORDER structure (the flow-object target is set)
+
+**What this is.** Dated, append-only RESULT for the D-cal calibration pre-registered above (+ the readout-fix
+amendment). Apparatus scripts/dcal.py (numpy + canonical cit/information.py raw MI; reuses cit/data/hsmm_d1.py
+for the latent regime path). The Phase-1 pre-reg AND the readout-fix amendment + corrected apparatus were both
+committed + pushed BEFORE this official run (sec 8). Independently verified by a from-scratch reimplementation
+(separate transfer/encode/latent code, permitted imports only; all seven readout numbers reproduced to 3-4
+decimals -- the construction is deterministic). NO pin/constant VALUE changed; nothing in
+data/ committed (data/dcal_verdict.json gitignored).
+
+**(a) RESULT (T=50000, 12-latent ensemble = 12 real pairs + 132 null cross-pairs; all four pre-committed gates
+PASS).**
+  | gate | numbers | verdict |
+  | --- | --- | --- |
+  | construction sanity | latent P-pairs MI 0.16..1.62 bits (graded); latent H-pairs MI max 0.0009 (~0); I(triple;regime) 1.58/0.92/1.58/1.58 bits | PASS |
+  | (a) P positive control | real_P mean +0.993 (min +0.971, p2.5 +0.974) vs null_P mean +0.058 (std 0.43, p95 +0.727); min(real_P) > null_P p95; separation +0.935 | PASS |
+  | (b) H gap (flat measure BLIND) | real_H mean +0.150 ~= null_H mean +0.043 (\|diff\| 0.107 < 0.15; real_H inside null_H [p5,p95]=[-0.41,+0.46]); real_P - real_H = +0.842 | PASS |
+  | (c) null + generic equality | null_P mean +0.058 (<0.2), null_H mean +0.043 (<0.2); per-feature surface-marginal TV 0.0107 (<0.02), order-1 entropy-rate rel-diff 0.0024 (<0.02) | PASS |
+
+**(b) INTERPRETATION (the FORK outcome).** (a)+(b)+(c)+sanity ALL hold -> the pre-registered fork fires
+"MACHINERY VALIDATED". The FLAT pairwise transfer measure (i) DETECTS a planted GRADED PAIRWISE coalition
+across two disjoint-alphabet (A=12 vs 10), independently-scrambled stochastic encoders -- real_P +0.993 with the
+SAME encoders giving null_P ~0, so the agreement is the shared LATENT, not an encoder artifact or a shared
+surface statistic (generic statistics matched real-vs-null to < 0.02); and (ii) is BLIND to a planted
+PURE-HIGHER-ORDER (parity-triple) coalition that demonstrably DOES carry the shared latent at third order
+(I(triple;regime) ~ 1.0-1.6 bits) -- real_H is statistically indistinguishable from the independent-latent null.
+HONEST CAVEAT (flagged by the independent verifier): real_H +0.150 sits MODESTLY ABOVE null_H's center +0.043
+and uses most of the 0.15 indistinguishability budget; it is well WITHIN null_H's [p5,p95]=[-0.41,+0.46] chance
+band (so "blind" in the indistinguishable sense, NOT real_H == 0). The small positive residual is consistent
+with chance at this pair-count (12 H-pairs); it is not a reliable higher-order signal, and a more-powered
+H-readout (more triples) would tighten it -- but it passes the pre-committed gate as specified.
+This is the cross-domain analog of D1 (a known-ground-truth calibration of the instrument, NOT a metacoherence
+claim): it validates the transfer MACHINERY and SETS THE BAR the future flow object (design/cross_domain_transfer.md
+Sec 4.2) must clear -- transmit H, i.e. drive real_H >> null_H where the flat measure cannot.
+
+**(c) SCOPE / WHAT THIS IS NOT.** SYNTHETIC calibration only; FLAT/pairwise transfer measure only; NO real-domain
+data, NO flow object, NO metacoherence claim. The flow object is the separate next THEORY problem (Sec 4.2),
+gated to Benjamin + advisor. The validated machinery is a NECESSARY instrument check, not evidence of
+cross-domain coherence transmission (that requires the flow object + a real disjoint-prior pair). HOLD.
+
+**Discipline.** RESULT record. Pre-reg + readout-fix amendment + apparatus committed + pushed BEFORE this run
+(sec 8). Records exactly the pre-committed gates; the fork outcome is read off the data. NO pin/constant VALUE
+changed; raw MI via canonical cit/information.py; numpy + math.lgamma only; NO DCA; NO real-domain data, NO flow
+object, NO lock. Nothing in data/ committed (gitignored). Append-only, ASCII.
