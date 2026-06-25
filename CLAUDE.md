@@ -135,9 +135,13 @@ Weights are either user-supplied or induced from data:
   vs 0.131/0.086; 0.214 vs 0.160/0.150, ~11x base); and the convergence SURVIVES -- in fact STRENGTHENS -- under the
   conservation-product + burial-product control (partial +0.651 / +0.852 vs raw +0.583 / +0.775), so it is NOT the
   agree-on-conserved/buried-pairs null. Caveat: top-L Jaccard MODEST (0.15/0.24, expected for genuinely distinct estimators);
-  TWO families, no grid, no lock. The edge-valued direction is now supported by cross-paradigm convergence. NEXT relational
-  component = Benjamin's call. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 + capstone.
-  (Spec Section 8.7.)
+  TWO families, no grid, no lock. The edge-valued direction is now supported by cross-paradigm convergence. RELATIONAL BUILD
+  step 2 = edge-w FORMAL-ADMISSIBILITY check PRE-REGISTERED (Phase-1 PUSHED, run HELD): a VERIFICATION (pre-fixed criteria,
+  not a hypothesis test) that edge-w = CIT-on-pair-features is an EXTENSION not a fork -- A boundedness / B Shannon-recovery
+  (w=1 collapse bit-level) / C coarse-graining (Dayhoff-6 Spearman>=0.7) / D monotonicity / E relabel-invariance / F
+  bootstrap-stability>=0.8, both families + estimators; key risk = pair-features OVERLAP (each position in L-1 pairs).
+  Standalone scripts/admissibility_edge.py. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 +
+  capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -259,7 +263,12 @@ RELATIONAL BUILD step 1 RAN + PASSED (apparatus scripts/r2_edge.py): R2-EDGE pre
 K_comp (MDL/KT compression edge coupling), DCA EXCLUDED as Pearlian -> R2-EDGE PASS BOTH families (long-range Spearman +0.542
 PF13354 / +0.745 PF00026 >=0.5; consensus-edge contact precision beats each alone; convergence STRENGTHENS under
 conservation/burial control, partial +0.651/+0.852). Caveat top-L Jaccard modest (0.15/0.24); two families, no grid, no lock.
-Edge-valued direction supported by cross-paradigm convergence; NEXT relational component = Benjamin's call. D2
+Edge-valued direction supported by cross-paradigm convergence. RELATIONAL BUILD step 2 = edge-w FORMAL-ADMISSIBILITY check
+PRE-REGISTERED (Phase-1 PUSHED, run HELD; foundations design/relational_edge_w.md): VERIFICATION (pre-fixed criteria) that
+edge-w = CIT-on-pair-features is an EXTENSION not a fork -- checks A boundedness / B Shannon-recovery (w=1 collapse, bit-level)
+/ C coarse-graining (Dayhoff-6, Spearman>=0.7) / D monotonicity / E relabel-invariance (==1.0) / F bootstrap-stability (>=0.8),
+both families, both estimators; KEY RISK = pair-features OVERLAP (each position in L-1 pairs, not a partition). Standalone
+scripts/admissibility_edge.py. NEXT after = Benjamin's call (R1-edge / M5-edge / graded R3-edge / K_pred). D2
 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
