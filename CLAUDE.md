@@ -136,15 +136,24 @@ Weights are either user-supplied or induced from data:
   conservation-product + burial-product control (partial +0.651 / +0.852 vs raw +0.583 / +0.775), so it is NOT the
   agree-on-conserved/buried-pairs null. Caveat: top-L Jaccard MODEST (0.15/0.24, expected for genuinely distinct estimators);
   TWO families, no grid, no lock. The edge-valued direction is now supported by cross-paradigm convergence. RELATIONAL BUILD
-  step 2 = edge-w FORMAL-ADMISSIBILITY check RAN + PASSED (apparatus scripts/admissibility_edge.py; ADVERSARIALLY VERIFIED by
-  a 6-agent workflow, all numbers reproduced clean-room, estimators bit-exact to saved): edge-w = CIT-on-pair-features is an
-  EXTENSION not a fork -- A boundedness / B Shannon-recovery (0.0 both) / C coarse-graining (Dayhoff-6: K_MI 0.966/0.980,
-  K_comp 0.865/0.845, all >=0.7) / D monotonicity / E relabel-invariance (1.0) / F bootstrap-stability (K_MI 0.993/0.993,
-  K_comp 0.991/0.986, all >=0.8) ALL PASS both families + estimators; the pair-OVERLAP risk did not break any. TWO open formal
-  FOLLOW-UPS flagged (not blockers): (i) check B is algebraically tautological as-coded (recovery confirmed via the canonical
-  cit/information.py funcs, not B's path; rewire B) + the I_w 441-joint-vs-21-marginal weighting convention is unpinned
-  off-boundary; (ii) the overlap/partition-of-unity ACCOUNTING is NOT probed by A-F -> left OPEN. The D2 KxA grid /
-  family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
+  step 2 = edge-w FORMAL-ADMISSIBILITY check RAN + PASSED-AS-CODED but now RETRACTED (by step 3): it verified the WRONG object
+  (edge-w = CIT per-symbol w on the 441-joint pair-symbol, which COLLAPSES to single-source node-w on a merged 441-symbol node,
+  weights joint symbol-VALUES not the RELATION, and is not even shape-admissible vs canonical I_w's 21-symbol source marginal)
+  AND the PASS was TAUTOLOGICAL (check B hardcoded np.ones; the pre-registered pair-OVERLAP risk was never probed). RELATIONAL
+  BUILD step 3 = RETRACT that object + the step-2 PASS + INSTALL the corrected RELATIONAL functional + stress-test (pre-reg
+  `017a7e4` -> RESULT `046a596`; apparatus scripts/relational_formalism_test.py; foundations design/relational_formalism.md).
+  Corrected object weights the RELATION as a SCALAR: I_w_rel = sum_{(i,j) in E} w(i,j) I(X_i;X_j) over the DENSE complete graph
+  (P3), with I the RAW pairwise MI via CANONICAL cit/information.py at w=ones (clean Shannon boundary), w INDUCED from
+  marginal-relative proxies (beta=4.0; the same formal/induced split single-source CIT uses); C_rel = I_w_rel/sum I in [0,1];
+  node-induced c_i with the EXACT HANDSHAKE sum_i c_i = 2 I_w_rel closing the overlap. RESULT = GAP CLOSED both families:
+  stress-test S1-S6 PASS (S1 REAL Shannon recovery via canonical + non-trivial weight response 4878-7498 bits off-boundary; S2
+  non-collapse alpha=w*I ~ 0 at independence, alpha/beta ~ 0.001, vs the retracted merged-node beta=H(X_i,X_j) 1.3-2.0 bits; S3
+  handshake exact <=7e-12 at three weight fields; S4 monotonicity; S5 boundedness; S6 within-Dayhoff relabel-invariance; all
+  tested at w != 1). The two step-2 FOLLOW-UPS are DISCHARGED (441-vs-21 convention MOOT -- scalar edge weight now; I via
+  canonical; overlap closed by the handshake). S7/S8 EVIDENCE (Benjamin rules, NOT decided here): raw-I base favored (sum MIp
+  NEGATIVE, ~60% edges MIp<0 -> MIp base leaves [0,1]) + sum-I normalizer favored (C_rel 0.57/0.59 in [0,1]); c1/c3/c-merge
+  OPEN. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD; next relational component (R1/M5/graded-R3-edge / K_pred) =
+  Benjamin's call. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -267,13 +276,20 @@ K_comp (MDL/KT compression edge coupling), DCA EXCLUDED as Pearlian -> R2-EDGE P
 PF13354 / +0.745 PF00026 >=0.5; consensus-edge contact precision beats each alone; convergence STRENGTHENS under
 conservation/burial control, partial +0.651/+0.852). Caveat top-L Jaccard modest (0.15/0.24); two families, no grid, no lock.
 Edge-valued direction supported by cross-paradigm convergence. RELATIONAL BUILD step 2 = edge-w FORMAL-ADMISSIBILITY check
-RAN + PASSED (apparatus scripts/admissibility_edge.py; foundations design/relational_edge_w.md; ADVERSARIALLY VERIFIED by a
-6-agent workflow -- all numbers reproduced clean-room, estimators bit-exact to saved): edge-w = CIT-on-pair-features is an
-EXTENSION not a fork -- A/B(0.0)/C(Dayhoff-6 K_MI 0.97/0.98, K_comp 0.86/0.84 all>=0.7)/D/E(1.0)/F(0.99 all>=0.8) ALL PASS
-both families + estimators; the pair-OVERLAP risk broke none. TWO open formal follow-ups flagged (not blockers): (i) check B
-tautological as-coded (recovery confirmed via canonical cit/information.py, not B's path) + the I_w 441-vs-21 weighting
-convention unpinned off-boundary; (ii) the overlap/partition-of-unity ACCOUNTING is NOT probed by A-F (left OPEN). NEXT
-relational component = Benjamin's call (resolve I_w convention + overlap-accounting / R1-edge / M5-edge / graded R3-edge / K_pred). D2
-grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
+RAN + PASSED-AS-CODED but RETRACTED by step 3 (it verified the WRONG object -- edge-w = CIT per-symbol w on the 441-joint
+pair-symbol, which COLLAPSES to single-source node-w, weights joint VALUES not the RELATION, fails canonical I_w's 21-symbol
+shape -- AND the PASS was TAUTOLOGICAL: check B hardcoded np.ones, the pair-OVERLAP risk was never probed). RELATIONAL BUILD
+step 3 = RETRACT that object + the step-2 PASS + INSTALL the corrected RELATIONAL functional + stress-test (pre-reg `017a7e4`
+-> RESULT `046a596`; apparatus scripts/relational_formalism_test.py; foundations design/relational_formalism.md). Corrected
+object weights the RELATION as a SCALAR: I_w_rel = sum_{(i,j) in E} w(i,j) I(X_i;X_j) over the DENSE complete graph (P3), I =
+RAW pairwise MI via CANONICAL cit/information.py at w=ones (clean Shannon boundary), w INDUCED from marginal-relative proxies
+(beta=4.0; same formal/induced split as single-source CIT); C_rel = I_w_rel/sum I in [0,1]; node-induced c_i with the EXACT
+HANDSHAKE sum_i c_i = 2 I_w_rel closing the overlap. RESULT = GAP CLOSED both families (S1-S6 PASS: S1 REAL Shannon recovery
+via canonical + non-trivial weight response; S2 non-collapse alpha~0 at independence vs merged-node beta large; S3 handshake
+exact <=7e-12; S4 monotonicity; S5 boundedness; S6 within-Dayhoff relabel-invariance; tested at w != 1). The two step-2
+follow-ups are DISCHARGED (441-vs-21 convention MOOT -- scalar edge weight; I via canonical; overlap closed by the handshake).
+S7/S8 EVIDENCE (Benjamin rules): raw-I base favored (sum MIp NEGATIVE, ~60% edges MIp<0) + sum-I normalizer favored (C_rel
+0.57/0.59 in [0,1]); c1/c3/c-merge OPEN. NEXT relational component = Benjamin's call (rule c1/c3/c-merge / R1-edge / M5-edge /
+graded R3-edge / K_pred). D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
