@@ -1521,3 +1521,27 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 **VERDICT RULE.** The corrected relational functional is an ADMISSIBLE RELATIONAL OBJECT -- the formal GAP CLOSED, overlap ACCOUNTED -- iff S1-S6 ALL pass on both families. S7/S8 are EVIDENCE for Benjamin's c1/c3 rulings, NOT pass/fail. No decision on the open choices (Benjamin rules); no further build; no commits past this Phase-1 pre-registration.
 
 **Discipline.** DESIGN + dated amendment; criteria LOCKED HERE pre-computation; committed + pushed BEFORE the Phase-2 stress-test run (sec 8). TWO families; reuse saved matrices/MIp; canonical `cit/information.py` for I (NO hardcoded-ones reimplementation); numpy + `math.lgamma` only. NO DCA; NO edge-ablation / R1 / R3-edge build, NO grid, NO family-list lock; NO decision past the gap-closure verdict. Nothing in `data/` committed (gitignored). Append-only, ASCII.
+
+### 2026-06-25 -- v0.7.2 D2 (Pfam) RELATIONAL BUILD step 3 RESULT: relational functional I_w_rel is an ADMISSIBLE RELATIONAL OBJECT (S1-S6 PASS both families; the formal GAP is CLOSED)
+
+**What this is.** A dated, append-only RESULT record for the relational-functional stress-test pre-registered immediately above. Apparatus = `scripts/relational_formalism_test.py` (numpy + `math.lgamma`; reuses each family's saved matrix + saved APC-MIp; every raw pairwise I(X_i; X_j) is taken from the CANONICAL `cit/information.py` routines at w = ones -- NO hardcoded-ones reimplementation, the step-2 tautology trap; tested at w != 1). Both pilot families (PF13354, PF00026); eligible pairs |i-j| >= 5; raw-I base. NO pin / constant VALUE changed; nothing in `data/` committed (gitignored).
+
+**(a) RESULT (both families).**
+  | check | criterion | PF13354 | PF00026 |
+  | --- | --- | --- | --- |
+  | S1 Shannon recovery + weight response | \|I_w_rel - sum I\| < 1e-9 at w=1; hand-sum match; != sum I off-boundary | PASS (0.0; resp 5722/4878 bits) | PASS (3.6e-12; resp 7498/6064) |
+  | S2 non-collapse (alpha vs merged-node beta) | low-I alpha/beta < 0.20 AND beta > 1 bit | PASS (low alpha/beta 0.001-0.002, beta 1.5-1.8b; high 0.21-0.30) | PASS (low 0.001, beta 1.3-2.0b; high 0.19-0.20) |
+  | S3 handshake / overlap (sum_i c_i = 2 I_w_rel) | < 1e-9 at w=1, random w, induced w | PASS (<= 1.8e-12) | PASS (<= 7.3e-12) |
+  | S4 monotonicity | single-w perturb = exactly delta*I, 0 inversions | PASS (err 8.8e-13, 0/500) | PASS (err 1.6e-12, 0/500) |
+  | S5 boundedness | C_rel in [0,1], = 1 at w=1 | PASS (1.000000/0.500/0.574) | PASS (1.000000/0.499/0.595) |
+  | S6 relabel / domain-translation invariance | \|dI_w_rel\| < 1e-9 within Dayhoff | PASS (0.0) | PASS (0.0) |
+
+**(b) VERDICT = GAP CLOSED (both families).** S1-S6 ALL pass. The corrected functional is an ADMISSIBLE RELATIONAL OBJECT: (i) Shannon recovery is REAL -- exercised through the canonical `coherence_weighted_*` routines (NOT a hardcoded-ones tautology), AND the functional genuinely RESPONDS to w (I_w_rel - sum I = 4878-7498 bits off-boundary), the two senses the retracted step-2 PASS failed; (ii) it WEIGHTS THE RELATION -- the relational contribution alpha = w*I ~ 0 at independence (alpha/beta ~ 0.001) where the RETRACTED merged-node object beta = H(X_i,X_j) stays large (1.3-2.0 bits), exactly the property the old object LACKED; (iii) the previously-UNPROBED pair-overlap is closed EXACTLY by the handshake sum_i c_i = 2 I_w_rel (residual <= 7e-12 at three distinct weight fields). The formal GAP named in the step-3 retraction is CLOSED on the CORRECT (relational) object.
+
+**(c) EVIDENCE for Benjamin's open rulings (S7/S8; NO pass/fail).**
+  - c3 (BASE): sum raw-I >= 0 (11440 bits PF13354 / 14961 bits PF00026). sum MIp is NEGATIVE (-300 / -438 bits) with ~60% of eligible edges MIp < 0 (17671/29646; 28446/47278). An MIp base would push C_rel OUTSIDE [0,1] -> EVIDENCE FAVORS the recommended RAW-I base (clean classical boundary).
+  - c1 (NORMALIZER): C_rel under sum-I = 0.574 / 0.595 (clean "fraction of coupling retained", in [0,1]); under /|E| = 0.221 / 0.188 bits/edge; under /max-I ~ 5114 / 7643 (not in [0,1]) -> EVIDENCE FAVORS the recommended sum-I normalizer.
+
+**(d) OPEN (NOT decided here).** c1 / c3 / c-merge are Benjamin's rulings (the stress-test INFORMS, does not decide). The next relational component (R1-edge / M5-edge / graded R3-edge / K_pred) is Benjamin's call. This admissibility is established on the CORRECTED relational object and REPLACES the retracted step-2 PASS.
+
+**Discipline.** RESULT record + apparatus commit (`scripts/relational_formalism_test.py`). The Phase-1 pre-registration (above) was committed + pushed BEFORE this run (sec 8, HEAD 017a7e4). NO pin / constant VALUE changed; numpy + `math.lgamma` only; canonical `cit/information.py` for I; NO DCA; NO edge-ablation / R1 / R3-edge build, NO grid, NO family-list lock; NO decision past gap-closure. Nothing in `data/` committed (gitignored). Append-only, ASCII.

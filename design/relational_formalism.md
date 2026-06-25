@@ -229,3 +229,13 @@ THE CORRECTION weights the RELATION (eq. 1), is genuinely relational (property D
 overlap by the exact handshake (eq. 4, the previously-unprobed risk now closed), and has a REAL
 Shannon reduction exercised through the canonical routine (property C). The pre-registered
 stress-test S1-S8 checks these against two families before any claim of admissibility is recorded.
+
+RESULT (2026-06-25 step-3; pre_registration.md): S1-S6 PASS on BOTH families (PF13354, PF00026) --
+the corrected functional is an ADMISSIBLE RELATIONAL OBJECT, the formal GAP CLOSED. Shannon recovery
+is real (via canonical cit/information.py, with a non-trivial weight response: I_w_rel - sum I =
+4878-7498 bits off-boundary), the object VANISHES at independence where the retracted merged-node
+object stays large (property D / S2: alpha/beta ~ 0.001 vs beta 1.3-2.0 bits), and the overlap is
+closed EXACTLY by the handshake (eq. 4 / S3, residual <= 7e-12 at three weight fields). S7/S8
+evidence FAVORS the raw-I base (sum MIp negative; ~60% of eligible edges MIp < 0) and the sum-I
+normalizer (C_rel 0.57/0.59 in [0,1]); c1 / c3 / c-merge remain Benjamin's rulings. Apparatus:
+scripts/relational_formalism_test.py.

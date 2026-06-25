@@ -244,11 +244,22 @@ DONE (verified):
   weighting convention is unpinned off w=1 -- WHERE the edge weight attaches in I_w(X_i;X_j) is
   open; (ii) the overlap / partition-of-unity ACCOUNTING is NOT yet probed. (Recorded at the
   step-2 result commit.)
+- RELATIONAL FUNCTIONAL (step 3, the CORRECTED object): GAP CLOSED -- stress-test S1-S6 PASS BOTH
+  families (S1 REAL Shannon recovery via canonical cit/information.py + non-trivial weight response;
+  S2 non-collapse: relational alpha = w*I ~ 0 at independence (alpha/beta ~ 0.001) where the
+  retracted merged-node beta = H(X_i,X_j) stays large (1.3-2.0 bits); S3 handshake sum_i c_i =
+  2 I_w_rel exact (<= 7e-12) at three weight fields; S4 monotonicity; S5 boundedness; S6
+  within-Dayhoff relabel-invariance; all tested at w != 1). S7/S8 EVIDENCE favors the recommended
+  raw-I base (sum MIp NEGATIVE, ~60% edges MIp<0) + sum-I normalizer (C_rel 0.57/0.59 in [0,1]).
+  REPLACES the retracted step-2 PASS with admissibility of the CORRECT relational object.
+  (pre-reg + RESULT 2026-06-25 step-3; apparatus scripts/relational_formalism_test.py.)
 
 NEXT (each PRE-REGISTERED before run; Benjamin chooses order):
-1. RESOLVE the two admissibility follow-ups: pin the I_w-on-edges weighting convention (441-joint
-   vs 21-marginal) + rewire check B through cit/information.py; and a partition-of-unity /
-   edge-OVERLAP accounting check (each position in L-1 pairs).
+1. [DISCHARGED by step 3] The two step-2 follow-ups are resolved: the 441-joint-vs-21-marginal
+   I_w convention is MOOT (the corrected object weights the SCALAR edge MI, not a 441-joint weight);
+   I(X_i;X_j) is now computed through canonical cit/information.py; and the edge-OVERLAP / partition
+   risk is closed EXACTLY by the handshake identity (S3). REMAINING: Benjamin rules the open choices
+   c1 (normalizer) / c3 (base) / c-merge (node-merge rule) -- stress-test evidence favors sum-I + raw-I.
 2. R1-edge: does high edge-w predict compensatory/coupled substitution (coupling persistence)?
    Conservation-independent. The load-bearing Adaptive-Realism cash-out on edges.
 3. M5-edge: contact-vs-non-contact AUROC across more families; MUST control burial-product
