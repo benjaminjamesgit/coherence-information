@@ -1412,4 +1412,30 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 
 **(f) HARD STOPS.** TWO families; reuse saved matrices + MIp (no refetch / recompute MIp); numpy-only; DENSE estimators only (NO sparse / DCA); NO R1-edge / R3-edge; NO grid; NO family-list lock; nothing in `data/` committed. The Phase-1 pre-registration (this entry) is committed + pushed BEFORE the Phase-2 run (sec 8). Append-only, ASCII.
 
+### 2026-06-25 -- v0.7.2 D2 (Pfam) RELATIONAL BUILD step 1 RESULT: R2-EDGE PASSES on BOTH families (the dense paradigms converge; confound control STRENGTHENS it)
+
+**What this is.** A dated, append-only RESULT record for the R2-edge premise pre-registered immediately above. Apparatus = `scripts/r2_edge.py` (reuses `run_d2_family2.py`'s locked method; K_comp = KT/Krichevsky-Trofimov stochastic-complexity codelength, joint-vs-independent, on the deterministically-recomputed 80%-id reweighted effective counts; `math.lgamma`, numpy-only; APC-MIp REUSED from the saved `.npz`, no recompute). VALIDATION: K_comp returns ~+1674 bits for a perfectly-coupled synthetic pair and ~-27 bits for an independent pair (the KT complexity penalty on the 441-symbol joint drives independent pairs to ~0/negative -- the algorithmic distinction from the plug-in MI). No pin / constant VALUE changed; nothing in `data/` committed (gitignored). NO decision past the premise is taken here.
+
+**(a) RESULT TABLE (thresholds from (c)/(d) above).**
+  | metric | PF13354 (1djc:A) | PF00026 (4y9w:A) |
+  | --- | --- | --- |
+  | (i) Spearman(K_MI,K_comp) all \|i-j\|>=5 | +0.586 | +0.772 |
+  | (i) Spearman LONG-RANGE \|i-j\|>=12 (PASS >= 0.5) | **+0.542** | **+0.745** |
+  | (ii) top-L Jaccard | 0.146 (62/L) | 0.236 (112/L) |
+  | (iii) contact precision K_MI / K_comp / CONSENSUS (base) | 0.131 / 0.086 / **0.242** (0.022) | 0.160 / 0.150 / **0.214** (0.019) |
+  | (iv) confound control raw -> partial(\|cons-prod,burial-prod) | +0.583 -> **+0.651** | +0.775 -> **+0.852** |
+  | (iv) long-range raw -> partial | +0.540 -> +0.610 | +0.748 -> +0.833 |
+  | R2-EDGE PASS (family) | **YES** | **YES** |
+
+**(b) VERDICT = R2-EDGE PASS (both families).** All three (d) conditions hold on BOTH PF13354 and PF00026: (1) long-range Spearman >= 0.5; (2) consensus contact precision >= each estimator alone; (3) survives the conservation/burial control.
+
+**(c) READING.**
+  - The two genuinely-distinct DENSE paradigms (Shannon plug-in MIp vs algorithmic KT/MDL coupling) CONVERGE -- long-range Spearman 0.54 (PF13354) / 0.75 (PF00026), both clearing 0.5.
+  - The convergence is NOT a confound artifact: partialling out pair conservation-product AND burial-product does not merely preserve it, it STRENGTHENS it (+0.583 -> +0.651; +0.775 -> +0.852). So the agreement is on genuine coupling structure, not the trivial "agree on conserved / buried pairs" null (the Sec-2 homogeneous-family trap is cleared).
+  - SUBSTRATE-INFORMATIVE: the CONSENSUS edges (top-L in BOTH) predict PDB contacts BETTER than either estimator alone (0.242 vs 0.131/0.086; 0.214 vs 0.160/0.150; ~11x base) -- cross-paradigm agreement isolates real structure.
+
+**(d) CAVEATS (honest).** (i) top-L Jaccard is MODEST (0.15 / 0.24) -- the estimators rank the full edge set differently in detail; the Spearman reflects BROAD agreement, not near-identical top-L (expected + desirable for genuinely distinct estimators -- near-perfect overlap would mean they are the same method; the consensus-precision win shows the agreement that exists is substantive). (ii) TWO families, no grid, no lock -- a premise check, not the full R2-edge. (iii) DCA stayed EXCLUDED (Pearlian); MIp-high non-contact pairs logged as an R1-edge question, NOT noise.
+
+**Discipline.** RESULT record + apparatus commit (`scripts/r2_edge.py`); the Phase-1 pre-registration (above) was committed + pushed BEFORE this run (sec 8). NO pin / constant VALUE changed; numpy-only; DENSE estimators only (NO DCA); NO R1/R3-edge, NO grid, NO family-list lock; NO decision past the premise. Nothing in `data/` committed (gitignored). Append-only, ASCII.
+
 

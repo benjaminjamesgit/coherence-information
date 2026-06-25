@@ -125,13 +125,17 @@ Weights are either user-supplied or induced from data:
   (B' beat the WEAKER entropy ref +0.091 on PF00026) but the HARDENED phylo bar FAILS. BRANCH ADJUDICATED (Benjamin):
   node-valued w RETIRED (fails the hardened phylo bar BOTH families), EDGE-valued w ADOPTED (corpus-aligned: coupling is a
   DENSE entangled FIELD, not a sparse direct-edge graph; + empirically supported). RELATIONAL BUILD step 1 PRE-REGISTERED
-  (this entry; Phase-1 PUSHED, Phase-2 run HELD): R2-EDGE premise = convergence of TWO distinct DENSE paradigms K_MI
-  (APC-MIp, Shannon plug-in; reuse saved MIp) vs K_comp (MDL/KT compression edge coupling = joint-vs-independent codelength,
-  marginal-relative, numpy `math.lgamma`); DCA/inverse-covariance EXCLUDED as the Pearlian direct-vs-indirect cut the corpus
-  critiques (may return later as a non-adjudicating contrast). R2-EDGE PASS iff Spearman(K_MI,K_comp)>=0.5 long-range AND
-  consensus-edge contact precision >= each alone AND survives the conservation/burial-product control, holding BOTH families
-  (PF13354 + PF00026). Standalone scripts/r2_edge.py. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3
-  (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
+  (`e3e0458` pre-reg -> RESULT this entry; apparatus `scripts/r2_edge.py`): R2-EDGE premise = convergence of TWO distinct
+  DENSE paradigms K_MI (APC-MIp, Shannon plug-in; reuse saved MIp) vs K_comp (MDL/KT compression edge coupling =
+  joint-vs-independent codelength, marginal-relative, numpy `math.lgamma`; validated +1674 bits coupled / -27 independent);
+  DCA/inverse-covariance EXCLUDED as the Pearlian cut the corpus critiques. RESULT = R2-EDGE PASS BOTH families: long-range
+  Spearman(K_MI,K_comp) +0.542 (PF13354) / +0.745 (PF00026) >=0.5; CONSENSUS-edge contact precision BEATS each alone (0.242
+  vs 0.131/0.086; 0.214 vs 0.160/0.150, ~11x base); and the convergence SURVIVES -- in fact STRENGTHENS -- under the
+  conservation-product + burial-product control (partial +0.651 / +0.852 vs raw +0.583 / +0.775), so it is NOT the
+  agree-on-conserved/buried-pairs null. Caveat: top-L Jaccard MODEST (0.15/0.24, expected for genuinely distinct estimators);
+  TWO families, no grid, no lock. The edge-valued direction is now supported by cross-paradigm convergence. NEXT relational
+  component = Benjamin's call. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 + capstone.
+  (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -249,9 +253,11 @@ margin -0.007 CI includes 0; B2 g_pr pass did NOT replicate; winning projection 
 fold-in: MIp 0.698 beats conservation but LOSES to burial 0.716 -> the edge-vs-burial margin is family-dependent. MIXED vs
 the strict rules ('node-fail generalizes' not literally met because B' beat the weaker entropy ref; hardened phylo bar
 fails) -> BRANCH ADJUDICATED (Benjamin): node-valued w RETIRED, EDGE-valued w ADOPTED (corpus-aligned dense coupling field).
-RELATIONAL BUILD step 1 PRE-REGISTERED (Phase-1 PUSHED, run HELD): R2-EDGE premise = convergence of K_MI (APC-MIp) vs
-K_comp (MDL/KT compression edge coupling), DCA EXCLUDED as Pearlian; PASS iff Spearman>=0.5 long-range + consensus-contact-
-precision + survives conservation/burial control, BOTH families; standalone scripts/r2_edge.py. No build past the premise, no
-family-lock taken. D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
+RELATIONAL BUILD step 1 RAN + PASSED (apparatus scripts/r2_edge.py): R2-EDGE premise = convergence of K_MI (APC-MIp) vs
+K_comp (MDL/KT compression edge coupling), DCA EXCLUDED as Pearlian -> R2-EDGE PASS BOTH families (long-range Spearman +0.542
+PF13354 / +0.745 PF00026 >=0.5; consensus-edge contact precision beats each alone; convergence STRENGTHENS under
+conservation/burial control, partial +0.651/+0.852). Caveat top-L Jaccard modest (0.15/0.24); two families, no grid, no lock.
+Edge-valued direction supported by cross-paradigm convergence; NEXT relational component = Benjamin's call. D2
+grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
