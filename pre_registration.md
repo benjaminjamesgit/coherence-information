@@ -1776,3 +1776,54 @@ generic-statistics-matched null.
   data, NO flow object, NO decisions past calibration. NO pin/constant VALUE changed; raw MI via canonical
   cit/information.py; numpy + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). Append-only,
   ASCII.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 1 / D-cal READOUT-FIX AMENDMENT (build-time; the NULL MODEL was wrong, the construction is sound) -- pre-committed BEFORE the official run
+
+**What this is.** A dated, append-only amendment to the D-cal pre-registration (immediately above), recording
+a CONSTRUCTION/READOUT issue found at BUILD-TIME smoke-testing (before any official result) and the fix,
+pre-committed here BEFORE the official run (sec 8 discipline). NOT a threshold-tune-to-pass: the original NULL
+MODEL was statistically wrong; the construction itself is sound. Apparatus = scripts/dcal.py (corrected).
+
+**(a) THE FINDING (smoke test, T=50000 primary latent + a 2000-draw diagnostic).** The construction passes its
+sanity gate exactly: latent P-pairs MI graded (0.16..1.62 bits), latent H-pairs MI max 0.0009 bits (~0), and
+I(triple;regime) = 1.58/0.92 bits (H carries the shared latent at third order). The POSITIVE control is strong:
+real_P transfer = 0.996. BUT a single NULL latent pair (enc1(L(7000)), enc2(L(12000))) gave P-transfer = 0.62,
+NOT ~0. DIAGNOSIS: this is NOT a construction confound -- a 2000-draw Monte-Carlo of the null Spearman between
+two INDEPENDENT latents' coupling vectors has MEAN -0.018 (i.e. the across-latent null IS centered at 0), but
+HIGH variance (std ~0.39 for the 15-pair rank-1 coupling profile); the single pair (7000,12000) was simply a
+high draw. The ERROR was in the original NULL MODEL: the pre-registered headline CI was a BLOCK-BOOTSTRAP OVER
+TIME on ONE latent pair, which models only within-latent finite-sample sampling noise (negligible at T=50000)
+and does NOT model the ACROSS-LATENT variability that IS the null. Separately, the H readout's absolute
+threshold |real_H| < 0.3 was mis-specified: Spearman over a few pure-noise H-pairs is a high-variance chance
+quantity (the point is real_H == null_H, INDISTINGUISHABLE from chance, not real_H == 0).
+
+**(b) THE FIX (pre-committed here, BEFORE the official run).** Construction UNCHANGED except the H-coalition is
+grown from 2 to 4 parity triples (F 12 -> 18; H-pairs 6 -> 12) for readout power; P-coalition, encoders, the
+marginally-uniform property, and the FLAT-MI transfer measure are all unchanged. The NULL is now an
+ACROSS-LATENT ENSEMBLE: 12 latents (seeds 7000..7011) -> 12 REAL pairs (enc1(L(s)), enc2(L(s))) and 132 NULL
+cross-pairs (enc1(L(si)), enc2(L(sj)), i != j); readouts compare the REAL vs NULL transfer DISTRIBUTIONS. The
+block-bootstrap-over-time is DROPPED (wrong null model). Updated, pre-committed thresholds:
+  - (a) P positive control PASS iff: real_P 2.5th percentile (across the 12 real pairs) > 0.5 AND min(real_P) >
+    95th percentile of the 132-pair null_P AND mean(real_P) - mean(null_P) > 0.5.
+  - (b) H gap PASS iff: |mean(real_H) - mean(null_H)| < 0.15 AND mean(real_H) lies within the [5th,95th]
+    percentile band of null_H (indistinguishable from the chance/null distribution) AND mean(real_P) -
+    mean(real_H) > 0.5 (the flat measure detects P but NOT H).
+  - (c) null rejection + generic equality PASS iff: |mean(null_P)| < 0.2 AND |mean(null_H)| < 0.2 AND per-feature
+    surface-marginal total-variation < 0.02 AND per-feature order-1 conditional-entropy relative difference <
+    0.02 (enc2 real-latent vs enc2 independent-latent).
+  - CONSTRUCTION SANITY (gate, reported): latent P-pairs MI min > 0.02 (graded) AND latent H-pairs MI max < 0.01
+    (~floor) AND I(triple;regime) > 0.5 for all 4 triples.
+PROTOTYPE CONFIRMATION (T=20000, 8-latent ensemble, pre-official): real_P mean +0.993 (min +0.986) vs null_P
+mean -0.018 (p95 +0.727) -> real_P min clears null p95; real_H -0.039 ~= null_H +0.018 (|diff| 0.057, both
+chance); real_P - real_H = +1.03. The corrected readout separates P (detected) from H (blind) cleanly.
+
+**(c) FORK (unchanged in logic).** (a)+(b)+(c)+sanity ALL hold -> D-cal machinery VALIDATED and the flow-object
+TARGET is set by (b) (the flat measure transmits P but is blind to H; the flow object must make real_H >>
+null_H). (a) fails -> the transfer machinery is BROKEN. (b) fails with real_H separable-above null_H -> H is not
+pure-higher-order (construction bug).
+
+**Discipline.** Append-only readout-fix AMENDMENT, committed + pushed BEFORE the official run (sec 8). NOT a
+threshold-tune-to-pass: a wrong null MODEL (time-bootstrap on one latent) replaced by the correct ACROSS-LATENT
+ensemble; the construction sanity + positive-control strength were already passing. SYNTHETIC only; FLAT measure
+only; NO real-domain data, NO flow object. NO pin/constant VALUE changed; raw MI via canonical cit/information.py;
+numpy + math.lgamma only; NO DCA. Nothing in data/ committed (gitignored). ASCII.
