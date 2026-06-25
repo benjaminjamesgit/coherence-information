@@ -193,21 +193,30 @@ below states the property AND the argument that it holds for the object of Secs 
 
 ---
 
-## 7. Open choices (the stress-test INFORMS; Benjamin DECIDES)
+## 7. Open choices -- RULED (Benjamin, 2026-06-25)
 
-(c1) NORMALIZER for C_rel (eq. 2): sum I (recommended -- "fraction of coupling retained", the
-     natural [0,1] reading) vs |E| (mean weighted coupling per edge) vs max (peak-relative). S8
-     reports C_rel under all three at induced w, both families, as evidence.
+(c3) BASE of the relational functional = RAW I(X_i; X_j), NOT beyond-marginal MIp. **RULED.**
+GOVERNING PRINCIPLE -- BASE/WEIGHT SEPARATION (foundation P7 in design/relational_edge_w.md): CIT
+places RAW INFORMATION in the functional base and COHERENCE in w. Single-source
+H_w = sum p(x) w(x) [-log p(x)] puts raw surprisal in the base, coherence in w; the relational
+object mirrors this -- base = raw I(X_i; X_j), coherence (beyond-marginal AND beyond-background)
+lives in w(i,j), induced from the estimators (K_MI = APC-MIp, K_comp). Rationale:
+  - Raw MI is ALREADY beyond-marginal: I = 0 at independence regardless of the columns' marginals,
+    so a conserved-but-independent pair scores ~ 0 (S2 confirmed). The corpus's beyond-marginal
+    commitment is satisfied by MI in the base.
+  - APC's ADDITIONAL beyond-BACKGROUND step (subtract phylogenetic/background coupling) is mildly
+    PEARLIAN (a soft direct-vs-indirect move) and belongs in w via the estimators, NEVER in the
+    base. Putting it in the base double-counts background with w, is less P3-dense, and breaks the
+    single-source parallel.
+  - c3-gamma (a non-negative-beyond-background base, e.g. max(MIp, 0)) is RETRACTED as a category
+    error for the same reasons. The MIp base also breaks boundedness empirically (S7: ~60% of edges
+    MIp < 0, sum MIp < 0 -> C_rel outside [0,1]).
 
-(c3) BASE of the formal object: RAW I (recommended -- clean classical boundary, all terms >= 0,
-     C_rel cleanly in [0,1]) vs MIp (beyond-marginal, sharper on real coupling but no clean Shannon
-     boundary and individual terms can be negative -> C_rel can leave [0,1]). S7 reports I_w_rel at
-     w == 1 under both bases and counts negative-MIp edges, as evidence.
+(c1) NORMALIZER for C_rel (eq. 2) = sum I. **RULED.** The only choice giving C_rel in [0,1] (S5/S8),
+and the natural partner of the raw base ("fraction of the graph's coupling retained").
 
-(c-merge) NODE-MERGE rule (Sec 6 F2): stated as the coupling-weighted average; needed before the
-     coarse-graining commitment is locked.
-
-These are NOT decided here. The stress-test produces the evidence; Benjamin rules.
+(c-merge) NODE-MERGE rule (Sec 6 F2): **DEFERRED** until coarse-graining is actually exercised. The
+coupling-weighted-average rule stands as stated; it is not locked until a coarse-graining step uses it.
 
 ---
 

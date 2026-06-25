@@ -96,6 +96,18 @@ P6. NO CORRESPONDENCE-ORACLE. Validation never measures w against an external tr
     Comparison-compressions (Pfam conservation, PDB contacts, later DCA) ENTER as "one more
     compression" but NEVER adjudicate; convergence and divergence are both findings.
 
+P7. BASE/WEIGHT SEPARATION (raw information in the base, coherence in w). RULED 2026-06-25 (c3).
+    CIT places RAW INFORMATION in the functional base and COHERENCE in w: single-source
+    H_w = sum p(x) w(x) [-log p(x)] is raw surprisal in the base, coherence in w. The relational
+    object MIRRORS this -- base = RAW I(X_i;X_j) (clean Shannon boundary; ALREADY beyond-marginal,
+    since I = 0 at independence regardless of marginals), and coherence (beyond-marginal AND
+    beyond-background) lives in w(i,j), induced from the estimators. DESIGN: the formal base is
+    ALWAYS raw I, NEVER a beyond-background transform. APC's beyond-BACKGROUND subtraction is mildly
+    PEARLIAN (a soft direct-vs-indirect move) and belongs in w via the estimators, NOT in the base
+    (a base transform double-counts background with w, is less P3-dense, and breaks the single-source
+    parallel). c3-gamma (a max(MIp,0) base) is RETRACTED as a category error; the MIp base also
+    breaks boundedness empirically (~60% edges MIp<0 -> C_rel leaves [0,1]). See design/relational_formalism.md Sec 7.
+
 ---
 
 ## 4. Architecture: edge-valued w
@@ -145,12 +157,12 @@ hyperedge weights w(S) on k-subsets weight the order-k interaction; C_rel_k =
 sum_{|S| = k} w(S) TC(S) / sum TC(S) (TC = total correlation). k is the recursive scale axis.
 Build k = 2 now; higher-order deferred (Sec 8).
 
-OPEN CHOICES (PENDING Benjamin -- the stress-test INFORMS, does NOT decide):
-  (c1) Normalizer for C_rel: sum I (recommended -- "fraction of coupling retained") vs |E| vs max.
-  (c3) Base of the formal object: RAW I (recommended -- clean classical boundary, >= 0) vs MIp
-       (beyond-marginal but no clean boundary, can be negative).
-  (c-merge) Node-merge coarse-graining rule (merge i,j: drop edge (i,j), union other edges,
-       combine weights by coupling-weighted average) -- needed for the coarse-graining commitment.
+CHOICES -- RULED 2026-06-25 (see P7 + design/relational_formalism.md Sec 7):
+  (c1) RULED = sum I -- the only normalizer giving C_rel in [0,1], natural partner of the raw base.
+  (c3) RULED = RAW I (base/weight separation, P7); the beyond-background MIp / max(MIp,0) [c3-gamma]
+       base is RETRACTED as a category error (mildly Pearlian + breaks boundedness, ~60% edges MIp<0).
+  (c-merge) DEFERRED: node-merge coarse-grain rule (merge i,j: drop edge (i,j), union other edges,
+       combine weights by coupling-weighted average) -- stands as stated, not locked until exercised.
 
 ESTIMATORS (edge analogs of the K-proxies; DENSE paradigm only):
 - K_MI   = APC-corrected mutual information (MIp): statistical / Shannon plug-in.
