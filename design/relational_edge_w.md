@@ -100,12 +100,57 @@ P6. NO CORRESPONDENCE-ORACLE. Validation never measures w against an external tr
 
 ## 4. Architecture: edge-valued w
 
-DEFINITION. The edge weight w(i,j) on a position-pair (i,j) is recast as the CIT per-symbol
-weight on the JOINT pair-symbol (x_i, x_j) over the product alphabet A x A (|A| = 21, so 441
-joint symbols). This keeps edge-w INSIDE the existing H_w / I_w machinery -- it is an
-EXTENSION (CIT on pair-features), not a fork. Bounded [0,1] inherits trivially. Shannon
-recovery at w=1, coarse-graining consistency, and monotonicity are to be VERIFIED in the
-formal-admissibility step (Sec 7).
+DEFINITION (corrected -- v0.7.2 step 3). RETRACTED -- see pre_registration.md 2026-06-25 step-3
+amendment + design/relational_formalism.md. The prior definition recast w(i,j) as the CIT
+per-symbol weight on the JOINT pair-symbol (x_i, x_j) over the 441-symbol product alphabet. That
+is WRONG. Four reasons, compressed: (1) it COLLAPSES to single-source node-w on a merged
+441-symbol node -- it weights joint symbol-VALUES, not the RELATION, so it is NOT relational
+(violates P2); (2) canonical I_w weights the 21-symbol SOURCE MARGINAL (`contribution =
+pxy * w[:,None]`), so a 441-length weight is not even shape-admissible -- it fails
+`_check_weights`; (3) the source corpus defines w ONLY single-source (w: X -> [0,1]) and is
+SILENT on edge/pair weighting -- a real FORMAL GAP, not a recast; (4) the step-2 admissibility
+"PASS" was FALSE COMFORT (check B hardcoded `np.ones_like`, an x*1 == x tautology never calling
+the canonical routines; E/F referenced same-code recompute; the pre-registered pair-overlap risk
+was never probed).
+
+CORRECTED OBJECT. Weight the RELATION (the edge's mutual information) as a SCALAR. Positions
+1..L are variables X_1..X_L over alphabet A (|A| = 21). Edges = the DENSE complete graph
+E = {(i,j): i < j} (no sparsification -- P3). I(X_i; X_j) is the RAW pairwise mutual information,
+computed via the canonical cit/information.py at w = ones (clean Shannon boundary). w(i,j) in
+[0,1] is the edge weight.
+
+  RELATIONAL coherence-weighted information (the I_w analog):
+      I_w_rel  =  sum_{(i,j) in E} w(i,j) * I(X_i; X_j)
+  SHANNON RECOVERY (a REAL reduction): w(i,j) = 1 for all edges => I_w_rel = sum I(X_i; X_j)
+      = total pairwise coupling on the graph.
+  BOUNDED relational coherence (the Coherence-Engine bounded scalar C):
+      C_rel  =  I_w_rel / sum_{(i,j) in E} I(X_i; X_j)   in [0,1],   = 1 at w == 1.
+  NODE-INDUCED coherence (the cross-scale link -- the edge field induces a per-position scalar):
+      c_i  =  sum_{j != i} w(i,j) * I(X_i; X_j)
+  OVERLAP / NON-PARTITION accounting (the previously-unprobed risk, now EXPLICIT):
+      HANDSHAKE IDENTITY:  sum_i c_i  =  2 * I_w_rel    (each edge sits in exactly two node-loads)
+  The handshake is the bookkeeping that makes the non-partition pair-representation consistent.
+
+INDUCTION (how w(i,j) comes from data; mirrors single-source CIT's formal/induced split):
+      edge proxy K:   stream -> Chat(i,j)        (K_MI = APC-MIp, or K_comp)
+      edge relevance  rho(i,j)                   (marginal-relative -- what APC/MIp deliver)
+      w(i,j) = sigma(beta * z(rho(i,j))),  beta = 4.0 (LOCKED)
+  CRITICAL SEPARATION: the FORMAL object I_w_rel is built on RAW I(X_i; X_j) (clean Shannon
+  boundary); w is INDUCED from MARGINAL-RELATIVE proxies (beyond-marginal). This is the SAME
+  formal/induced split single-source CIT already uses (formal H_w/I_w on raw p; w induced from
+  marginal-relative K-proxies). Do not conflate the two.
+
+RECURSIVE / MULTI-SCALE: pairwise is order k = 2 (FIRST ORDER, explicit). General form:
+hyperedge weights w(S) on k-subsets weight the order-k interaction; C_rel_k =
+sum_{|S| = k} w(S) TC(S) / sum TC(S) (TC = total correlation). k is the recursive scale axis.
+Build k = 2 now; higher-order deferred (Sec 8).
+
+OPEN CHOICES (PENDING Benjamin -- the stress-test INFORMS, does NOT decide):
+  (c1) Normalizer for C_rel: sum I (recommended -- "fraction of coupling retained") vs |E| vs max.
+  (c3) Base of the formal object: RAW I (recommended -- clean classical boundary, >= 0) vs MIp
+       (beyond-marginal but no clean boundary, can be negative).
+  (c-merge) Node-merge coarse-graining rule (merge i,j: drop edge (i,j), union other edges,
+       combine weights by coupling-weighted average) -- needed for the coarse-graining commitment.
 
 ESTIMATORS (edge analogs of the K-proxies; DENSE paradigm only):
 - K_MI   = APC-corrected mutual information (MIp): statistical / Shannon plug-in.
@@ -185,7 +230,12 @@ DONE (verified):
   long-range raw); STRENGTHENS under partialling conservation-product AND burial-product
   (+0.583->+0.651, +0.775->+0.852); consensus edges out-predict either alone on contacts
   (~11x base). (Recorded at git b28aefe.)
-- FORMAL-ADMISSIBILITY (extension-not-fork) PASSES both families/both estimators (A-F;
+- FORMAL-ADMISSIBILITY (step-2) RETRACTED (v0.7.2 step 3): the PASS was TAUTOLOGICAL (check B
+  hardcoded np.ones; the pair-overlap risk was never probed) AND verified the WRONG object (the
+  441-joint-symbol edge-w now retracted in Sec 4). The corrected relational functional (Sec 4) +
+  its stress-test (S1-S8, pre-reg 2026-06-25 step-3) SUPERSEDE it. Original step-2 record kept
+  below for the audit trail:
+  FORMAL-ADMISSIBILITY (extension-not-fork) PASSED-AS-CODED both families/both estimators (A-F;
   adversarially verified, estimators bit-exact to saved): A boundedness, B Shannon recovery at
   w=1 (|dH|=|dI|=0.0), C coarse-graining (Dayhoff-6: K_MI 0.966/0.980, K_comp 0.865/0.845, all
   >=0.7), D monotonicity, E within-class relabel invariance (=1.0), F 100-bootstrap stability
