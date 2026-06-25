@@ -265,15 +265,31 @@ DONE (verified):
   raw-I base (sum MIp NEGATIVE, ~60% edges MIp<0) + sum-I normalizer (C_rel 0.57/0.59 in [0,1]).
   REPLACES the retracted step-2 PASS with admissibility of the CORRECT relational object.
   (pre-reg + RESULT 2026-06-25 step-3; apparatus scripts/relational_formalism_test.py.)
+- c3/c1 RULED (step 4, 2026-06-25): BASE = RAW I (base/weight separation, foundation P7);
+  NORMALIZER = sum I; c-merge DEFERRED. Beyond-background MIp / max(MIp,0) base [c3-gamma] RETRACTED.
+- R1-EDGE (step 4/5, the PRIMARY cross-domain signature): PILOT PASS, adversarially verified.
+  Induced edge-w predicts PHYLOGENY-CORRECTED coupling PERSISTENCE (median raw MI across K=8
+  phylo-independent subclades) on BOTH pilot families x BOTH estimators -- long-range SEPARATED
+  partial K_MI +0.426/+0.418, K_comp +0.567/+0.477 (>0). Genuine COUPLING (w_mi conservation-
+  ORTHOGONAL, Spearman ~0.02-0.05), NOT the conservation-circularity that sank node-w; cross-
+  paradigm corroborated. Three verification upgrades are DEFAULTS now: SEPARATED control (the
+  conservation-PRODUCT control LEAKS -- a cons-only null passes it harder), POSITION-BLOCK bootstrap
+  (the pair-bootstrap CI was ~10x too tight), complementary-arm reading (K_MI MIp-circular but
+  cons-clean; K_comp algorithmic but cons-loaded; both clear the separated control). STATUS =
+  pilot/calibration, NOT locked: PF00026's partition is a degenerate caterpillar, so phylo-
+  decorrelation rests on ~1.5 families -> GATE = a clean-tree THIRD family. LOCKED = PF00348
+  (8a7c:A @1.2A, 242 cols, K_eff=6 balanced max-clade 32%); replication run PENDING.
+  (pre-reg + RESULT 2026-06-25 step-5; apparatus scripts/r1_edge.py + scripts/select_third_family.py.)
 
 NEXT (each PRE-REGISTERED before run; Benjamin chooses order):
-1. [DISCHARGED by step 3] The two step-2 follow-ups are resolved: the 441-joint-vs-21-marginal
-   I_w convention is MOOT (the corrected object weights the SCALAR edge MI, not a 441-joint weight);
-   I(X_i;X_j) is now computed through canonical cit/information.py; and the edge-OVERLAP / partition
-   risk is closed EXACTLY by the handshake identity (S3). REMAINING: Benjamin rules the open choices
-   c1 (normalizer) / c3 (base) / c-merge (node-merge rule) -- stress-test evidence favors sum-I + raw-I.
-2. R1-edge: does high edge-w predict compensatory/coupled substitution (coupling persistence)?
-   Conservation-independent. The load-bearing Adaptive-Realism cash-out on edges.
+1. [DISCHARGED by steps 3-4] The two step-2 follow-ups are resolved (441-vs-21 convention MOOT --
+   scalar edge MI; I via canonical cit/information.py; overlap closed by the handshake S3), and the
+   open choices are RULED: c1 = sum I, c3 = RAW I (step 4); c-merge DEFERRED until coarse-graining
+   is exercised.
+2. [PILOT PASS, step 4/5 -- see DONE] R1-edge predicts phylo-corrected coupling PERSISTENCE on both
+   pilot families x both estimators (conservation-orthogonal, cross-paradigm corroborated). REMAINING:
+   run the LOCKED clean-tree THIRD family PF00348 (the generalization gate) -> a pass firms the
+   PRIMARY signature.
 3. M5-edge: contact-vs-non-contact AUROC across more families; MUST control burial-product
    (it beats MIp on PF13354). The edge admissibility gate.
 4. R3-edge: GRADED selection-pressure sweep (P5) -- structural reorganizes edge-w, interpretive
