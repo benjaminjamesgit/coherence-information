@@ -122,9 +122,16 @@ Weights are either user-supplied or induced from data:
   family-dependent (loses on small a-b/a+b PF13354, wins on larger all-b PF00026). NODE hardened: g_pr partial|burial
   +0.127 vs phylo-cons +0.134 -> margin -0.007 (CI -0.154,+0.129 INCLUDES 0) NOT ROBUST; the B2 PF13354 g_pr pass did NOT
   replicate; winning projection UNSTABLE (g_pr PF13354 / g_topL PF00026). Strict 'node-fail generalizes' NOT literally met
-  (B' beat the WEAKER entropy ref +0.091 on PF00026) but the HARDENED phylo bar FAILS -> retire-node/relational-build vs
-  node-survives is Benjamin's call. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 +
-  capstone. (Spec Section 8.7.)
+  (B' beat the WEAKER entropy ref +0.091 on PF00026) but the HARDENED phylo bar FAILS. BRANCH ADJUDICATED (Benjamin):
+  node-valued w RETIRED (fails the hardened phylo bar BOTH families), EDGE-valued w ADOPTED (corpus-aligned: coupling is a
+  DENSE entangled FIELD, not a sparse direct-edge graph; + empirically supported). RELATIONAL BUILD step 1 PRE-REGISTERED
+  (this entry; Phase-1 PUSHED, Phase-2 run HELD): R2-EDGE premise = convergence of TWO distinct DENSE paradigms K_MI
+  (APC-MIp, Shannon plug-in; reuse saved MIp) vs K_comp (MDL/KT compression edge coupling = joint-vs-independent codelength,
+  marginal-relative, numpy `math.lgamma`); DCA/inverse-covariance EXCLUDED as the Pearlian direct-vs-indirect cut the corpus
+  critiques (may return later as a non-adjudicating contrast). R2-EDGE PASS iff Spearman(K_MI,K_comp)>=0.5 long-range AND
+  consensus-edge contact precision >= each alone AND survives the conservation/burial-product control, holding BOTH families
+  (PF13354 + PF00026). Standalone scripts/r2_edge.py. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3
+  (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -241,7 +248,10 @@ burial-prod 0.685, long 0.794 > 0.700) but NODE does NOT clear the HARDENED bar 
 margin -0.007 CI includes 0; B2 g_pr pass did NOT replicate; winning projection unstable g_pr/g_topL). PF13354 edge-M5
 fold-in: MIp 0.698 beats conservation but LOSES to burial 0.716 -> the edge-vs-burial margin is family-dependent. MIXED vs
 the strict rules ('node-fail generalizes' not literally met because B' beat the weaker entropy ref; hardened phylo bar
-fails) -> BRANCH ADJUDICATION HELD for Benjamin (retire-node + relational/edge build vs node-survives). No build, no
+fails) -> BRANCH ADJUDICATED (Benjamin): node-valued w RETIRED, EDGE-valued w ADOPTED (corpus-aligned dense coupling field).
+RELATIONAL BUILD step 1 PRE-REGISTERED (Phase-1 PUSHED, run HELD): R2-EDGE premise = convergence of K_MI (APC-MIp) vs
+K_comp (MDL/KT compression edge coupling), DCA EXCLUDED as Pearlian; PASS iff Spearman>=0.5 long-range + consensus-contact-
+precision + survives conservation/burial control, BOTH families; standalone scripts/r2_edge.py. No build past the premise, no
 family-lock taken. D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.

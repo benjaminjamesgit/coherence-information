@@ -1382,4 +1382,34 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 
 **Discipline.** RESULT record + apparatus commit (`scripts/run_d2_family2.py`); the Phase-1 pre-registration (above) was committed + pushed BEFORE this run (sec 8). NO pin / constant VALUE changed; NO KxA grid, NO joint / edge build, NO family-list lock; NO branch decision taken (HELD). Nothing in `data/` committed (gitignored). Append-only, ASCII.
 
+### 2026-06-25 -- v0.7.2 D2 (Pfam) RELATIONAL BUILD step 1: node-valued w RETIRED -> edge-valued w ADOPTED; R2-edge premise (MIp vs MDL-compression; DCA EXCLUDED as Pearlian per corpus)
+
+**BRANCH ADJUDICATION (Benjamin's decision, taken on the two-family record above).** The node-valued `w` is RETIRED: it failed the HARDENED phylo bar on BOTH families (PF13354 g_pr pass razor-thin + prediction-inverted; PF00026 g_pr margin vs phylo-conservation -0.007, CI includes 0; winning projection unstable g_pr/g_topL). The EDGE-valued `w` is ADOPTED: corpus-aligned (coevolution is a DENSE entangled coupling FIELD, not a sparse direct-edge graph) AND empirically supported (edge-M5 GENERALIZES; on PF00026 MIp beats both conservation- and burial-product even long-range). The edge-vs-burial margin is FOLD-DEPENDENT (lost to burial on PF13354), so burial MUST be controlled. This entry pre-registers the FIRST relational component: an edge-`w` formalism framing + an R2-EDGE convergence premise across two of CIT's OWN distinct DENSE paradigms. DESIGN + dated amendment; thresholds FIXED here; committed + pushed BEFORE the Phase-2 run (sec 8). Nothing in `data/` committed.
+
+**CORPUS GROUNDING (load-bearing).** Coevolutionary coupling is a DENSE, entangled field. DCA / inverse-covariance / direct-coupling is the PEARLIAN direct-vs-indirect CUT the corpus deconstructs ("Cult of Causality"; "From Causation to Coherence", see [[cit-corpus-lineage]]) -- it is NOT used here as an R2 convergence partner or a validation standard. R2-edge tests convergence across CIT's OWN distinct paradigms (statistical / Shannon plug-in vs algorithmic / MDL), BOTH DENSE. DCA may return LATER as a SEPARATE, non-adjudicating "Pearlian-contrast" diagnostic -- NOT here.
+
+**(a) EDGE-W FORMALISM (framing).** `w` on position-PAIRS = the CIT per-symbol `w` applied to the JOINT pair-symbol over the PRODUCT alphabet (A x A, here 21 x 21 = 441) -> it enters H_w / I_w exactly as the per-symbol weight does, with the pair-symbol as the source symbol. Shannon-recovery (w=1 over pair-symbols collapses to the joint Shannon quantity), coarse-graining (pair -> marginal), and monotonicity are FLAGGED for a SEPARATE formal-admissibility check (corpus-admissibility of an edge-valued `w`) and are NOT gating this run.
+
+**(b) R2-EDGE ESTIMATORS (DENSE paradigm; genuinely distinct inductive bias).**
+  - K_MI = APC-corrected MIp (statistical / Shannon plug-in; REUSE the saved MIp `.npz`, no recompute).
+  - K_comp = a COMPRESSION / MDL edge coupling (algorithmic): per pair (i, j), the description-length SAVING of coding the JOINT pair-symbol vs coding i and j INDEPENDENTLY -- marginal-relative (the locked CIT proxy idiom; the EDGE analog of K1 compression-delta / K2 MDL). Concretely K_comp(i,j) = L(col_i) + L(col_j) - L(joint_ij), where L is a stochastic-complexity codelength (Krichevsky-Trofimov / KT, the parameter-free sequential-MDL codelength of a multinomial; gammaln via `math.lgamma`, numpy-only). The KT COMPLEXITY PENALTY (larger alphabet for the joint -> 441 vs 21) is what makes K_comp ALGORITHMICALLY DISTINCT from the plug-in MI (which has no complexity penalty and overestimates coupling for sparse pairs). REUSE each family's saved matrix; sequence reweighting (80%-id, deterministic) RECOMPUTED from the matrix via the locked `reweight()` (reproduces the saved weights; NOT an MIp recompute) so K_MI and K_comp differ ONLY in PARADIGM, not preprocessing.
+  - EXPLICITLY EXCLUDED as a convergence partner: DCA / inverse-covariance / any direct-vs-indirect SPARSIFIER (Pearlian; corpus-critiqued). May return LATER as a separate, non-adjudicating Pearlian-contrast diagnostic, NOT here.
+
+**(c) CONVERGENCE STATISTIC (both families PF13354 + PF00026; thresholds fixed here).**
+  - (i) Spearman(K_MI, K_comp) over eligible pairs (|i-j| >= 5) AND long-range (|i-j| >= 12).
+  - (ii) top-L edge OVERLAP (Jaccard) of the top-L pairs by K_MI vs the top-L by K_comp (L = #mapped positions, the pilot-A convention).
+  - (iii) SUBSTRATE-INFORMATIVE: contact precision of the CONSENSUS edges (in BOTH top-L sets) vs each estimator's top-L ALONE.
+  - (iv) CONFOUND control: the convergence must SURVIVE partialling pair conservation-product (cons_i * cons_j) AND burial-product (burial_i * burial_j) -- partial Spearman(K_MI, K_comp | cons-product, burial-product) -- OR hold on the long-range split. Else it is the trivial "agree on conserved / buried pairs" null (the Sec-2 homogeneous-family trap).
+
+**(d) R2-EDGE PASS iff ALL (keying on holding for BOTH families).**
+  - Spearman(K_MI, K_comp) >= 0.5 on the LONG-RANGE split; AND
+  - consensus contact precision >= each estimator's top-L alone; AND
+  - convergence SURVIVES the conservation / burial control (partial holds, or long-range holds).
+
+**(e) CONTACTS = one sparse cut of the coupling field -- the falsifiable ANCHOR, NOT its totality.** MIp-high non-contact pairs are a QUESTION for R1-edge (allostery / long-range coupling), NOT defined as noise here. Held at CIT's falsifiable tier (PDB contacts are the empirical anchor); NO unfalsifiable "indirect coupling is real" license is taken.
+
+**PINS (Phase-2 run; numpy-only; reuse saved artifacts).** REUSE each family's saved matrix (`pilotS_{acc}_matrix.npy`) + the saved APC-MIp (`pilot_coupling_{acc}.npz`; NO MIp refetch / recompute). K_comp = KT stochastic-complexity codelength (Dirichlet-1/2 / Krichevsky-Trofimov), 21-symbol marginals + 441-symbol joint, on the deterministically-RECOMPUTED 80%-id reweighted effective counts; gammaln via `math.lgamma`. Eligible pairs |i-j| >= 5; long-range |i-j| >= 12; L = #mapped positions; contacts Cb-Cb < 8 A (Ca for Gly) from the locked PDB (`1djc:A` / `4y9w:A`); burial = HSExposureCB EXP_HSE_B_U; conservation = gap-excluded column entropy (negated). Standalone `scripts/r2_edge.py`; outputs -> `data/pfam/` (gitignored). NO locked-constant VALUE changed.
+
+**(f) HARD STOPS.** TWO families; reuse saved matrices + MIp (no refetch / recompute MIp); numpy-only; DENSE estimators only (NO sparse / DCA); NO R1-edge / R3-edge; NO grid; NO family-list lock; nothing in `data/` committed. The Phase-1 pre-registration (this entry) is committed + pushed BEFORE the Phase-2 run (sec 8). Append-only, ASCII.
+
 
