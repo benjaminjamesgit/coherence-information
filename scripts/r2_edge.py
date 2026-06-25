@@ -44,10 +44,18 @@ def k_comp_matrix(M, weights):
     return K
 
 def partial_multi(x, y, Zs):
-    """Spearman partial corr of x,y controlling for covariates in Zs (precision-matrix form)."""
-    rows = [rank(np.asarray(x, float)), rank(np.asarray(y, float))] + [rank(np.asarray(z, float)) for z in Zs]
-    R = np.corrcoef(np.vstack(rows)); P = np.linalg.pinv(R)
-    return float(-P[0, 1] / math.sqrt(P[0, 0] * P[1, 1]))
+    """Spearman partial corr of x,y controlling Zs, via OLS-residual regression on ranks. Robust to
+    collinear covariates -- the prior pinv-on-rank-correlation form (used through v0.7.2 step 5)
+    returns GARBAGE when a covariate is collinear with x (e.g. the +0.903 cons-product-null artifact,
+    diagnosed v0.7.2 step 6); residualizing on ranks via least-squares partials correctly even under
+    exact collinearity. Identical to the pinv form for well-conditioned controls (matches to ~5dp)."""
+    rx = rank(np.asarray(x, float)); ry = rank(np.asarray(y, float))
+    Z = np.column_stack([np.ones(len(rx))] + [rank(np.asarray(z, float)) for z in Zs])
+    ex = rx - Z @ np.linalg.lstsq(Z, rx, rcond=None)[0]
+    ey = ry - Z @ np.linalg.lstsq(Z, ry, rcond=None)[0]
+    if ex.std() == 0 or ey.std() == 0:
+        return float("nan")
+    return float(np.corrcoef(ex, ey)[0, 1])
 
 def eligible_pairs(idxs, sep):
     out = []
