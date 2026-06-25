@@ -12,6 +12,8 @@ On conflict: Benjamin live > global ACRE > this file > code comments.
 4. Run the fast suite: `pytest` (defaults to fast-only). Report green/red.
 5. Report state, then wait for steering. Do not edit before reporting.
 
+For D2 relational (edge-valued w) work, read `design/relational_edge_w.md` -- foundations, specs, and guardrails (esp. DCA exclusion and graded-not-binary interventions).
+
 ## What CIT is, and why
 
 Coherence Information Theory generalizes Shannon by attaching a bounded weight
