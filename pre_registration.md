@@ -1352,4 +1352,34 @@ The entropy-baseline control (the only non-tautology guard) was scoped to R1 ONL
 
 **Discipline.** DESIGN + dated amendment; the second family/PDB/chain + all edge-M5 / node thresholds are LOCKED HERE, pre-computation; committed + pushed BEFORE the Phase-2 run (sec 8). PILOT replication of TWO families total; does NOT lock the D2 family list; NO KxA grid, NO joint / edge build. This DISCHARGES (does NOT edit) the B2 confirm-clause. Nothing in `data/` committed (gitignored). Append-only, ASCII.
 
+### 2026-06-25 -- v0.7.2 D2 (Pfam) SECOND-FAMILY REPLICATION + EDGE-M5 RESULT: edge GENERALIZES; node-valued w does NOT clear the hardened bar (branch adjudication HELD)
+
+**What this is.** A dated, append-only RESULT record for the Phase-2 run pre-registered immediately above (the second-family replication + edge-M5). Apparatus = `scripts/run_d2_family2.py` (parameterizes the pinned coupling / B' / B2 method by (acc, pdb, chain) + adds the edge-M5 AUROC; the matrix-build recipe was pinned BIT-EXACT to the PF13354 pilot -- VERIFIED: rebuilding PF13354's matrix from the alignment reproduced `pilotS_PF13354_matrix.npy` exactly: match-state columns by case, gap-fraction < 0.5 on the `np.random.default_rng(0).choice(n,2000,replace=False)`-sorted subsample, AA 'ACDEFGHIKLMNPQRSTVWY' -> 0..19, else -> 20). No pin or constant VALUE changed; nothing in `data/` committed (gitignored). NO branch decision is taken here -- the adjudication is HELD for Benjamin.
+
+**(a) SETUP (PF00026, Asp / 4y9w:A).** Full alignment 43,779 seqs -> seed-0 2000-subsample -> L = 312 match columns; Meff = 1438.6; PDB mapping coverage 293 / 312 (94%); 811 contacts (Cb-Cb < 8 A, |i-j| >= 5).
+
+**(b) EDGE -- GENERALIZES (strongly; cleaner than PF13354).**
+  - Check A (top-L MIp PAIR precision) = 0.160 vs contact base rate 0.019 (8.2x) vs conservation-product 0.020 -> PASS (PF13354 was 0.131 vs 0.022).
+  - EDGE-M5 (PF00026) OVERALL: AUROC MIp = 0.802 (CI 0.789-0.814) > conservation-product 0.442 AND > burial-product 0.685; CI excludes 0.5. LONG-RANGE (|i-j| >= 12): MIp = 0.794 (CI 0.779-0.808) > 0.424 AND > 0.700. -> EDGE-M5 PASS on both splits (MIp beats BOTH controls incl. burial, even long-range).
+  - DECISION-RULE (d): EDGE GENERALIZES = YES (check A pass AND edge-M5 pass).
+
+**(c) PF13354 EDGE-M5 FOLD-IN (formalization).** OVERALL: MIp = 0.698 (CI 0.674-0.720) BEATS conservation-product 0.419 but NOT burial-product 0.716. LONG: MIp = 0.673 (CI 0.648-0.698) vs burial-product 0.720. -> on PF13354 MIp does NOT beat burial -> edge-M5 'fails' the burial comparison. So the edge signal is REAL on both families, but its MARGIN OVER BURIAL is family-dependent: it LOSES to burial on the small a-b/a+b PF13354 (0.70 < 0.72) and WINS decisively on the larger all-b PF00026 (0.80 > 0.69). The decision rule keys EDGE-GENERALIZES on the SECOND family (PF00026), which passes.
+
+**(d) NODE -- does NOT robustly survive the hardened bar.**
+  - References (partial-Spearman | burial, 293 positions): entropy-conservation = +0.091; phylo-corrected inverse-tolerance = +0.134.
+  - B' naive aggregations: s_max +0.099, s_top5 +0.118, s_cnt +0.113 -- ALL beat entropy-conservation (so B' did NOT fail on PF00026, UNLIKE PF13354) but NONE beat the phylo reference.
+  - B2 projections: g_eig -0.032 (fail), g_pr +0.127, g_topL +0.152.
+  - HARDENED g_pr test (the pre-registered bar): margin vs entropy = +0.036 (CI -0.119,+0.180 -- INCLUDES 0); margin vs PHYLO = -0.007 (CI -0.154,+0.129 -- INCLUDES 0, point estimate NEGATIVE) -> ROBUST node pass = FALSE. The B2 PF13354 g_pr narrow-pass did NOT robustly replicate.
+  - Non-replication of WHICH projection wins: g_pr passed on PF13354 / g_topL is strongest on PF00026 / g_pr is borderline-fail on PF00026 -> the node-valued projection is NOT stably identifiable across families.
+
+**(e) DECISION-RULE MAPPING (pre-committed (d); MIXED -> HELD).**
+  - EDGE GENERALIZES = YES.
+  - NODE robust pass (g_pr beats phylo, CI excludes 0) = NO.
+  - NODE-FAIL GENERALIZES (B' fails AND g_pr not-robust) = NO *strictly* -- only because B' beat the WEAKER entropy reference on PF00026 (the entropy bar dropped +0.143 [PF13354] -> +0.091 [PF00026] between families; the g_pr-not-robust half IS satisfied).
+  - So the outcome lands BETWEEN branch-1 ('edge generalizes + node-fail generalizes -> retire node-valued w, relational build', blocked only by the B'-vs-entropy technicality) and branch-3 ('robust node pass -> node may survive', which the HARDENED phylo+margin-CI bar -- pre-registered AS the bar precisely because B2 was thin -- FAILS). The hardened bar is the one that fails.
+
+**(f) DISCHARGE + STATUS.** The B2 confirm-clause is DISCHARGED on a second coevolution-rich family: the EDGE direction is DE-RISKED (generalizes, and on family 2 beats the burial confound PF13354 could not); the NODE-valued w does NOT clear the hardened bar on family 2 and its winning projection is unstable. The clean branch ('edge generalizes + node-fail generalizes -> relational/edge build') is met in spirit by the HARDENED bar but not by the strict B'-vs-entropy clause -> BRANCH ADJUDICATION HELD for Benjamin. HARD STOP = TWO families; the D2 family list is NOT locked; NO joint / edge build is started here.
+
+**Discipline.** RESULT record + apparatus commit (`scripts/run_d2_family2.py`); the Phase-1 pre-registration (above) was committed + pushed BEFORE this run (sec 8). NO pin / constant VALUE changed; NO KxA grid, NO joint / edge build, NO family-list lock; NO branch decision taken (HELD). Nothing in `data/` committed (gitignored). Append-only, ASCII.
+
 

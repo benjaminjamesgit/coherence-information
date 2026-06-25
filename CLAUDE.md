@@ -112,16 +112,19 @@ Weights are either user-supplied or induced from data:
   Spearman(., contact_degree|burial) = +0.151 BEATS conservation's +0.143 (g_eig +0.092, g_topL +0.052 both FAIL) ->
   Sec 6.2 NODE-VALUED w SURVIVES, edge-valued branch A NOT forced. CAVEATS: razor-thin (+0.008) on ONE family (the
   pre-reg rule REQUIRES replication on >=1 more coevolution-rich family before any node-valued lock), and the recorded
-  prediction was INVERTED (g_topL failed, global PageRank flow passed). SECOND-FAMILY REPLICATION + EDGE-M5
-  PRE-REGISTERED (`df025a3`+ this entry; Phase-1 PUSHED, Phase-2 run HELD): discharges the B2 confirm-clause on PF00026
-  (Asp / 4y9w:A; pure all-b 311-col aspartic protease -- lowest-accession pure-all-b 1500+ catalytic family with domain
-  >=150 cols + a CLEAN single-domain x-ray <=2.5A PDB; size-floor refinement excluded the literal hit PF00024/PAN_1 as a
-  weakly-catalytic disulfide module). Adds an EDGE-M5 AUROC statistic (MIp vs conservation-product vs burial-product;
-  overall + long-range, bootstrap CI; PASS iff MIp-AUROC beats both controls and CI excludes 0.5) + a PHYLO-HARDENED
-  node-retirement test (g_pr partial|burial vs IQ-TREE per-site-rate conservation, margin-CI must exclude 0). EDGE
-  generalizes + NODE-FAIL generalizes -> node-valued w retired on 2 families -> relational build; node 'pass' ROBUST ->
-  node-valued joint-proxy design; edge does NOT generalize -> STOP. The D2 KxA grid / family-lock / R1-M5-R2 runs stay
-  HELD. Then D3 (FOMC), R3, M5 + capstone. (Spec Section 8.7.)
+  prediction was INVERTED (g_topL failed, global PageRank flow passed). SECOND-FAMILY REPLICATION + EDGE-M5 RAN
+  (`b8de3f1` pre-reg -> RESULT this entry; apparatus `scripts/run_d2_family2.py`, matrix recipe pinned BIT-EXACT to
+  PF13354) on PF00026 (Asp / 4y9w:A; pure all-b aspartic protease, L=312, cov 293/312; size-floor refinement >=150 cols
+  excluded the literal hit PF00024/PAN_1 as a weakly-catalytic disulfide module). RESULT = EDGE GENERALIZES, NODE does
+  NOT clear the hardened bar -> MIXED, BRANCH ADJUDICATION HELD for Benjamin. EDGE: check A 0.160 vs base 0.019 PASS;
+  edge-M5 PASS (MIp-AUROC 0.802 [CI 0.789-0.814] > cons-prod 0.442 AND > burial-prod 0.685; long 0.794 > 0.700). PF13354
+  fold-in: MIp 0.698 BEATS conservation (0.419) but LOSES to burial (0.716) -> the edge margin OVER burial is
+  family-dependent (loses on small a-b/a+b PF13354, wins on larger all-b PF00026). NODE hardened: g_pr partial|burial
+  +0.127 vs phylo-cons +0.134 -> margin -0.007 (CI -0.154,+0.129 INCLUDES 0) NOT ROBUST; the B2 PF13354 g_pr pass did NOT
+  replicate; winning projection UNSTABLE (g_pr PF13354 / g_topL PF00026). Strict 'node-fail generalizes' NOT literally met
+  (B' beat the WEAKER entropy ref +0.091 on PF00026) but the HARDENED phylo bar FAILS -> retire-node/relational-build vs
+  node-survives is Benjamin's call. The D2 KxA grid / family-lock / R1-M5-R2 runs stay HELD. Then D3 (FOMC), R3, M5 +
+  capstone. (Spec Section 8.7.)
 - Tests: 272 fast + 100 slow + 18 very_slow = 390 (1 xfail). v0.7.1: 11 R1-persistence. v0.7.0: 13 D1-structure
   + 35 categorical-proxy + 8 categorical-ablation + 8 R2/cross-tab + 6 crossing-proxy (+1 slow) + 20 decoupling-control (+1 slow).
   v0.6.2: 12 empirics. v0.6.1: 23 coder. v0.6.0: 32 capacity.
@@ -232,10 +235,13 @@ coevolution real + conservation-independent, per-position projection weak); chec
 node-aggregation beats burial-controlled conservation -> the edge->node projection loses the signal). B2 (graph-structural
 node projections) RAN + PASSED NARROWLY (g_pr/PageRank partial +0.151 > conservation +0.143; g_eig/g_topL fail; thin +0.008,
 single family, prediction inverted) -> Sec 6.2 NODE-VALUED w SURVIVES (edge-valued branch A NOT forced). SECOND-FAMILY
-replication + EDGE-M5 PRE-REGISTERED (Phase-1 PUSHED, run HELD): PF00026 (Asp / 4y9w:A; pure all-b 311-col aspartic
-protease; size-floor refinement >=150 cols excluded literal hit PF00024/PAN_1) discharges the B2 confirm-clause; adds an
-EDGE-M5 AUROC statistic + a phylo-hardened node-retirement test (g_pr partial|burial vs IQ-TREE-rate conservation, margin-CI).
-Edge+node-fail generalize -> edge-valued w branch A; node-pass robust -> node-valued joint-proxy design; edge fails -> STOP.
-D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
+replication + EDGE-M5 RAN (PF00026 Asp / 4y9w:A; L=312; apparatus scripts/run_d2_family2.py; matrix recipe BIT-EXACT to
+PF13354): RESULT = EDGE GENERALIZES (check A 0.160 vs base 0.019; edge-M5 PASS, MIp-AUROC 0.802 > cons-prod 0.442 AND >
+burial-prod 0.685, long 0.794 > 0.700) but NODE does NOT clear the HARDENED bar (g_pr partial +0.127 vs phylo-cons +0.134,
+margin -0.007 CI includes 0; B2 g_pr pass did NOT replicate; winning projection unstable g_pr/g_topL). PF13354 edge-M5
+fold-in: MIp 0.698 beats conservation but LOSES to burial 0.716 -> the edge-vs-burial margin is family-dependent. MIXED vs
+the strict rules ('node-fail generalizes' not literally met because B' beat the weaker entropy ref; hardened phylo bar
+fails) -> BRANCH ADJUDICATION HELD for Benjamin (retire-node + relational/edge build vs node-survives). No build, no
+family-lock taken. D2 grid/family-lock/R1-M5-R2 runs HELD; then D3 (FOMC), R3, M5 + capstone. Deferred
 (not pre-judged): the full R1 grid; the A2-Shapley rescue verdict; the
 R2-statistic all-pairs-vs-cross-philosophy-pairs decision.
