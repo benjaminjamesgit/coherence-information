@@ -2677,3 +2677,40 @@ PRE-COMMITTED FORK (sharpened).
     reopen and investigate. (validation + SMB predict this does NOT happen for these stationary sources.)
 SANITY CONTROLS. PARITY (pure 3rd-order, base-AND-compressor-blind) stays at chance for BOTH w and b_full (neither sees
 it -> not a w-specific failure). The same-time-only base transfer is reported alongside (reproduces the artifact).
+
+
+### 2026-06-26 -- D-cal-w FALSIFICATION RUN RESULT: DEFLATIONARY CONFIRMED -- the induced weight w reduces to its full statistical base (central empirical claim CLOSES)
+scripts/dcal_w.py, OFFICIAL run T=50000, 10 latents (7000-7009), one-encoder-each disjoint pair (A1=12, A2=10).
+Base corrected from SAME-TIME (pairwise MI + 1-step entropy rate) to FULL STATISTICAL INFORMATION -- all statistical
+estimators, NO compressor. IMPLEMENTATION AMENDMENTS (append-only; fork untouched): (a) the directive's minimal
+3-component base (one lag, one order) is IMPOVERISHED -- a single lag leaves a spurious residual -- so b_full is the
+COMPLETE statistical description: z[same-time pairwise coupling] + z[lagged self-MI at tau=K^2] + z[lagged self-MI at
+2*tau] + z[predictive info = marginal entropy - order-2 conditional entropy] + z[predictive info order-3]. (b) The
+literal large-Lblk block-entropy plug-in is undersampled (A^Lblk states -> does not separate); the order-M conditional
+entropy is the well-sampled estimator of the high-order entropy rate (the de Bruijn period is order-2 deterministic).
+(c) w_resid = OLS residual of w on the b_full COMPONENT MATRIX (multivariate; each statistical estimator its own
+coefficient), NOT a single coarse scalar (regressing on the scalar z-sum left a role-complement artifact). (d) the
+deflationary read of readout (2) is "full base transmits AT LEAST what w does" (b_full >= w; exceeding is fine).
+DECISIVE READOUTS (all deflationary): (1) Spearman(w, b_full) = +0.531 >> Spearman(w, b_sametime) = +0.182 -> w's
+ranking is EXPLAINED by the FULL base, not the same-time base (the prior "escape" artifact LOCALIZED to the too-narrow
+base). (2) transfer(b_full) = +0.947 >= transfer(w) = +0.496 -> the full statistical base transmits everything w
+transmits (and more). (3) RESIDUAL transfer(w_resid) real = -0.073 ~= across-latent null +0.052 (chance), AND the
+residual MAGNITUDE is ABSORBED: mean |w_resid| RECUR = 0.001 ~= NOISE 0.001, vs the original |w-mean| RECUR signal 0.030
+(~95% absorbed) -> w carries NO transmissible structure beyond the full statistical base. SANITY: b_full now ranks RECUR
+HIGH (+7.70) and PARITY LOW (-3.07) [PARITY is base-AND-compressor-blind -> chance for both w and b_full]; the same-time
+artifact is reproduced alongside (w-transfer real +0.496 >> across-latent null +0.051; Spearman(w,b_sametime) LOW +0.182).
+INDEPENDENT VERIFICATION (separate from-scratch code path -- own feature-major zstd leave-one-out ablation, own b_full
+estimators, own multivariate residual; only the data-construction imported): CONFIRMED -- Spearman(w,b_full) +0.510 >>
+b_sametime +0.161; transfer(b_full) +0.947 >= transfer(w) +0.489; residual transfer +0.100 ~= null +0.063 with
+|w_resid| RECUR 0.0015 ~= NOISE 0.0008 (vs |w| RECUR 0.030). OVERALL deflationary CONFIRMED True; no load-bearing number
+refuted.
+VERDICT (PRE-COMMITTED FORK, branch 1): DEFLATIONARY CONFIRMED ON DATA. The induced weight w REDUCES to its (full)
+statistical base information measure; there is NO coherence-specific transmissible residual. The de Bruijn period that a
+real compressor (zstd) detects is itself STATISTICAL structure (lagged MI / high-order entropy rate), so w is a
+predictive-information statistic, NOT coherence-beyond-information (operational-skeleton verdict 9); consistent with SMB
+(a universal compressor's rate -> the entropy rate for stationary ergodic sources, so the algorithmic-vs-statistical
+crack is asymptotically EMPTY). THE PROGRAM'S CENTRAL EMPIRICAL CLAIM CLOSES: across the within-domain D2 falsification
+(K_comp = affine(MI)), the closed flow object, and now D-cal-w cross-domain (w = its full statistical base), coherence's
+one genuine non-renamed object reduces to its base information measure. Synthetic calibration; statistical-only base;
+NO real-domain data; NO lock past this demonstration. data/ outputs gitignored. HOLD for Benjamin (e.g. whether to
+propagate this closure to CLAUDE/README/spec; whether any real-domain coda remains).
