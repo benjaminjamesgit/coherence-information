@@ -2552,3 +2552,21 @@ LANDING: 4/5 gates PASS cleanly INCLUDING the load-bearing CEILING (the corpus c
  coordinate-free eta-structure TRANSMISSION pre-reg) are BENJAMIN's -- NOT decided here. The STEP-1 FORK and the five
  gate THRESHOLDS are UNCHANGED; the ceiling-aware recovery REPORTING (AUROC + achievable-ceiling) is a diagnostic
  addition discovered from the run, construction + gate logic untouched. HOLD for Benjamin.
+
+
+### 2026-06-26 -- v0.7.3 D-cal-flow STEP-1 CLOSURE + redirect to the induced-weight (w) question
+DECISION (Benjamin): accept the Step-1 apparatus as INTERNALLY VALID but GENERIC. Flow gate (ii) is tautological --
+beta=1/nf, lambda=sqrt(nf), g=1/sqrt(nf) are one scalar nf in three forms, and the corpus-literal top-eigenvalue beta
+FAILED to reproduce b^d and was redefined to information-SNR (smoke-amend) -> the flow was inserted, not measured.
+CEILING gate (iv) AUROC 1.000 recovers a planted TIMESCALE label (eta_f = coupling-survival-under-coarse-graining;
+anomalous = slow-regime-driven by construction) + partial planted wiring WITH correspondence = internal validity on
+GENERIC structure. This CONFIRMS coherence_operational_skeleton.md verdict 7: the corpus Sec 6 "RG flow" is tree-level
+dimensional analysis, NOT Wilsonian RG (eta inserted by hand, only the trivial fixed point).
+FLOW ROUTE (option c) CLOSED as low-value -- NOT falsified, but a dead end: it rests on the corpus's most decorative
+math and recovers only generic timescale structure. Step 2 (transmission) is NOT pursued (it would test whether a
+generic timescale label transmits against a scalar-eta-matched null built to kill it; a pass would be generic/Horn 1).
+REDIRECT: per the operational skeleton, the ONE genuine non-renamed object is the induced weight w=sigma(beta*rho),
+rho = compression-ablation delta. The live empirical question: does w carry TRANSMISSIBLE STRUCTURE BEYOND THE BASE
+MEASURE it weights, across DISJOINT-prior domains, against a base-matched null? Within-domain w collapses to the base
+(D2: K_comp=affine(MI)); the non-circular test is cross-domain transfer (standing circularity prior). NEXT = D-cal-w
+(next entry).
