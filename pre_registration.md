@@ -2889,3 +2889,40 @@ structured-noise null = does the SMB crack bite) is the OFFICIAL run -- HELD for
 corpus choices (text alphabet/size -> orders 3-4 undersampled; human DNA vs other genomes; whether E. coli serves as
 a near-stationary control arm), the null validity (sound in smoke), and especially the BEYOND-BASE PREVIEW + its
 LZ-vs-finite-order interpretive question. Real-domain data authorized; NO lock past this; nothing in data/ committed.
+
+
+### 2026-06-26 -- v0.7.3 D-cal-w-real RE-BASE: fair universal statistical estimator replaces the strawman ladder
+VALIDATION FINDING. The prior smoke's beyond-base preview (var(w_resid) real >> surrogate) is a STRAWMAN-BASE ARTIFACT,
+not the SMB crack. w = full-resolution LZ77 (repeats at ANY distance <=8192 / length <=4096); the base was a SPARSE 13-dim
+ladder (9 fixed lags 1..256 + orders 1..4). LZ's per-position relevance is driven by repeats at the thousands of
+distances/lengths the ladder CANNOT represent -> w_resid GUARANTEED large; real >> surrogate because real corpora have
+long-range repeats (Moby Dick phrasings, chr22 ALU/LINE) the order-k Markov surrogate destroys. Those repeats ARE
+statistical structure (lagged correlation); w is itself a statistical/MDL/predictive-info estimator (skeleton verdict 9).
+So the residual = "LZ is a better entropy-rate estimator than a 9-lag model" = SMB estimator-quality, NOT
+coherence-beyond-information. The ladder was too sparse AND non-adaptive (worse on non-stationary data) -> unfair.
+
+RE-BASE (anti-tautology pin PRESERVED -- ONE frozen standard method, not a tunable ladder). The base must be of LZ's
+representational class: a UNIVERSAL ADAPTIVE statistical estimator of the per-position information content
+-log2 P(x_t | context). Install a FROZEN PPM (prediction-by-partial-matching, PPM-C escape) OR a high-order back-off /
+suffix Markov model (longest-matching-context prediction with add-alpha smoothing + back-off) -- giving base_t = the
+estimated statistical information content at t, capturing arbitrary-order/long-range structure (a long matching context =
+a repeat -> confident prediction -> low codelength, the statistical analog of LZ's match). DROP the sparse ladder entirely.
+By SMB both LZ and PPM converge to the entropy rate, so a FAIR base ABSORBS w (residual -> finite-sample noise); the sparse
+ladder could not. PINS (frozen a priori): max-order = 24 (cap 32 if the fairness gate forces it); PPM-C escape, OR back-off
+add-alpha = 0.1. NO compressor in the base (it is an explicit -log2 P model).
+
+FAIRNESS GATE (smoke, pre-registered -- the anti-strawman check, both directions). mean(base per-position codelength) ~=
+mean(w per-position codelength) within tol (e.g. |d| < 0.15 bits): both estimate the ENTROPY RATE -> same representational
+class -> a fair comparison. If mean(base) >> mean(w), the estimator is too weak at the pinned order -> raise the order to
+the cap (documented) to reach FAIRNESS (equal MEAN rate), NOT to absorb the per-position residual. Matching the MEAN does
+NOT pre-determine the per-position RESIDUAL -- two consistent estimators of the same entropy rate can still disagree
+position-by-position; that disagreement-structure IS the test.
+
+TEST + FORK (unchanged). w_resid = OLS residual of w (LZ codelength) on [1, base (PPM codelength)]. LAYER 1: w_resid
+structure REAL vs the order-k Markov-surrogate null (var, lag-1 autocorr).
+  - ABSORBED (real ~= surrogate) in BOTH domains -> DEFLATIONARY SEALED on real, non-stationary, disjoint data: w reduces
+    to the statistical information content even against a FAIR universal estimator -> the hardest test passed, the central
+    claim closes for good (SMB empirically robust).
+  - REAL >> SURROGATE (beyond a fair, entropy-rate-MATCHED statistical estimator) in a domain -> a GENUINE non-ergodic
+    crack on real data -> pre-register LAYER 2 (cross-domain transmission = metacoherence), only if Layer 1 forces it.
+Corpora (Moby Dick / human chr22), per-position unit, order-k Markov null: UNCHANGED.
