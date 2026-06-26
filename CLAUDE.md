@@ -41,7 +41,12 @@ Weights are either user-supplied or induced from data:
 
 ## Current state
 
-- Version `0.7.1` (pyproject + README + CITATION.cff; tagged 2026-06-24). v0.6 operational-theorem program COMPLETE: v0.6.0 capacity
+- **v0.7.x ARC CLOSED (2026-06-26):** the measurable-beyond-information claim is CLOSED, deflationary -- coherence-as-a-measurable
+  = statistical information, necessarily (the induced weight is itself a statistical estimator -> "beyond statistical information" is
+  ill-posed). Three manifestations of one wall: analytic (K_comp=affine MI), entropy-rate-estimator (LZ vs PPM fairness mismatch),
+  combinatorial-statistic (LZ vs longest-match). Theory-led (SMB + exhaustion + ill-posedness), not a clean finite empirical equality.
+  Public summary = README.md; full record = pre_registration.md; anatomy = coherence_operational_skeleton.md.
+- Version `0.7.4` (pyproject + CITATION.cff; tagged 2026-06-26; v0.7.1 was tagged 2026-06-24). v0.6 operational-theorem program COMPLETE: v0.6.0 capacity
   estimator, v0.6.1 selective coder (Thm 5.1 repaired), v0.6.2 Selective Compression empirics.
 - Proxies (K_n): K1 compression-delta (zstd), K2 n-gram MDL, K3 neural prequential
   (single-layer GRU), K4 MDL-HMM (factorized-Bernoulli HMM, two-part MDL selection over

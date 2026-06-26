@@ -3100,3 +3100,51 @@ residual, per the HARD STOP; NOTHING chosen here):
       compressor's codelength. (My read: (a) and (c) are the coherent readings; the data do not support a genuine
       beyond-information reopening.)
 NO lock past this. Real-domain data authorized; nothing in data/ committed.
+
+
+### 2026-06-26 -- v0.7.x ARC CLOSE (consolidated)
+TERMINAL CONCLUSION. The CIT empirical program's central claim -- that the induced coherence weight carries structure
+BEYOND known statistical information -- is CLOSED, deflationary: as a MEASURABLE, coherence reduces to statistical
+information (the entropy rate), NECESSARILY. The instrument that operationalizes coherence (w = sigma(beta*rho), rho a
+compression/predictive relevance) is ITSELF a statistical/entropy-rate estimator, so "coherence beyond statistical
+information" has no operationalization that could detect it -- the claim is ill-posed at this level, not merely
+unconfirmed. This entry CONSOLIDATES the committed results (D2 within-domain falsification + theorem; the flow-object
+closure; D-cal-w synthetic deflation; the D-cal-w-real re-base fairness-gate failure; the compressor-free close); it
+introduces NO new numbers.
+
+THREE MANIFESTATIONS OF ONE WALL (each independently recorded above):
+  1. ANALYTIC -- K_comp = N_eff*(raw MI) - KT_penalty, an exact algebraic identity (D2; verified <=7e-12, OLS R^2
+     0.987-0.994, Spearman +0.99). The analytic compression coupling IS mutual information, rank-equivalent. The
+     order-collapse generalization extends it: a fixed-order compression coupling = the corresponding order-k information
+     statistic + penalty; higher order relocates the identity, it does not escape it.
+  2. ENTROPY-RATE-ESTIMATOR -- a real compressor's per-position codelength (LZ77 w) and any explicit -log2 P model (a
+     frozen PPM-C base) are NOT entropy-rate-class-matched at finite scale: the pre-registered fairness gate FAILED in
+     OPPOSITE directions on text vs DNA (TEXT |d|=0.395 PPM-stronger; DNA |d|=0.358 PPM-weaker; the pinned order-raise
+     lever inert), so the residual against a second estimator is confounded by cross-estimator bias -- the "beyond-base"
+     preview was an artifact, not interpretable.
+  3. COMBINATORIAL-STATISTIC -- a compressor's per-position relevance does not cleanly reduce to the sequence's
+     longest-previous-match statistic either: the compressor-free decomposition gave LOW R^2(w on F) (0.128 text / 0.236
+     DNA) and a residual MORE structured than the matched (incl. repeat-preserving block-permute) null, but the residue
+     is w's LZ-parsing-specific nonlinearity + long-range repeat PLACEMENT -- the sequence's OWN statistics, not an
+     emergent quantity.
+
+HONEST SCOPE. This is a THEORY-LED close, NOT a clean finite-scale empirical equality: "the statistical information at a
+position" is estimator-dependent, so there is nothing UNIQUE for w to be shown equal to. The close rests on (i)
+Shannon-McMillan-Breiman (a universal compressor's rate -> the entropy rate for stationary ergodic sources, so the
+algorithmic-vs-statistical crack is asymptotically empty); (ii) the EXHAUSTION of operationalizations (the three
+manifestations above span analytic, estimator, and combinatorial routes); and (iii) the ILL-POSEDNESS of the alternative
+(the instrument is a statistical estimator, so it cannot detect "beyond-statistical"). No result reopened it: every
+escape-leaning signal was traced to an estimator/representation mismatch and none survived a statistics-matched null.
+
+WHAT SURVIVES. The coherence-weighted information theorems as a consistent WEIGHTED GENERALIZATION of Shannon (H_w, I_w,
+the Coherence-Capacity Theorem C_C = max_p I_w; the Selective-Compression Theorem in its REPAIRED form -- floor = the
+merged-source entropy H(Z), the original H_w floor unsound for non-constant w; all reduce to Shannon at w = 1). The
+relational FORMALISM (admissible; weight MAGNITUDES untested -- sigma-induction is a rank no-op). The node-w falsification.
+M5 standard-MI->contact AUROC ~0.80. The deflated R1 (the field's standard subclade-replicated MI coevolution). The
+synthetic internal-validity calibrations (D1). FALSIFIED/illusory: coherence as a novel measurable beyond information;
+the R2-edge "two paradigms converge"; K_comp-as-distinct; P4 (compression distinct from information) in D2; every
+"beyond-base" cross-domain signal.
+
+The framework's value as a unifying CONCEPTUAL frame, and its semiotic/applied readings, are NOT measurable claims and
+are out of scope -- neither verified nor falsified here. PUBLIC SUMMARY = README.md (rewritten as the program-arc
+summary). Full record = this file. Operational anatomy = coherence_operational_skeleton.md. Version bumped to 0.7.4.
