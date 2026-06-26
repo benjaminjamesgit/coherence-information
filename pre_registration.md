@@ -2760,3 +2760,51 @@ PRE-COMMITTED FORK (Layer 1).
     only after Layer 1 forces it.
 SANITY: report Spearman(w, b_sametime-only) alongside (the D-cal-w artifact baseline). Report stationarity diagnostics
 (per-domain entropy-rate drift across the stream) -- the SMB assumption made visible.
+
+
+### 2026-06-26 -- D-cal-w-real SMOKE RESULT + smoke-amendments (machinery VALIDATED on real data; LOCKED ladder + fork UNTOUCHED; HOLD before the official run)
+scripts/dcal_w_real.py. SMOKE on two REAL disjoint-prior domains: A = PROTEIN (saved D2 Pfam matrix
+data/pfam/pilotS_PF13354_matrix.npy, subsample 1500 seqs x 60 positions, alphabet 21); B = TEXT (concatenated
+in-repo markdown prose README+CLAUDE+design/*.md+docs/*.md -> char-level a-z+space alphabet 27, 4000 windows x 24
+positions). TEXT SOURCE NOTE: the network was BLOCKED (Gutenberg fetch timed out) -> used the in-repo prose fallback
+the pre-reg authorizes; the OFFICIAL run should use a literary corpus if network becomes available (recorded).
+SMOKE-AMENDMENTS (real-data confounds; the LOCKED blind ladder LAG_LADDER/ORDER_SET and the FORK are NEVER touched):
+(1) w SERIALIZATION: the feature-major K1 proxy (compression_delta_proxy_cat) compresses each feature's column ALONE
+-> it sees only WITHIN-feature structure and is DEGENERATE on these real matrices (std(w) ~6e-4), whose structure is
+CROSS-feature (protein coevolution; text char-adjacency). FIX: a TIME-MAJOR zstd leave-one-out ablation (each row's F
+features laid contiguously so zstd sees the within-row/cross-feature structure; marginal-relative via a per-column
+shuffle baseline). Still "a real compressor, leave-one-out ablation" per the pre-reg; the BLIND BASE LADDER is
+unchanged -- this is the w object, not the base. (2) the structured-noise null's marginal check is POOLED (well-sampled)
+-- the per-column max-TV is finite-sample-inflated (~0.05 by chance for 27 symbols x ~4000 samples; pooled 0.003).
+(3) TEXT_MARKOV_K = 3 pinned.
+SMOKE RESULT -- ALL THREE GATES PASS on BOTH domains. PROTEIN: (ii) w non-degenerate std 0.0062 [range 0.491-0.516];
+(i) NULL VALIDITY -- per-column-shuffle null preserves marginals EXACTLY (pooled TV 0.000) while DESTROYING coupling
+(same-time coupling 43.2 -> 6.4) AND compressibility (time-major compress ratio 0.669 real vs 0.924 null); (iii) b_blind
+computable (14 components). TEXT: (ii) w non-degenerate std 0.0048; (i) NULL VALIDITY -- order-3 Markov surrogate matches
+the pooled marginal (TV 0.003) AND the order-3 conditional entropy (real 1.74 vs null 1.68; orders 0/1/2 match to <=0.008
+bits, the structural divergence appears only at order-4: real 1.15 vs null 1.49 = the destroyed beyond-order-3 structure)
+while DESTROYING compressibility (ratio 0.764 real vs 0.902 null); (iii) b_blind computable. INDEPENDENT VERIFICATION
+(separate from-scratch code path -- own bit-pack/time-major zstd/per-column-shuffle/w/coupling/Markov-null; only the raw
+data loaded): REPRODUCED every load-bearing number (protein w 0.0062, coupling 43->6, ratio 0.67->0.92, marginal 0; text
+w 0.0048, ratio 0.76->0.90, pooled marginal 0.003, order-3 matched, per-column TV 17x pooled = finite-sample); no number
+refuted.
+FLAGGED REAL-DATA CONFOUNDS (for Benjamin's pre-official review; NOT fixed here -- the ladder is locked):
+  - b_blind UNDERSAMPLING: orders 2/3/4 are undersampled in BOTH domains (eff samples/cell = T/A^(M+1): protein
+    0.16/0.008/3e-4; text 0.20/0.008/3e-4) -> those predictive-info components are noisy. The Layer-1 DECISIVE readout is
+    real-vs-STRUCTURED-NOISE-NULL residual (the surrogate's b_blind carries the SAME noise) -> the comparison controls for
+    this; the ABSOLUTE residual does not.
+  - PROTEIN orientation (T=sequences, unordered): the locked ladder's LAGGED self-MI and ORDER terms are ~MEANINGLESS along
+    unordered rows -> b_blind for protein reduces to the same-time coupling + noise (preview Spearman(w,b_blind)=-0.21 vs
+    Spearman(w,b_sametime)=+0.42 -- the noise terms corrupt the same-time signal). A per-position (T=positions) orientation
+    or a protein-appropriate base reading is a Benjamin call.
+  - TEXT representation (windows x within-window positions): the F positions in an arbitrary 24-char window are weakly
+    DIFFERENTIATED (English structure is not window-position-specific) -> w and b_blind are nearly flat per feature
+    (preview Spearman(w,b_blind)=-0.06, Spearman(w,b_sametime)=+0.00, R^2 0.33) -> the per-feature Layer-1 test may be
+    weakly powered on text as represented. A token/word-unit representation is a Benjamin call.
+  - STATIONARITY diagnostics (SMB assumption made visible): entropy-rate drift first-vs-last-third = protein 0.198 (note:
+    rows unordered -> "drift" is subsample variation, not time), text 0.075.
+NET: the apparatus is VALIDATED on real data (nulls valid, w computable cross-feature, base computable); the locked blind
+ladder was NEVER tuned. The Layer-1 fork (does w carry structure beyond the blind base, real vs structured-noise null) is
+the OFFICIAL run -- HELD for Benjamin, who reviews the flagged confounds (undersampling, protein orientation, text
+representation, text corpus quality) and the structured-null validity FIRST. Real-domain data authorized for this capstone;
+NO lock past this; nothing in data/ committed.
