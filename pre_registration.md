@@ -2843,3 +2843,49 @@ LAYER 1 FORK (per domain -- the decisive gate; the SMB crack on real non-station
     which REOPENS the close) -- a separate entry, only if Layer 1 forces it.
 DIAGNOSTICS: report the stationarity (entropy-rate drift first-vs-last third) for each real corpus -- the SMB assumption
 made visible; report Spearman(w, b_sametime-only) alongside (the D-cal-w artifact baseline).
+
+
+### 2026-06-26 -- D-cal-w-real (PROPER) SMOKE RESULT: machinery VALIDATED on real non-stationary corpora (text + human DNA); a beyond-base PREVIEW; LOCKED ladder + fork UNTOUCHED; HOLD
+scripts/dcal_w_real.py (rewritten, per-position). Two REAL fetched corpora (network confirmed available): TEXT =
+Moby Dick (Project Gutenberg 2701, https://www.gutenberg.org/files/2701/2701-0.txt, 1.23 MB); DNA = human chr22
+region NC_000022.11:23,000,000-24,200,000 (NCBI efetch, 1.20 Mb, 0% N). UNIT = PER-POSITION along the 1-D stream.
+SMOKE-AMENDMENTS (real-data confounds; the LOCKED blind ladder LAG_LADDER/ORDER_SET and the FORK are NEVER touched):
+(1) per-position w = greedy-LZ77 codelength (the LZ-family core of zstd; a real-compressor per-position relevance,
+distinct from the fixed-order base) -- replaces the prior degenerate window-position unit. (2) the structured-noise
+null's k is pinned PER DOMAIN to the highest WELL-SAMPLED order so the surrogate actually preserves order-k: TEXT k=2
+(A=27 only samples ~order-2 at smoke sizes; orders 3-4 of the locked base stay in as a REPORTED undersampling
+limitation), DNA k=4 (A=4 samples all four orders at 1172-75000/cell). (3) DNA non-stationarity is COMPOSITIONAL
+(GC/marginal drift), which the ~flat entropy rate misses -> added a composition-drift diagnostic. (4) E. coli (the
+first DNA) was DROPPED: compact/near-stationary (composition drift 0.012) with little beyond-order-4 structure (LZ
+destroyed-gap only +0.011) -> a LOW-POWER crack test; swapped for a human chr22 region (ALU/LINE repeats = strong
+long-range structure: LZ destroyed-gap +0.074, ~7x E. coli).
+SMOKE RESULT -- ALL FOUR GATES PASS on BOTH domains. (i) REAL + NON-STATIONARY: TEXT entropy-rate drift 0.034 /
+composition drift 0.063; DNA composition drift 0.0084 (weakly compositionally non-stationary; its SMB-crack-relevant
+property is the long-range repeat structure, gate iii). (ii) UNITS POWERED: per-position w non-degenerate (std TEXT
+1.07 / DNA 0.285), residual not flat; R^2(w on b_blind) LOW = 0.057 (TEXT) / 0.018 (DNA). (iii) NULL VALIDITY: the
+order-k Markov surrogate matches the marginal (TV 0.006/0.0006) AND order-k conditional entropy (|d| 0.042/0.000)
+while DESTROYING beyond -- LZ compressibility gap real-more-compressible +0.48 bits (TEXT) / +0.074 bits (DNA, the
+repeats) and order-(k+2) gap +0.39/+0.045. (iv) BASE computable; per-order sampling reported (TEXT orders 3-4
+undersampled at A=27; DNA all orders well-sampled).
+LAYER-1 PREVIEW (NOT the fork -- the official run decides; recorded for Benjamin): R^2(w on b_blind) is LOW in BOTH
+domains (0.057/0.018) and the RESIDUAL carries MORE structure on REAL than on the structured-noise surrogate --
+var(w_resid) real 1.07 vs surrogate 0.53 (TEXT, ~2x); real 0.080 vs surrogate 0.015 (DNA, ~5x); residual lag-1
+autocorr real 0.757/0.925 vs surrogate 0.634/0.883. This PREVIEWS that w may carry structure BEYOND the locked
+statistical base on real non-stationary data -> if the OFFICIAL run confirms it, the deflationary close would REOPEN
+(-> Layer 2 = cross-domain transmission). CAVEAT (the interpretive question, Benjamin's call): the LZ per-position
+codelength captures variable-length / off-ladder repeats that the fixed-lag/fixed-order base structurally cannot --
+whether that is a genuine coherence-beyond-information crack or just "LZ != finite-order-Markov at finite scale"
+(SMB is an ASYMPTOTIC statement; the per-position finite-scale gap is exactly where it is silent) is the adjudication
+the official Layer-1 run + Benjamin make. PROVISIONAL: smoke, single subsample, no statistics.
+INDEPENDENT VERIFICATION (separate from-scratch code path -- own LZ77, own per-position base, own Markov surrogate;
+only the raw corpora loaded): CONFIRMED every load-bearing number -- std(w) 1.072/0.286, R^2 0.062/0.019, null
+marginal+order-k matched, LZ destroyed-gap +0.489/+0.074, composition drift 0.063/0.008, Layer-1 var(w_resid) real >>
+surrogate (1.077>0.547, 0.080>0.015). One minor flagged discrepancy: TEXT entropy-rate drift reproduced at 0.010 vs
+0.034 (same sign/order; an entropy-rate-estimator thirds/convention difference; NON-load-bearing -- the composition
+drift 0.063 carries the text non-stationarity).
+NET: the apparatus is VALIDATED on real, non-stationary, disjoint-prior SEQUENTIAL corpora with the corrected
+per-position unit; the locked blind ladder was NEVER tuned. The Layer-1 fork (w_resid structure real vs the
+structured-noise null = does the SMB crack bite) is the OFFICIAL run -- HELD for Benjamin, who reviews FIRST: the
+corpus choices (text alphabet/size -> orders 3-4 undersampled; human DNA vs other genomes; whether E. coli serves as
+a near-stationary control arm), the null validity (sound in smoke), and especially the BEYOND-BASE PREVIEW + its
+LZ-vs-finite-order interpretive question. Real-domain data authorized; NO lock past this; nothing in data/ committed.
