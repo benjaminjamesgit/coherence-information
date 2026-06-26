@@ -2989,3 +2989,48 @@ FORK and the frozen-estimator family are UNTOUCHED; NOT chosen here):
       since two consistent estimators of the same entropy rate can mean-match yet disagree per-position -- but the pre-reg
       explicitly gated interpretability on MEAN fairness, so this needs a pre-reg amendment.
 NO lock past this. Real-domain data authorized; nothing in data/ committed.
+
+
+### 2026-06-26 -- v0.7.3 D-cal-w-real CLOSE: confirm deflationary ON DATA via the compressor-free match statistic
+WHY THIS, NOT MORE RESIDUAL-VS-A-SECOND-COMPRESSOR. The fairness gate proved w (LZ codelength) and any frozen statistical
+-log2 P base are not entropy-rate-class-matched at finite scale, so a residual against a SECOND estimator (PPM) is
+confounded by cross-estimator bias. The clean on-data confirmation uses NO second compressor: it asks whether w is a
+deterministic function of the sequence's OWN compressor-free statistics. w (greedy-LZ77 per-position codelength) is, by
+the LZ construction, the amortized cost of the local match; the match is captured by the LONGEST-PREVIOUS-MATCH length
+L_t -- a pure combinatorial statistic of the sequence (computed by a suffix automaton / suffix array, NO coding, NO
+probability model) that reaches repeats of ANY length (the DNA order-~300 repeats a Markov-K surrogate can never
+represent) and that converges to the entropy rate (Wyner-Ziv). If w = f(L_t, distance_t, short-range Markov surprisal)
+with the residual no more structured than a matched-statistics null, then w carries NOTHING beyond the sequence's
+statistical/combinatorial structure -- the deflationary close, confirmed on real data.
+
+CONSTRUCTION (both real corpora -- Moby Dick, human chr22 -- FULL length; per-position unit).
+  - w_t = greedy-LZ77 per-position codelength (UNCHANGED; the compression relevance).
+  - EXPLICIT COMPRESSOR-FREE STATISTICS (pinned; no compressor, no coding):
+      L_t  = longest previous match length at t (suffix automaton / suffix array / hash-chain matcher reporting LENGTH
+             only -- a pure sequence statistic, reaches any repeat length);
+      D_t  = log2(distance to that match + 1);
+      S_t  = order-k Markov surprisal -log2 P_k(x_t | x_{t-k..t-1}), k pinned per domain at the well-sampled order
+             (TEXT k=2, DNA k=8) -- the short-range statistical predictability.
+  - FEATURES F_t = [L_t, D_t, S_t, 1(L_t==0 literal)].
+
+READOUTS.
+  (1) DECOMPOSITION: R^2 of w on F (OLS) + Spearman(w, -L) -- how much of w is the sequence's own match/Markov statistics.
+      (Expect high: w is the amortized match cost; this is the mechanism made explicit.)
+  (2) RESIDUAL FORK (falsification): r_t = w_t - OLS(w on F). Compare the STRUCTURE of r (variance + lag-1..L autocorr)
+      on REAL vs on a MATCHED-STATISTICS null = the order-k Markov surrogate (destroys beyond-order-k) AND a
+      repeat-preserving surrogate (block-permutation that keeps the repeat multiset; destroys their long-range placement).
+  (3) ROBUSTNESS: full corpora; report R^2 + residual numbers on each HALF (stability, not a small-sample fluke); and a
+      TEXT-only Markov-order cross-check (residual vs order K = 1,2,4,8: does it shrink -- the convergence trend, feasible
+      at A=27 short range).
+
+PRE-COMMITTED FORK.
+  - r_real structure ~= matched-null (residual no more structured than statistics-matched surrogates), with w substantially
+    decomposed onto F -> DEFLATIONARY CONFIRMED ON DATA: w is a deterministic function of the sequence's own compressor-free
+    statistical structure (longest-match -> entropy rate by Wyner-Ziv; + Markov surprisal); no emergent residual. THE ARC
+    CLOSES: the compression-induced weight = statistical information, on real disjoint-prior data.
+  - r_real structure >> matched-null (residual carries structure beyond the explicit statistics AND beyond the
+    repeat/Markov surrogates) -> w carries structure beyond the sequence's statistics -> the close REOPENS -> new territory.
+HONEST CEILING (recorded): "L -> entropy rate" is Wyner-Ziv (asymptotic); this confirms w = f(an explicit, compressor-free
+sequence statistic) at finite scale and that the residual is statistics-matched-noise -- it does NOT make "statistical
+information at position t" a unique finite quantity (that is estimator-dependent by nature). This is the strongest on-data
+confirmation the question admits.
