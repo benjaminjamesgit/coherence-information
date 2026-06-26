@@ -2496,3 +2496,28 @@ STEP-1 FORK (pre-committed).
 STEP 2 thresholds (escape bar, null match tol) are FLAGGED PENDING Step-1 -- NOT locked here.
 
 DISCIPLINE. Synthetic only; pre-reg committed BEFORE the run; smoke-amend gate; HOLD after Step 1.
+
+
+### 2026-06-26 -- D-cal-flow STEP-1 SMOKE-AMENDMENT (apparatus realization; FORK + the five GATE THRESHOLDS UNTOUCHED)
+Smoke (T=12000, F=30) surfaced apparatus/construction confounds (NOT fork-relevant); fixed append-only per the
+pre-reg smoke-amend rule. (1) BIAS FLOOR: the plug-in normalized-MI coupling carries the finite-sample bias
+(A−1)²/(2N) that scales as 1/N and SWAMPS the signal at sample-starved coarse scales (raw recovery Spearman ~0.06).
+FIX: subtract the analytic Miller-Madow independence floor (deterministic -> EXACTLY permutation-invariant, gate v
+clean) before clamping at 0. (2) beta/lambda/g OPERATIONALIZATION: the literal top-eigenvalue beta does not cleanly
+reproduce the corpus scaling (beta~b^d, lambda~b^(−d/2), g~b^(d/2)); realized as the information-SNR
+beta=1/noise_fraction, lambda=sqrt(noise_fraction), g=1/sqrt(noise_fraction), with noise_fraction = mean_f (1−U*_f)
+and U*_f = mean of feature f's top-(MOD_SIZE−1) normalized-MI couplings -> g monotone-increasing BY CONSTRUCTION,
+faithful to dg/dell=(d/2)g; per-feature eta_f = d_f − median_f(d_f), d_f = slope of log2 beta_f over the FULL
+measured scale window (anomalous rises throughout / normal rises-then-plateaus -> full-window slope separates them;
+the well-sampled fine scales stabilize the fit, unlike a starved coarse-only fit). (3) SIGNAL: SIGMA=1.0 (latent
+corr ~0.5..0.98 across scales) so the eta magnitudes clear the CI. (4) eta CI: a moving-block bootstrap (block =
+M_SUP, full-T resamples, B=40 at run) replaces a crude J-segment split (which starved each segment). (5) RECOVERY
+read at the MOST coarse-grained scale (the bias-corrected MI is reliable there; the full per-scale curve is
+reported). SMOKE RESULT: gates (ii) FLOW (beta up / lambda down / g monotone; fitted d>0) / (iii) eta-IDENTIFIABLE
+(anomalous median +0.064 >> normal −0.002 ~ noise 0.000; every anomalous feature bootstrap CI_lo>0) / (iv) CEILING
+(anomalous-SET AUROC 1.000, anomalous-GRAPH precision 0.750 >> planted density 0.028) / (v) NON-DEGENERACY (max
+off-diag 0.327 < 0.98; spectrum perm-invariance 9e-16) all PASS; gate (i) RECOVERY 0.652 at smoke's 187 coarse
+blocks is T-LIMITED (the per-scale Spearman curve rises 0.21 -> 0.65 with scale) -> expected to clear >=0.7 at the
+official T=50000 (780 coarse blocks). Construction constants: K=8, MOD_SIZE=3, M_SUB=4, M_SUP=400, SIGMA=1.0,
+scales b=1..64 (L=6), GEN_SEED=7000, one encoder A1=12. The STEP-1 FORK and the five GATE THRESHOLDS are UNCHANGED.
+Apparatus committed + pushed BEFORE the official run. scripts/dcal_flow.py.
