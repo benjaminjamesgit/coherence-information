@@ -2608,3 +2608,43 @@ SMOKE GATES (verify BEFORE the official run; AMEND construction append-only if a
   (iii)CEILING (necessary-not-sufficient): WITH the shared feature index, w transmits real >> null (structure present,
        w-detectable).
   (iv) DISJOINTNESS: the two encoders share no surface n-gram statistic (generic stats matched < tol).
+
+
+### 2026-06-26 -- D-cal-w SMOKE RESULT + smoke-amendments (apparatus realization; FORK UNTOUCHED; HOLD before the official run)
+scripts/dcal_w.py. SMOKE (T=20000, 6 latents). Real compressor = zstd K1 (cit.proxies.categorical.
+compression_delta_proxy_cat) via the cit induce/ablation pipeline; NOT the analytic-KT proxy.
+SMOKE-AMENDMENTS (construction realizations found during the dev/smoke shakeout; append-only; the FORK and the
+SMOKE-GATE structure are UNTOUCHED). (1) The disjoint encoders RELABEL per feature -> they break CROSS-feature
+surface structure (so a same-time pairwise coupling or a cross-feature long-range copy is NOT compressor-visible
+post-encoding) but PRESERVE within-feature temporal structure. So the encoding-surviving w-beyond-base candidate is
+a WITHIN-feature recursive long-range self-copy. (2) MASS 0.7 -> 0.95: at 30% rendering noise zstd finds no exact
+repeat (match run ~2 symbols) -> the period is undetectable; 0.95 (run ~10) lets the real compressor see it. (3)
+RECUR = a de Bruijn B(K,2) period-K^2 block (Hierholzer Eulerian circuit): UNIFORM marginal AND UNIFORM 1-step
+transitions -> 1-step entropy rate = log2 K EXACTLY (verified 2.9993), so the structure is PURELY long-range and
+the base-matched SHARED-timestep shuffle preserves marginals + same-time pairwise MI + entropy rate while
+destroying ONLY the long-range period. (4) Per-latent ROLE variation (which features are P/RECUR/PARITY/NOISE
+varies per latent) -> a VALID across-latent null (a different latent puts RECUR at different indices -> its w does
+not transfer). (5) base-match tols sized to sampling error (marginal TV<0.02; pairwise-coupling = a sum of 17 MIs,
+SD~0.02 -> <0.04; entropy-rate<0.05). (6) Spearman degeneracy guard (std<1e-4 -> nan): a near-constant w vector has
+NO signal, so its transfer is UNDEFINED, not a noise value.
+SMOKE RESULT -- ALL 4 GATES PASS. (i) NULL VALIDITY (load-bearing, the make-or-break): the base-matched shared-shuffle
+MATCHES the base measure (enc1 marginal TV 0.005 / pairwise 0.029 / entropy-rate 0.007; enc2 0.005/0.016/0.004) WHILE
+DIFFERING in real-compressor compressibility -- C_K1 real 0.154/0.147 vs base-matched-null ~0.000 -> GAP +0.154/+0.147.
+So there IS a base-matched-but-compressible long-range structure to plant. (ii) w COMPUTABLE+STABLE (std 0.014; w ranks
+RECUR ~0.53 highest, P/PARITY/NOISE ~0.49). (iii) CEILING: w-transfer(real) +0.546 >> across-latent null +0.041
+(base-transfer +0.921 >> +0.064). (iv) DISJOINTNESS (A1=12 != A2=10; generic-stat TV 0.013, entropy-rate reldiff 0.003).
+THE BASE-MATCHED NULL DEGENERATES w (6/6 latents, all-0.5, std 1.2e-4): once the recursive period is shuffled out the
+compressor finds nothing -> w collapses -> w's transmissible content IS the beyond-base RECUR structure.
+PROVISIONAL READ (smoke, NOT the official fork): escape-leaning -- w-transfer real >> across-latent null AND the
+base-matched null kills w. INDEPENDENT VERIFICATION (separate from-scratch code path -- own feature-major zstd, own
+leave-one-out ablation, own spearman; only the data-construction imported): REPRODUCED all load-bearing numbers
+(de Bruijn 1-step entropy 2.9993; base-matched gap +0.154/+0.147; ceiling real +0.546 vs across-latent null +0.040;
+base-matched w degenerate 6/6) -- no number refuted.
+HONEST CAVEAT (recorded for the adjudication; flagged by the apparatus AND independently by the verifier): the planted
+"w-beyond-base" structure is MECHANICALLY a long-range temporal PERIOD that a SURFACE compressor (zstd) detects and the
+SAME-TIME pairwise-MI base does not. Whether that counts as coherence-beyond-information, or is merely "the compressor
+sees a repeat the same-time base misses," is BENJAMIN's adjudication -- as is the BASE-MEASURE definition (a lagged/
+higher-order MI base would also see the period). The smoke is SOUND either way; it validates the machinery, not the claim.
+HOLD before the official run: Benjamin reviews the gate-(i) base-matched null FIRST (the make-or-break) and the
+base-measure / interpretation question, then sets the official-run thresholds (the fork's >> and ~= are FLAGGED PENDING).
+NO official run, NO real-domain data, NO lock. scripts/dcal_w.py committed + pushed.
