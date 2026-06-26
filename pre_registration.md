@@ -3034,3 +3034,69 @@ HONEST CEILING (recorded): "L -> entropy rate" is Wyner-Ziv (asymptotic); this c
 sequence statistic) at finite scale and that the residual is statistics-matched-noise -- it does NOT make "statistical
 information at position t" a unique finite quantity (that is estimator-dependent by nature). This is the strongest on-data
 confirmation the question admits.
+
+
+### 2026-06-26 -- D-cal-w-real CLOSE RESULT: did NOT cleanly close; literal criterion leans REOPEN, but the signal is most parsimoniously the w-representation/long-range-repeat artifact -> HOLD for adjudication
+scripts/dcal_w_real.py "close" mode (FULL corpora; TEXT Moby Dick T=1,174,224 A=27; DNA human chr22 T=1,200,001 A=4).
+COMPRESSOR-FREE apparatus BUILT + validated: longest-previous-match L_t / Dist_t via suffix array (numpy prefix-doubling)
++ Kasai LCP + RMQ + nearest-smaller-SA-value neighbours (Crochemore-Ilie LPF) -- a PURE combinatorial sequence statistic,
+NO coding, reaches repeats of ANY length; matched a brute-force O(n^2) LPF EXACTLY on 60 random strings before the run.
+Features F = [L_t, log2(Dist_t+1), S_t (order-k Markov surprisal, Laplace add-1; k TEXT 2 / DNA 8), 1(L_t==0)]; w = the
+greedy-LZ77 per-position codelength (UNCHANGED). Decomposition r = w - OLS(w on [1,F]); nulls = order-k Markov surrogate
+(seed 1) AND a repeat-preserving block-permutation surrogate (block 256, seed 1).
+
+RESULT -- against the PRE-COMMITTED FORK, this is NOT the clean deflationary close; by the LITERAL criterion it leans
+REOPEN, on BOTH of the two pre-registered conditions:
+  (1) w is NOT substantially decomposed by F. R^2(w on F) = 0.128 (TEXT) / 0.236 (DNA) -- LOW. The pre-reg HARD STOP
+      states "if w is NOT decomposed by them, that is the reopening signal, recorded honestly." Spearman(w,-L) weak and
+      rank-convention-sensitive (heavy ties: ordinal +0.222 TEXT / +0.078 DNA; average-rank ~+0.26; Pearson(w,-L) +0.41
+      DNA -- so the low R^2 is PARTLY the linear-OLS spec, not only a missing predictor).
+  (2) the residual r is MORE structured than BOTH matched nulls, including the tighter repeat-preserving block-permute:
+      var(r) ratio real/block = 1.12x (TEXT) / 1.27x (DNA); real/markov = 2.02x / 1.80x. The excess is concentrated at
+      LONG lags -- DNA autocorr(r) real L16 +0.249 / L32 +0.179 vs block +0.173 / +0.094 vs markov +0.004 / +0.001.
+      Per-half STABLE (R^2 0.148/0.149 TEXT; 0.237/0.277 DNA) -- not a small-sample fluke.
+
+MECHANISM (the crux for adjudication -- the reopening signal is most parsimoniously an ARTIFACT, not demonstrated
+coherence-beyond-information). (a) w (greedy-LZ77 amortized codelength) is NOT a clean function of the LPF statistic: w
+encodes LZ's GREEDY PARSING DECISIONS (match-vs-literal at its own threshold K, window cap 8192, 12-candidate cap, the
+amortized (log2 window + log2 best)/best assigned UNIFORMLY across a matched block), which the pure-statistic linear
+features cannot reconstruct -> low R^2 is a REPRESENTATIONAL/non-linearity mismatch (same wall the fairness gate hit for
+PPM). (b) the residual EXCESS over the block null is concentrated at long lags BECAUSE block-permute (block 256) destroys
+repeat placement beyond 256 while the real sequence keeps it; the markov null destroys ALL long-range (its long-lag acf
+~0). So the unabsorbed residual structure = the sequence's OWN long-range repeat PLACEMENT (a combinatorial property of
+the data), left in r only because w's dependence on it is LZ-parsing-specific + nonlinear and the PINNED linear OLS cannot
+remove it. That is STILL the sequence's statistics -- NOT an emergent beyond-information quantity.
+
+INDEPENDENT VERIFICATION (separate from-scratch code path -- own preprocessing, own LZ77, own suffix-array LPF
+[revalidated vs O(n^2) brute force on 50+80 random strings], own surprisal, own OLS, own surrogates; did NOT read
+scripts/dcal_w_real.py): CONFIRMED every load-bearing number -- R^2 0.1280/0.2359 (max |diff| 0.0001), Spearman
++0.222/+0.078 (ordinal; flagged the tie-convention sensitivity), var(r) ratios real/markov 2.02x/1.80x, real/block
+1.12x/1.27x, the long-lag autocorr ordering r_real > r_block >> r_markov, per-half R^2 0.148/0.149 and 0.237/0.277. All
+three central claims (w poorly decomposed / residual > matched nulls / markov destroys long-range far more than block)
+PASS.
+
+NET. The compressor-free decomposition did NOT cleanly confirm the deflationary close on data. By the literal
+pre-committed criterion it is a reopening-leaning result (w under-decomposed by the pinned features AND residual more
+structured than the matched, incl. block-permute, nulls). BUT the most parsimonious mechanism is the THIRD manifestation
+of the same wall: w (a REAL compressor's per-position codelength) resists clean reduction to ANY single statistical or
+combinatorial estimator at finite scale -- the D2 within-domain theorem (K_comp = affine(MI)) closed the analytic case;
+the fairness gate closed the entropy-rate-estimator case (LZ vs PPM, ~0.4-bit opposite-direction mismatch); this closes
+the combinatorial-statistic case (LZ codelength vs the true-LPF statistic + linear OLS). The unabsorbed residual traces
+to long-range repeat PLACEMENT (the sequence's own statistics), NOT to a demonstrated emergent quantity. So this is NOT a
+clean "coherence beyond information" reopening; it is the recurring "w != any one clean estimator, linearly" finding.
+
+HOLD for Benjamin -- adjudication (the FORK and the pinned features are UNTOUCHED; features were NOT enriched to absorb the
+residual, per the HARD STOP; NOTHING chosen here):
+  (a) DEFLATIONARY IN SPIRIT, formally unresolved: accept the mechanistic reading -- the residual is the sequence's own
+      long-range repeat structure unabsorbed only by w's LZ-parsing nonlinearity + the linear OLS, NOT beyond-information
+      -> the arc closes on the mechanism, with the honest caveat that the LINEAR decomposition could not formally seal it.
+  (b) TAKE THE LITERAL REOPEN: a new pre-registration to probe what the residual is (the HARD STOP forbids enriching the
+      pinned features here) -- e.g. a rank/nonlinear decomposition of w onto the SAME statistics, or a block-size sweep to
+      confirm the excess is exactly >block-size repeat placement. (Risk: chasing a likely artifact.)
+  (c) DECLARE THE FRAME ILL-POSED with LZ codelength as w: the fairness gate AND this decomposition both show w is not
+      cleanly a function of any single estimator at finite scale; the only clean adjudication redefines w as an explicit
+      -log2 P quantity -- which collapses to its base BY CONSTRUCTION (the D2 within-domain theorem replayed) -> the
+      deflationary close is the only well-posed answer, and "w beyond its base" is not finitely testable with a real
+      compressor's codelength. (My read: (a) and (c) are the coherent readings; the data do not support a genuine
+      beyond-information reopening.)
+NO lock past this. Real-domain data authorized; nothing in data/ committed.

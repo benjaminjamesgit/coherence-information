@@ -360,6 +360,249 @@ def run_domain(name, s, A, url, markov_k):
             "resid_autocorr_null": float(np.corrcoef(wr_null[:-1], wr_null[1:])[0, 1])}
 
 
+# ================= CLOSE: compressor-free longest-previous-match statistic (suffix array; NO coding) =================
+AUTOCORR_LAGS = (1, 2, 4, 8, 16, 32)
+BLOCK_SURR = 256                                            # repeat-preserving block-permutation block size (pinned)
+CLOSE_K = {"TEXT": 2, "DNA": 8}                             # order-k Markov surprisal order, well-sampled per domain (pinned)
+
+
+def suffix_array(s):
+    """SA[r] = start position of the r-th smallest suffix. numpy prefix-doubling (O(n log n))."""
+    s = np.asarray(s, dtype=np.int64)
+    n = len(s)
+    if n == 0:
+        return np.zeros(0, dtype=np.int64)
+    _, rank = np.unique(s, return_inverse=True)
+    rank = rank.astype(np.int64)
+    k = 1
+    order = np.argsort(rank, kind="stable")
+    while True:
+        rank_k = np.full(n, -1, dtype=np.int64)
+        if k < n:
+            rank_k[:n - k] = rank[k:]
+        order = np.lexsort((rank_k, rank))
+        diff = (rank[order[1:]] != rank[order[:-1]]) | (rank_k[order[1:]] != rank_k[order[:-1]])
+        new_rank = np.empty(n, dtype=np.int64)
+        new_rank[order[0]] = 0
+        new_rank[order[1:]] = np.cumsum(diff)
+        rank = new_rank
+        if int(rank.max()) == n - 1:
+            break
+        k *= 2
+    return order
+
+
+def kasai_lcp(s, sa):
+    """lcp[r] = lcp(SA[r-1], SA[r]) (lcp[0]=0); plus rank = inverse(SA). Kasai O(n)."""
+    sl = np.asarray(s, dtype=np.int64).tolist()
+    n = len(sl)
+    rank = np.empty(n, dtype=np.int64)
+    rank[sa] = np.arange(n)
+    sa_l = sa.tolist(); rk = rank.tolist()
+    lcp = np.zeros(n, dtype=np.int64)
+    h = 0
+    for i in range(n):
+        r = rk[i]
+        if r > 0:
+            j = sa_l[r - 1]
+            while i + h < n and j + h < n and sl[i + h] == sl[j + h]:
+                h += 1
+            lcp[r] = h
+            if h > 0:
+                h -= 1
+        else:
+            h = 0
+    return lcp, rank
+
+
+def _build_rmq(lcp):
+    n = len(lcp)
+    table = [lcp.astype(np.int32)]
+    j = 1
+    while (1 << j) <= n:
+        prev = table[-1]; half = 1 << (j - 1)
+        table.append(np.minimum(prev[:n - (1 << j) + 1], prev[half:n - half + 1]))
+        j += 1
+    return table
+
+
+def longest_previous_match(s):
+    """L_t = length of the longest factor starting at t that also occurs starting EARLIER (start < t); Dist_t = t minus
+    that earlier start. Pure suffix-array combinatorial statistic -- NO coding, NO probability model. Crochemore-Ilie
+    LPF: nearest smaller SA-value neighbor on each side (prev/next-smaller) + RMQ over the adjacent-LCP array."""
+    n = len(s)
+    L = np.zeros(n, dtype=np.int64)
+    Dist = np.zeros(n, dtype=np.int64)
+    if n <= 1:
+        return L, Dist
+    sa = suffix_array(s)
+    lcp, _ = kasai_lcp(s, sa)
+    table = _build_rmq(lcp)
+    sa_l = sa.tolist()
+    psv = [-1] * n; nsv = [n] * n
+    st = []
+    for r in range(n):                                     # previous-smaller SA-value (nearest earlier-starting suffix above)
+        v = sa_l[r]
+        while st and sa_l[st[-1]] > v:
+            st.pop()
+        psv[r] = st[-1] if st else -1
+        st.append(r)
+    st = []
+    for r in range(n - 1, -1, -1):                         # next-smaller SA-value (nearest earlier-starting suffix below)
+        v = sa_l[r]
+        while st and sa_l[st[-1]] > v:
+            st.pop()
+        nsv[r] = st[-1] if st else n
+        st.append(r)
+
+    def rmq(l, r):
+        if l > r:
+            return 0
+        j = (r - l + 1).bit_length() - 1
+        a = table[j]
+        return int(min(a[l], a[r - (1 << j) + 1]))
+
+    for r in range(n):
+        p = sa_l[r]
+        bestL = 0; bestpos = -1
+        pu = psv[r]
+        if pu != -1:
+            lu = rmq(pu + 1, r)
+            if lu > bestL:
+                bestL = lu; bestpos = sa_l[pu]
+        nu = nsv[r]
+        if nu != n:
+            ld = rmq(r + 1, nu)
+            if ld > bestL or (ld == bestL and bestpos != -1 and (p - sa_l[nu]) < (p - bestpos)):
+                bestL = ld; bestpos = sa_l[nu]
+        L[p] = bestL
+        if bestL > 0 and bestpos != -1:
+            Dist[p] = p - bestpos
+    return L, Dist
+
+
+def markov_surprisal(s, A, k, alpha=1.0):
+    """S_t = -log2 P_k(x_t | x_{t-k..t-1}); Laplace add-alpha, whole-sequence MLE counts. A count model -- NO compressor."""
+    n = len(s)
+    S = np.zeros(n)
+    if k >= n:
+        return S
+    ctx = np.zeros(n - k, dtype=np.int64)
+    for m in range(k):
+        ctx = ctx * A + s[m:n - k + m]
+    cur = s[k:]
+    cnt = defaultdict(lambda: np.zeros(A))
+    cl = ctx.tolist(); xl = cur.tolist()
+    for c, x in zip(cl, xl):
+        cnt[c][x] += 1
+    out = np.empty(n - k)
+    for idx, (c, x) in enumerate(zip(cl, xl)):
+        v = cnt[c]
+        out[idx] = -math.log2((v[x] + alpha) / (v.sum() + A * alpha))
+    S[k:] = out
+    return S
+
+
+def block_permute(s, B, seed=0):
+    """repeat-preserving surrogate: shuffle length-B blocks -- keeps the block multiset (local repeats), destroys
+    long-range placement of repeats beyond B."""
+    rng = np.random.default_rng(seed)
+    n = len(s); nb = n // B
+    if nb < 2:
+        return np.array(s, dtype=np.int64)
+    head = np.asarray(s[:nb * B], dtype=np.int64).reshape(nb, B)
+    out = head[rng.permutation(nb)].reshape(-1)
+    return np.concatenate([out, np.asarray(s[nb * B:], dtype=np.int64)])
+
+
+def close_features(s, A, k):
+    """F = [L_t, log2(Dist_t+1), S_t, 1(L_t==0)] -- pinned compressor-free statistics."""
+    L, Dist = longest_previous_match(s)
+    S = markov_surprisal(s, A, k)
+    F = np.column_stack([L.astype(float), np.log2(Dist + 1.0), S, (L == 0).astype(float)])
+    return F, L, S
+
+
+def decompose(w, F):
+    X = np.column_stack([np.ones(len(w)), F])
+    coef, *_ = np.linalg.lstsq(X, w, rcond=None)
+    r = w - X @ coef
+    r2 = 1.0 - np.var(r) / max(np.var(w), 1e-12)
+    return r, float(r2), coef
+
+
+def autocorr(x, lags):
+    x = x - x.mean()
+    v = float(np.dot(x, x))
+    return {int(L): (float(np.dot(x[:-L], x[L:]) / v) if (0 < L < len(x) and v > 0) else float("nan")) for L in lags}
+
+
+def _close_pipeline(s, A, k):
+    """full per-condition pipeline: w (LZ) -> features -> decomposition -> residual."""
+    w = lz77_codelength(s, A)
+    F, L, S = close_features(s, A, k)
+    r, r2, coef = decompose(w, F)
+    return {"w": w, "F": F, "L": L, "r": r, "r2": r2, "coef": coef}
+
+
+def run_close_domain(name, s, A, k, url):
+    print(f"\n========== CLOSE DOMAIN {name}  (T={len(s)} stream, A={A}, Markov k={k}; {url}) ==========", flush=True)
+    real = _close_pipeline(s, A, k)
+    w, r, r2 = real["w"], real["r"], real["r2"]
+    sp = spearman(w, -real["L"].astype(float))
+    print("--- readout (1) DECOMPOSITION: how much of w is the sequence's own match/Markov statistics ---", flush=True)
+    print(f"  R^2(w on F=[L,logD,S,lit])={r2:.4f}   Spearman(w, -L)={sp:+.4f}", flush=True)
+    print(f"  OLS coef [intercept,L,logD,S,lit]={np.array2string(real['coef'], precision=4, floatmode='fixed')}", flush=True)
+
+    print("--- readout (2) RESIDUAL FORK: structure of r real vs matched-statistics nulls ---", flush=True)
+    nulls = {"markov": markov_surrogate(s, A, k, seed=1), "block": block_permute(s, BLOCK_SURR, seed=1)}
+    rows = {"real": (r2, np.var(r), autocorr(r, AUTOCORR_LAGS))}
+    for label, ss in nulls.items():
+        nd = _close_pipeline(ss, A, k)
+        rows[label] = (nd["r2"], np.var(nd["r"]), autocorr(nd["r"], AUTOCORR_LAGS))
+    for label in ("real", "markov", "block"):
+        rr2, vr, ac = rows[label]
+        acs = " ".join(f"L{L}={ac[L]:+.3f}" for L in AUTOCORR_LAGS)
+        print(f"  {label:7s}: R^2={rr2:.4f}  var(r)={vr:.4e}  autocorr[{acs}]", flush=True)
+    vreal = rows["real"][1]
+    print(f"  -> var(r) ratios real/markov={vreal/max(rows['markov'][1],1e-12):.2f}x  real/block={vreal/max(rows['block'][1],1e-12):.2f}x "
+          f"(>>1 = residual MORE structured than the matched null = reopen signal; ~1 = deflationary)", flush=True)
+
+    print("--- readout (3) ROBUSTNESS: per-half stability ---", flush=True)
+    h = len(s) // 2
+    for hi, ss in (("half1", s[:h]), ("half2", s[h:])):
+        hd = _close_pipeline(np.asarray(ss, dtype=np.int64), A, k)
+        print(f"  {hi}: R^2={hd['r2']:.4f}  var(r)={np.var(hd['r']):.4e}", flush=True)
+    if name == "TEXT":
+        print("  Markov-order cross-check (residual vs order K; does var(r) shrink as K grows?):", flush=True)
+        for kk in (1, 2, 4, 8):
+            Fk = np.column_stack([real["F"][:, 0], real["F"][:, 1], markov_surprisal(s, A, kk), real["F"][:, 3]])
+            rk, r2k, _ = decompose(w, Fk)
+            print(f"    K={kk}: R^2={r2k:.4f}  var(r)={np.var(rk):.4e}", flush=True)
+
+    return {"name": name, "url": url, "T": len(s), "A": A, "k": k, "r2": r2, "spearman_w_negL": sp,
+            "var_r_real": float(vreal), "var_r_markov": float(rows["markov"][1]), "var_r_block": float(rows["block"][1]),
+            "ratio_real_markov": float(vreal / max(rows["markov"][1], 1e-12)),
+            "ratio_real_block": float(vreal / max(rows["block"][1], 1e-12)),
+            "autocorr_real": rows["real"][2], "autocorr_markov": rows["markov"][2], "autocorr_block": rows["block"][2]}
+
+
+def run_close():
+    print("=== D-cal-w-real CLOSE  (compressor-free longest-previous-match decomposition; FULL corpora) ===", flush=True)
+    st, At = load_text()
+    sd, Ad = load_dna()
+    rt = run_close_domain("TEXT", st, At, CLOSE_K["TEXT"], TEXT_URL)
+    rd = run_close_domain("DNA", sd, Ad, CLOSE_K["DNA"], DNA_URL)
+    print("\n=== CLOSE FORK SUMMARY ===", flush=True)
+    for r in (rt, rd):
+        print(f"  {r['name']:5s}: R^2(w on F)={r['r2']:.4f}  Spearman(w,-L)={r['spearman_w_negL']:+.4f}  "
+              f"var(r) real/markov={r['ratio_real_markov']:.2f}x real/block={r['ratio_real_block']:.2f}x", flush=True)
+    print("  -> deflationary CONFIRMED if w is substantially decomposed by F AND var(r)/autocorr(r) real ~ matched null;", flush=True)
+    print("     REOPEN if residual structure real >> the matched (esp. block-permute) null. HOLD for Benjamin's read.", flush=True)
+    json.dump({"text": rt, "dna": rd}, open("data/dcal_w_real_close.json", "w"), indent=2, default=float)
+    print("\nsaved data/dcal_w_real_close.json", flush=True)
+
+
 def main(mode):
     # PPM-C is pure-Python per-position; smoke subsamples keep both domains tractable while powering order-4 sampling
     # and preserving non-stationarity (DNA contiguous slice spans GC drift).
@@ -384,4 +627,8 @@ def main(mode):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "smoke")
+    mode = sys.argv[1] if len(sys.argv) > 1 else "smoke"
+    if mode == "close":
+        run_close()
+    else:
+        main(mode)
