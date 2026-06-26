@@ -2374,3 +2374,69 @@ noise-limited; the official T=50000 + 12 latents (12 real + 132 null) determines
 the construction satisfy the pre-registered closure gate (ii) (GF(8) orthogonal = exact strength closure), fix
 generic equality (shuffle), and ensure genuine non-isomorphism (WL, bias-free). Apparatus scripts/dcal3.py committed
 + pushed BEFORE the official run. NO pin/constant VALUE changed; nothing in data/ committed. ASCII, append-only.
+
+### 2026-06-25 -- v0.7.3 CROSS-DOMAIN step 2c PHASE 2 / D-cal-3 RESULT (the WIRING test): with the strength channel CLOSED, the pure higher-order WIRING transmits only PARTIALLY coordinate-free (best AUROC 0.773, INTERMEDIATE) -- NOT a clean escape; the pincer's CORRESPONDENCE horn substantially HOLDS for the recursive structure
+
+**What this is.** Dated, append-only RESULT for the D-cal-3 pre-registration + smoke-amend above. Apparatus
+scripts/dcal3.py (GF(8) orthogonal sources -> exact strength closure; WL-distinct non-isomorphic wirings;
+coordinate-free invariants only; across-latent ensemble null). Pre-reg + apparatus committed + pushed BEFORE this
+run. Independently reproduced from scratch (see (f)). NO pin/constant VALUE changed; nothing in data/ committed.
+
+**(a) GATES (official T=50000, 12 latents; 12 real + 132 null) -- ALL PASS.**
+  - non-iso (i): 12/12 WL-distinct wirings (0 isomorphic pairs).
+  - CLOSURE (ii): triangle_min (strength reader) AUROC 0.508 ~ CHANCE (real 0.017 / null 0.019) -> the strength
+    channel is CLOSED (the GF(8) orthogonal construction equalizes every coupling's interaction-information exactly).
+  - perm-invariance (iii): max L2 over invariants 2.11e-15.
+  - generic equality (iv): enc2 marginal TV 0.0120, entropy-rate rel-diff 0.0022 (both < 0.02).
+  - CEILING: matrix WITH correspondence AUROC 1.000 -> the wiring is FULLY present and faithfully encoded; only
+    the coordinate-free (no-correspondence) recovery is in question.
+
+**(b) RESULT -- the coordinate-free TOPOLOGY invariants (strength closed -> these read pure WIRING).**
+  | invariant | AUROC | role |
+  | --- | --- | --- |
+  | motif_census (graphlet census) | 0.773 | wiring reader (BEST) |
+  | spectrum (eigenvalues of W_HO) | 0.766 | wiring reader |
+  | H0_barcode | 0.763 | wiring reader |
+  | betti1_curve | 0.672 | wiring reader (weak) |
+  | triangle_geo | 0.468 | weight reader (~chance, like triangle_min) |
+  BEST coordinate-free = 0.773 (motif_census). FORK = INTERMEDIATE (best in (0.65, 0.90]).
+
+**(c) INTERPRETATION (the FORK outcome = INTERMEDIATE; a partial, mostly-negative landing).** With the strength
+channel cleanly CLOSED (triangle_min 0.508) and the wiring FULLY present WITH correspondence (ceiling 1.000), the
+coordinate-free shape invariants recover the PURE higher-order WIRING only PARTIALLY: best 0.773 -- clearly above
+chance (the invariants DO carry real wiring information) but FAR below the 0.90 escape bar and the 1.000
+with-correspondence ceiling. Crucially the signal did NOT sharpen smoke -> official (0.806 -> 0.773; three invariants
+cluster 0.76-0.77, stable) -- UNLIKE step-2b's strength-escape (0.66 -> 0.98). So this is a STABLE partial signal,
+not a noise-limited one trending toward escape. MECHANISM: coordinate-free shape invariants (spectrum, motif, H0) are
+LOSSY graph summaries -- non-isomorphic wirings can share spectra / motif vectors -- so they recover the wiring only
+partially even though it is fully present (ceiling 1.0); the residual gap (0.77 -> 1.0) is exactly what a
+correspondence (horn 2) closes. The weight-reading invariants (triangle_min 0.508, triangle_geo 0.468) sit at chance,
+confirming the 0.77 is WIRING, not residual strength.
+
+**(d) ARC LANDING.** Combined with step-2c (the step-2b "escape" was the coupling-STRENGTH DISTRIBUTION, not the
+wiring), the coordinate-free route carries the strength distribution well (apparent escape) but the PURE WIRING only
+PARTIALLY (0.77, intermediate). So the PINCER's CORRESPONDENCE horn SUBSTANTIALLY HOLDS for the corpus-central
+recursive structure (the higher-order WIRING): coordinate-free shape invariants do NOT cleanly transmit it (no
+escape at >0.90), though they are not blind to it either. Metacoherence-OF-THE-WIRING lands as PARTIALLY
+coordinate-free transmissible, NOT a clean escape -- an honest, mostly-negative landing: the recursive wiring needs
+correspondence-discovery to transmit fully (the M5 / phi problem returns).
+
+**(e) HONEST CAVEATS (calibration, not a metacoherence claim).**
+  - The 0.77 is robust (3 invariants cluster; stable smoke->official) but the 12-latent ensemble caps AUROC
+    resolution; a larger ensemble would tighten it.
+  - INVARIANT CHOICE: only spectral/topological/motif coordinate-free invariants were tried (numpy-only). A genuine
+    persistent-homology library, graph kernels, or a learned permutation-invariant embedding MIGHT recover more --
+    a recorded further test. "Best coordinate-free = 0.77" = best of THIS suite.
+  - CONSTRUCTION scope: K_H=6 fixed; coupling = GF(8) XOR synergy; wiring = source-sharing motifs over <=8 sources.
+    Richer / larger / different-mechanism wirings are a further test. The closure is exact (a genuine strength-free
+    wiring test), which is the load-bearing improvement over step-2c.
+
+**(f) DISCIPLINE.** Independently reproduced from scratch by an adversarial verifier (a SEPARATE GF(8)/W_HO/AUROC
+reimplementation with its OWN non-isomorphic wirings, not importing dcal3): closure triangle_min 0.490 ~ chance,
+eig-spectrum 0.808 / motif 0.811 (both < 0.90), ceiling matrix-corr 1.000, perm-invariance ~4e-16 -> SAME FORK =
+INTERMEDIATE. The two implementations agree on the qualitative landing (closure holds; wiring partial, no escape;
+ceiling 1.0); the best-topology AUROC sits in 0.77-0.81 across them (mine 0.773, verifier 0.811) -- a stable partial
+signal, no escape either way. Pre-reg + apparatus committed + pushed BEFORE the run; the smoke-amend
+cascade recorded append-only; NO FORK THRESHOLD changed (>0.90 / <=0.65 untouched; the outcome is read off the data
+as INTERMEDIATE). Coordinate-free / numpy-only; across-latent ensemble null. NO real-domain data, NO metacoherence
+claim, NO lock. ASCII, append-only.

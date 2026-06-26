@@ -11,8 +11,12 @@
 > step 2c's FIXED-STRENGTH control CORRECTS it: the coordinate-free invariants transmit the coupling-STRENGTH
 > DISTRIBUTION (nominal + realized; the planted topologies are ISOMORPHIC = 6 disjoint triangles, so coordinate-free
 > WIRING transmission was UNTESTABLE -- fix the strengths and pairwise collapses 1.0 -> 0.56, higher-order collapses
-> only once the SHARED realization is also broken). The higher-order WIRING is UNTESTED; the correspondence horn still
-> HOLDS for it, pending D-cal-3 (the wiring test, strength channel closed). (Calibration only.)
+> only once the SHARED realization is also broken). STEP 2c PHASE 2 / D-cal-3 (the WIRING test, strength channel
+> CLOSED via GF(8) orthogonal sources -> triangle_min 0.51 ~ chance; WL-distinct non-isomorphic wirings) RAN ->
+> INTERMEDIATE: the pure higher-order WIRING transmits only PARTIALLY coordinate-free (best 0.77-0.81 across two
+> independent implementations; no escape at >0.90; ceiling 1.000 WITH correspondence) -> the pincer's CORRESPONDENCE
+> horn SUBSTANTIALLY HOLDS for the corpus-central recursive structure -- coordinate-free shape invariants carry the
+> strength distribution (step 2b) but recover the WIRING only partially; it needs correspondence-discovery. (Calibration only.)
 > Opened 2026-06-25 by the D2 (Pfam) relational FALSIFICATION (the within-domain protein program is
 > exhausted as a coherence test: D2 recovered the field's pairwise-MI coevolution construct and nothing
 > beyond it; K_comp = affine(raw MI) is a theorem; see pre_registration.md step-7 and
@@ -383,3 +387,22 @@ realized), NOT the higher-order WIRING. CORRECTED LANDING: the PINCER's CORRESPO
 higher-order wiring (the corpus's recursive structural reinforcement); only a distributional summary escapes, which is
 thin / generic-adjacent. D-cal-3 (the wiring test, with the strength channel CLOSED -- nominal AND realized -- and the
 topology varied NON-isomorphically) settles whether the wiring transmits coordinate-free. Calibration only.
+
+STEP 2c PHASE 2 RESULT (2026-06-25; pre_registration.md D-cal-3 RESULT; apparatus scripts/dcal3.py). The wiring test
+RAN. CLOSURE was the hard part (a smoke-amend cascade, all recorded): a plain deterministic coupling does NOT close the
+strength channel (the finite-sample II estimate leaks via the shared source realization -- the realized weight multiset
+is ENTANGLED with the wiring; per-latent sources triangle_min 0.87, global-random 0.95 WORSE). CLOSED EXACTLY by GF(8)
+ORTHOGONAL sources (source_p = u XOR alpha_p.v; every pair's joint EXACTLY uniform -> II exactly 3 bits for every
+coupling -> triangle_min multiset identical across latents) + a shuffled base (entropy-rate match) + WL-distinct
+non-isomorphic wiring selection (ground-truth, bias-free). RESULT (T=50000, 12 latents): closure triangle_min 0.508 ~
+chance; ceiling matrix-corr 1.000 (wiring fully present WITH correspondence); the coordinate-free TOPOLOGY invariants
+recover the pure WIRING only PARTIALLY -- motif 0.773, spectrum 0.766, H0 0.763 (best 0.773), INTERMEDIATE (no escape at
+>0.90; independently reproduced from scratch -> 0.81, same INTERMEDIATE fork). It did NOT sharpen smoke->official
+(0.81->0.77, stable) -- UNLIKE step-2b's strength-escape (0.66->0.98). LANDING: with strengths closed, coordinate-free
+shape invariants (lossy graph summaries) recover the higher-order WIRING only partially; the residual gap to the 1.000
+ceiling is what a correspondence closes. So the PINCER's CORRESPONDENCE horn SUBSTANTIALLY HOLDS for the corpus-central
+recursive structure: the wiring does NOT cleanly transmit coordinate-free, it needs correspondence-discovery (the M5/phi
+problem returns). Combined with step-2c (the apparent escape was the STRENGTH distribution), the coordinate-free route
+carries the strength distribution well but the pure WIRING only partially -- an honest, mostly-negative landing for
+coordinate-free metacoherence of the wiring. Caveat: best-of-THIS-suite (numpy-only spectral/topological/motif); a PH
+library / graph kernels / larger ensemble might recover more (a recorded further test). Calibration only.
