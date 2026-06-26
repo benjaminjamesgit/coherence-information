@@ -2808,3 +2808,38 @@ ladder was NEVER tuned. The Layer-1 fork (does w carry structure beyond the blin
 the OFFICIAL run -- HELD for Benjamin, who reviews the flagged confounds (undersampling, protein orientation, text
 representation, text corpus quality) and the structured-null validity FIRST. Real-domain data authorized for this capstone;
 NO lock past this; nothing in data/ committed.
+
+
+### 2026-06-26 -- v0.7.3 D-cal-w-real (PROPER): corrected representation + real non-stationary corpora
+WHY (from the validation of the prior smoke). The prior apparatus was MIS-SPECIFIED: (a) protein MSA rows are
+UNORDERED sequences, so the locked temporal ladder (lagged self-MI / order-M predictive info, computed along axis 0)
+was MEANINGLESS on it -> b_blind = same-time coupling + 13 noise dims (Spearman(w,b_blind) -0.21 vs b_sametime +0.42);
+protein is also NOT a non-stationary time series, so it does not test the SMB crack (the target). (b) text was shaped
+windows x within-window-positions, whose F features are near-identical -> the per-feature residual test was POWERLESS
+(R^2 0.33, Spearman ~0). CORRECTIONS (the LOCKED BLIND LADDER is UNCHANGED -- still the anti-tautology pin):
+  - DROP protein. Use TWO real, NON-STATIONARY, disjoint-prior SEQUENTIAL domains: A = literary English text
+    (public-domain, fetched); B = real genomic DNA (fetched). Disjoint priors (linguistics vs genomics); both
+    non-stationary (A: topic/register drift; B: GC-content / genic-intergenic drift); both small-alphabet streams.
+  - REPRESENTATION: each domain is a 1-D symbol stream; the ladder runs along the stream's NATURAL ORDER (sequence
+    position). UNIT = PER-POSITION (pre-committed): each position t gets w_t (a real-compressor relevance) and a base_t
+    (the locked statistical model at t); the residual test is over the T positions (powered, differentiated -- the fix
+    for the degenerate window unit). NOT window-position; NOT symbol-type.
+BLIND BASE (UNCHANGED, LOCKED): per-position statistical predictability = the locked ladder applied along the stream --
+  lagged self-MI at LAG_LADDER=(1,2,4,8,16,32,64,128,256) and order-M predictive info / Markov surprisal at
+  ORDER_SET=(1,2,3,4). Frozen a priori; identical across domains; NEVER tuned/enriched.
+INDUCED w (UNCHANGED): a REAL compressor (zstd) per-position relevance (block leave-one-out compression-delta or local
+  codelength-vs-shuffle; the exact cheap estimator pinned in smoke -- a real-compressor relevance, NOT the base).
+STRUCTURED-NOISE NULL (per domain): an order-k Markov surrogate (preserve order-k transition stats, destroy beyond), k
+  pinned in smoke -- the standing structured-noise requirement.
+
+LAYER 1 FORK (per domain -- the decisive gate; the SMB crack on real non-stationary data).
+  w_resid = OLS residual of w on the locked b_blind COMPONENT MATRIX. DECISIVE: w_resid structure REAL vs the
+  Markov-surrogate null.
+  - w_resid ~= surrogate (absorbed) in BOTH domains -> DEFLATIONARY CLOSE SURVIVES THE HARDEST TEST: w reduces to its
+    blind statistical base on real, non-stationary, disjoint substrates -> SMB empirically robust -> the central claim
+    closes for good.
+  - w_resid >> surrogate in a domain -> beyond-blind-base structure is REAL on real data (the SMB stationarity crack
+    bites) -> pre-register LAYER 2 (does that residual TRANSMIT cross-domain A<->B beyond a generic null = METACOHERENCE,
+    which REOPENS the close) -- a separate entry, only if Layer 1 forces it.
+DIAGNOSTICS: report the stationarity (entropy-rate drift first-vs-last third) for each real corpus -- the SMB assumption
+made visible; report Spearman(w, b_sametime-only) alongside (the D-cal-w artifact baseline).
