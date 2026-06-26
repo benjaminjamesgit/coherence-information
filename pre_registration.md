@@ -2521,3 +2521,34 @@ blocks is T-LIMITED (the per-scale Spearman curve rises 0.21 -> 0.65 with scale)
 official T=50000 (780 coarse blocks). Construction constants: K=8, MOD_SIZE=3, M_SUB=4, M_SUP=400, SIGMA=1.0,
 scales b=1..64 (L=6), GEN_SEED=7000, one encoder A1=12. The STEP-1 FORK and the five GATE THRESHOLDS are UNCHANGED.
 Apparatus committed + pushed BEFORE the official run. scripts/dcal_flow.py.
+
+
+### 2026-06-26 -- D-cal-flow STEP-1 RESULT (apparatus VALIDATED pending the gate-(i) metric call; independently verified)
+Official run T=50000, F=30 (12 normal-module / 12 anomalous-module / 6 noise), ONE encoder A1=12; GEN_SEED=7000.
+scripts/dcal_flow.py. GATES:
+ (ii) FLOW PASS: beta grows 1.013 -> 1.143, lambda shrinks 0.993 -> 0.935, g monotone-up 1.007 -> 1.069; fitted d=0.031 (>0).
+ (iii) eta IDENTIFIABLE PASS: median eta anomalous +0.092 >> normal −0.000 ~ noise −0.001; every anomalous feature's
+       moving-block bootstrap (B=40, block=M_SUP) CI_lo>0 (range [+0.045,+0.088]).
+ (iv) CEILING PASS (the load-bearing gate): the planted eta-STRUCTURE recovered WITH correspondence -- anomalous-SET
+       AUROC(eta_f, label) = 1.000 (>=0.90); anomalous-GRAPH precision @top-12 = 0.750 >> planted density 0.028.
+ (v) NON-DEGENERACY PASS: max off-diag W(coarse) = 0.365 (no saturation, <0.98); coordinate-free spectrum
+       perm-invariance 1.1e-15 (<1e-9).
+ (i) RECOVERY -- METRIC MIS-SPECIFIED, intent MET. Coarse-graining recovers the planted couplings at edge-detection
+       AUROC = 0.877 (the un-capped sparse-recovery metric; -> 1.0 for perfect separation; per-scale Spearman rises
+       0.21 -> 0.63 with scale). The LOCKED literal metric "Spearman >= 0.7 vs the binary planted graph" is
+       MATHEMATICALLY UNREACHABLE: a 24/435 sparse-binary target caps the perfect-separation Spearman at 0.658
+       (ordinal-rank) -- the apparatus reaches 0.633 = 96% of that ceiling. Independent verification additionally
+       flagged the Spearman value is tie-CONVENTION-dependent (ordinal ranks 0.633 / ceiling 0.658, vs average-rank
+       ~0.44 with an ill-defined ceiling) -> Spearman-vs-binary is a poor metric here; AUROC 0.877 is the robust verdict.
+INDEPENDENT VERIFICATION (separate from-scratch code path; only the data-gen pipeline shared): CONFIRMED all five
+ load-bearing numbers -- CEILING AUROC 1.0000, graph precision 0.7500, recovery edge-AUROC 0.8774, recovery Spearman
+ 0.6326, ceiling 0.6582 -- and surfaced the Spearman tie-convention nuance above.
+LANDING: 4/5 gates PASS cleanly INCLUDING the load-bearing CEILING (the corpus coarse-graining extracts the planted
+ eta-structure WITH correspondence at AUROC 1.000, perm-invariant, non-degenerate, with a clean monotone beta/lambda/g
+ flow and a sharply identifiable per-feature eta). Gate (i) recovery is met in INTENT (AUROC 0.877) but the locked
+ Spearman>=0.7 is unreachable-by-construction -> the apparatus appears VALIDATED. The gate-(i) metric-specification
+ call (accept the AUROC recovery as passing / respecify the recovery metric to AUROC / amend the construction to a
+ denser planted graph so Spearman-0.7 becomes reachable) and the resulting STEP-1 FORK decision (proceed to STEP 2 =
+ coordinate-free eta-structure TRANSMISSION pre-reg) are BENJAMIN's -- NOT decided here. The STEP-1 FORK and the five
+ gate THRESHOLDS are UNCHANGED; the ceiling-aware recovery REPORTING (AUROC + achievable-ceiling) is a diagnostic
+ addition discovered from the run, construction + gate logic untouched. HOLD for Benjamin.

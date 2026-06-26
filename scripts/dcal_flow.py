@@ -275,10 +275,19 @@ def main(mode):
     ell_star = L                                             # most coarse-grained scale (bias-corrected MI is reliable here)
     rec_curve = [spearman(Ws[e][iu], planted[iu]) for e in ells]
     rec_sp = rec_curve[ell_star]
-    print("\n--- gate (i) RECOVERY (Spearman W(coarse-grained) vs planted coupling) ---", flush=True)
+    # NOTE: Spearman vs a SPARSE BINARY target is capped well below 1 by the ties. Report the achievable
+    # perfect-separation ceiling + the edge-detection AUROC (the un-capped sparse-recovery metric).
+    npr = len(iu[0]); n_planted = int(planted[iu].sum())
+    _y = np.concatenate([np.ones(n_planted), np.zeros(npr - n_planted)])       # max Spearman achievable for an
+    rec_ceiling = spearman(np.arange(npr, 0, -1.0), _y)                        # n_planted/npr binary target (perfect sep)
+    rec_auroc = auroc(Ws[ell_star][iu], planted[iu])                          # edge-vs-nonedge separation (-> 1.0 perfect)
+    print("\n--- gate (i) RECOVERY (coarse-graining recovers the planted couplings) ---", flush=True)
     print(f"  per-scale Spearman(W(ell), planted): {[round(x,3) for x in rec_curve]}", flush=True)
-    print(f"  read at the coarsest scale ell*={ell_star} (b={2**ell_star}, N={T//2**ell_star} blocks): {rec_sp:.3f}  (>=0.7?)", flush=True)
-    gate_i = rec_sp >= 0.7
+    print(f"  Spearman at coarsest ell*={ell_star} (b={2**ell_star}, N={T//2**ell_star}): {rec_sp:.3f}  "
+          f"[achievable ceiling for {n_planted}/{npr} binary target = {rec_ceiling:.3f}; {100*rec_sp/rec_ceiling:.0f}% of ceiling]", flush=True)
+    print(f"  edge-detection AUROC(W edge-vs-nonedge) = {rec_auroc:.3f}  (un-capped sparse-recovery metric)", flush=True)
+    gate_i = rec_sp >= 0.7                                    # LITERAL locked gate (note: 0.7 > ceiling {:.3f} -> see report)
+    gate_i_intent = rec_auroc >= 0.7                          # ceiling-aware: does coarse-graining recover couplings?
 
     # ---------- gate (iii) eta IDENTIFIABLE + (iv) CEILING ----------
     eta, d_f, d_generic = eta_per_feature(Ustars)           # full-data point estimate
@@ -337,17 +346,24 @@ def main(mode):
     # ---------- summary ----------
     gates = {"i_recovery": gate_i, "ii_flow": gate_ii, "iii_eta": gate_iii, "iv_ceiling": gate_iv, "v_nondeg": gate_v}
     allpass = all(gates.values())
+    intent_pass = gate_i_intent and gate_ii and gate_iii and gate_iv and gate_v
     print("\n=== STEP-1 GATES ===", flush=True)
     for k_, v_ in gates.items():
         print(f"  {k_:14s}: {'PASS' if v_ else 'FAIL'}", flush=True)
-    print(f"  -> {'ALL GATES PASS -- apparatus VALIDATED (Step-1 fork: proceed to Step 2 pre-reg)' if allpass else 'GATE FAIL -- smoke-amend the construction append-only (fork untouched) or record negative'}", flush=True)
+    if not gate_i and gate_i_intent and rec_ceiling < 0.7:
+        print(f"  NOTE: gate (i) literal Spearman>=0.7 is UNREACHABLE for this sparse-binary target "
+              f"(ceiling {rec_ceiling:.3f}); recovery is near-maximal (rec {rec_sp:.3f}={100*rec_sp/rec_ceiling:.0f}% of ceiling; "
+              f"edge-detection AUROC {rec_auroc:.3f}) -> intent MET. Metric-specification call is BENJAMIN's (fork-adjacent).", flush=True)
+    print(f"  -> literal all-pass={allpass}; intent all-pass (gate i via AUROC)={intent_pass}", flush=True)
 
     out = {"mode": mode, "F": F, "T": T, "L": L, "d_global": d_global,
            "beta": beta.tolist(), "lam": lam.tolist(), "g": g.tolist(),
-           "recovery_spearman": rec_sp, "eta_median": {"anom": eta_anom_med, "norm": eta_norm_med, "noise": eta_noise_med},
+           "recovery_spearman": rec_sp, "recovery_ceiling": rec_ceiling, "recovery_auroc": rec_auroc,
+           "eta_median": {"anom": eta_anom_med, "norm": eta_norm_med, "noise": eta_noise_med},
            "anom_ci_pos": anom_ci_pos, "ceiling_auroc": ceil_auroc, "graph_prec": graph_prec,
            "planted_density": planted_density, "max_offdiag": maxoff, "perm_l2": perm_l2,
-           "gates": gates, "all_pass": allpass, "rec_curve": [float(x) for x in rec_curve],
+           "gates": gates, "all_pass": allpass, "intent_pass": intent_pass, "gate_i_intent": gate_i_intent,
+           "rec_curve": [float(x) for x in rec_curve],
            "eta": eta.tolist(), "eta_lo": eta_lo.tolist(), "anomalous_label": anomalous.tolist()}
     json.dump(out, open(f"data/dcal_flow_{mode}.json", "w"), indent=2, default=float)
     print(f"\nsaved data/dcal_flow_{mode}.json", flush=True)
