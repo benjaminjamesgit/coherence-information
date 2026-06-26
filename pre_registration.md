@@ -2648,3 +2648,32 @@ higher-order MI base would also see the period). The smoke is SOUND either way; 
 HOLD before the official run: Benjamin reviews the gate-(i) base-matched null FIRST (the make-or-break) and the
 base-measure / interpretation question, then sets the official-run thresholds (the fork's >> and ~= are FLAGGED PENDING).
 NO official run, NO real-domain data, NO lock. scripts/dcal_w.py committed + pushed.
+
+
+### 2026-06-26 -- v0.7.3 D-cal-w FALSIFICATION RUN: base-measure correction (same-time -> FULL statistical information) + the deflationary demonstration
+VALIDATION FINDING (prior smoke). The smoke's "escape-leaning" read was an ARTIFACT of a too-narrow base. The base was
+SAME-TIME pairwise MI + 1-step entropy rate; the RECUR plant is a de Bruijn period (purely long-range temporal, uniform
+at order 1). So the base was blind to long-range temporal BY CONSTRUCTION and the plant was long-range temporal BY
+CONSTRUCTION; "zstd sees a period the same-time base misses" is the setup restated. That period is STATISTICAL structure
+(detectable by lagged MI at lag K^2 / high-order block entropy), NOT algorithmic-beyond-statistical -> w is a
+predictive-information statistic, not coherence-beyond-information (operational-skeleton verdict 9). SMB grounding: for a
+stationary ergodic source a universal compressor's rate -> the entropy rate (a statistical quantity), so the
+algorithmic-vs-statistical "crack" is asymptotically EMPTY for these sources.
+CORRECTION (Benjamin, option b). Redefine the base measure to FULL STATISTICAL INFORMATION:
+  b_full_f = z(same-time pairwise MI_f) + z(lagged self-MI_f at tau=K^2) + z(predictive info_f = H1_f - block-entropy-rate_f)
+all STATISTICAL estimators (MI, entropy rate) -- NO compressor. This base sees the temporal axis the same-time base
+missed. The fork is UNCHANGED; this is a measurement fix (the base w is supposed to be beyond), per the validation.
+DEFLATIONARY DEMONSTRATION (the decisive readouts).
+  (1) Spearman(w, b_full) HIGH while Spearman(w, b_sametime) LOW -> w's ranking is EXPLAINED by the full base, not by
+      the same-time base (the artifact localized).
+  (2) transfer(b_full, real) ~= transfer(w, real) -> the full statistical base transmits what w transmits.
+  (3) RESIDUAL: w_resid = OLS-residual of w on b_full (per encoder); transfer(w_resid, real) ~= across-latent null
+      (chance) -> w carries NO transmissible structure beyond the full statistical base.
+PRE-COMMITTED FORK (sharpened).
+  - (1) high AND (2) match AND (3) residual-transfer ~= chance -> DEFLATIONARY CONFIRMED ON DATA: the induced weight w
+    REDUCES to its (full) base information measure; no coherence-specific transmissible residual. The program's central
+    empirical claim CLOSES (consistent with SMB). This is the falsification.
+  - residual-transfer >> chance (beyond CI) -> w carries content beyond the FULL statistical base -> the crack is real;
+    reopen and investigate. (validation + SMB predict this does NOT happen for these stationary sources.)
+SANITY CONTROLS. PARITY (pure 3rd-order, base-AND-compressor-blind) stays at chance for BOTH w and b_full (neither sees
+it -> not a w-specific failure). The same-time-only base transfer is reported alongside (reproduces the artifact).
