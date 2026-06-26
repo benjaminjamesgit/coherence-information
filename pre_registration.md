@@ -2570,3 +2570,41 @@ rho = compression-ablation delta. The live empirical question: does w carry TRAN
 MEASURE it weights, across DISJOINT-prior domains, against a base-matched null? Within-domain w collapses to the base
 (D2: K_comp=affine(MI)); the non-circular test is cross-domain transfer (standing circularity prior). NEXT = D-cal-w
 (next entry).
+
+
+### 2026-06-26 -- v0.7.3 D-cal-w PRE-REGISTRATION (does the induced weight carry transmissible structure BEYOND its base measure, cross-domain?)
+QUESTION. The induced weight is w=sigma(beta*rho), rho = leave-one-out compression delta. The BASE measure it weights is
+statistical information (per-symbol marginal surprisal + pairwise MI). Does w transmit, across two DISJOINT-vocabulary
+encoders, structure the BASE measure does NOT -- beyond a base-matched null? This is the D-cal-1 logic refocused on
+"w (real compressor) vs base measure," and it is the decisive non-circular form of the program's central claim.
+HONEST PRIOR. The skeleton's order-collapse + D2 (analytic-MI case, K_comp=affine(MI)) + the now-closed flow object all
+point to the DEFLATIONARY negative. The ONE open crack: D1's proxies are REAL compressors (zstd/LZ), NOT analytic-MI, so
+algorithmic compression-relevance MAY differ from statistical information for a real compressor. D-cal-w tests exactly
+that crack cross-domain. A negative closes the central claim cleanly; a positive is the first evidence of w-beyond-base
+transmissible content.
+CONSTRUCTION. Reuse cit/data/hsmm_d1.py for the shared latent T. Plant a PURE-HIGHER-ORDER / long-range component the
+base measure is blind to (the D-cal-1 H coalition: parity triples with pairwise-MI ~0 but joint-recovers-latent; and/or
+a long-range copy fB(t)=g(X_{t-tau}), tau pinned). Render through TWO disjoint-alphabet encoders (D-cal lineage,
+matched marginals + entropy-rate, disjoint surface n-grams). Induce w via the compression-ablation pipeline using a
+REAL compressor (cit/proxies zstd or LZ76) -- NOT the analytic-KT proxy (D2 proved that = MI). Base-measure vector b =
+per-symbol surprisal + pairwise-MI rank.
+TRANSFER + NULLS. real pair = (enc1(T), enc2(T)); across-latent null = (enc1(Ta), enc2(Tb)); BASE-MATCHED null =
+pairwise-Markov surrogate of the real stream (same marginals + pairwise transitions + entropy rate, higher-order/recursive
+structure destroyed). Transfer = Spearman of the w-vectors across the two encoders; same for the base-measure vectors.
+PRE-COMMITTED FORK.
+  - w-transfer(real) >> base-transfer(real) AND >> BOTH nulls -> the induced weight carries transmissible structure
+    BEYOND its base measure cross-domain -> ESCAPE: w has genuine content (the compression-relevance != statistical-
+    information crack is real); proceed to a real disjoint-prior domain pair.
+  - w-transfer(real) ~= base-transfer(real) ~= null -> w REDUCES to its base measure cross-domain -> DECISIVE
+    DEFLATIONARY NEGATIVE: coherence's one genuine object = its base information measure; the program's central
+    empirical claim closes. (the skeleton-predicted outcome.)
+  - intermediate -> report.
+SMOKE GATES (verify BEFORE the official run; AMEND construction append-only if any fails, fork untouched).
+  (i)  NULL VALIDITY (load-bearing): the base-matched Markov surrogate matches the real pair on per-symbol entropy +
+       pairwise MI + entropy rate (< tol) WHILE DIFFERING in real-compressor compression ratio. If it does NOT differ
+       in compressibility, there is no w-beyond-base structure to plant -> that is itself strong evidence for the
+       deflationary negative; record and HOLD (do NOT force a null).
+  (ii) w COMPUTABLE + STABLE: compression-ablation rho -> w=sigma(beta*rho) non-degenerate on both encoders.
+  (iii)CEILING (necessary-not-sufficient): WITH the shared feature index, w transmits real >> null (structure present,
+       w-detectable).
+  (iv) DISJOINTNESS: the two encoders share no surface n-gram statistic (generic stats matched < tol).
