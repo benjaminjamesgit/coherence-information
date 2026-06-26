@@ -2436,7 +2436,13 @@ reimplementation with its OWN non-isomorphic wirings, not importing dcal3): clos
 eig-spectrum 0.808 / motif 0.811 (both < 0.90), ceiling matrix-corr 1.000, perm-invariance ~4e-16 -> SAME FORK =
 INTERMEDIATE. The two implementations agree on the qualitative landing (closure holds; wiring partial, no escape;
 ceiling 1.0); the best-topology AUROC sits in 0.77-0.81 across them (mine 0.773, verifier 0.811) -- a stable partial
-signal, no escape either way. Pre-reg + apparatus committed + pushed BEFORE the run; the smoke-amend
+signal, no escape either way. The verifier's FINAL report adds robustness: TWO master seeds give stable ~0.81 across
+THREE independent topology-invariant families (spectrum 0.81, motif 0.81, H0 barcode 0.81), and -- the load-bearing
+point for the instrument-vs-structure question -- the H0 BARCODE, the very invariant that produced the step-2b ESCAPE
+(0.983 there), does NOT rescue the wiring here (0.81, no escape); it also proved the GF(8) closure EXACT (the
+(S_p,S_q) joint is exactly uniform for all 28 distinct-alpha pairs, max deviation 0, via the GF(8)-linear determinant
+alpha_p XOR alpha_q != 0). So the 0.81 is a ROBUST INTERMEDIATE, not an instrument fluke -- the step-2b champion
+instrument was tried and does not escape. Pre-reg + apparatus committed + pushed BEFORE the run; the smoke-amend
 cascade recorded append-only; NO FORK THRESHOLD changed (>0.90 / <=0.65 untouched; the outcome is read off the data
 as INTERMEDIATE). Coordinate-free / numpy-only; across-latent ensemble null. NO real-domain data, NO metacoherence
 claim, NO lock. ASCII, append-only.
