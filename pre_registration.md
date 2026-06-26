@@ -2714,3 +2714,49 @@ crack is asymptotically EMPTY). THE PROGRAM'S CENTRAL EMPIRICAL CLAIM CLOSES: ac
 one genuine non-renamed object reduces to its base information measure. Synthetic calibration; statistical-only base;
 NO real-domain data; NO lock past this demonstration. data/ outputs gitignored. HOLD for Benjamin (e.g. whether to
 propagate this closure to CLAUDE/README/spec; whether any real-domain coda remains).
+
+
+### 2026-06-26 -- v0.7.3 D-cal-w-real PRE-REGISTRATION: real-domain falsification of "w = its statistical base"
+WHY. The D-cal-w close (w reduces to its full statistical base) is THEORY-LED (SMB: a universal compressor's rate ->
+the entropy rate for STATIONARY ergodic sources) + a SYNTHETIC demonstration whose base was TUNED to the known plant
+(lags = the planted de Bruijn period; orders = 2,3). Two circularities to remove: (a) base-tuned-to-plant -> here the
+base ladder is PRE-REGISTERED BLIND (fixed below, identical across domains, locked before the run -- it CANNOT be
+enriched post-hoc to manufacture the close); (b) stationary-synthetic -> here the data is REAL and NON-STATIONARY,
+the one regime where SMB can break and w could carry structure a stationary statistical base misses. This is the
+external-validity capstone the circularity prior always pointed at: cross-disjoint-domain, blind base, structured null.
+
+DOMAINS (disjoint field priors). A = PROTEIN MSA (reuse the in-repo D2 Pfam apparatus; positions x sequences). B = TEXT
+(a public-domain corpus, e.g. Project Gutenberg; non-stationary, long-range syntax -- the SMB-crack domain). Each domain
+-> a (T x F) categorical matrix: protein = sequences x positions (natural); text = the token stream chopped into T
+windows of F positions. Per-feature unit throughout.
+
+BLIND BASE (LOCKED HERE; identical for both domains; NO tuning, NO post-hoc enrichment):
+  b_blind_f = z[same-time cross-feature MI: sum_j MI(f,j)]
+            + sum over LAG in LAG_LADDER of z[lagged self-MI(f, lag)]
+            + sum over M in ORDER_SET of z[predictive info_f = marginal entropy - order-M conditional entropy]
+  LAG_LADDER = (1,2,4,8,16,32,64,128,256)   # fixed geometric ladder (domain-agnostic coverage; NOT a known period)
+  ORDER_SET  = (1,2,3,4)                      # fixed; capped by sampling (report effective sampling per order)
+This base is deliberately RICH (gives w its best chance to show a residual) but FIXED a priori -- the anti-tautology pin.
+
+INDUCED w = compression-ablation with a REAL compressor (cit/proxies zstd, leave-one-out ablation; cit/induce), per
+feature, each domain. NO compressor in b_blind.
+
+STRUCTURED-NOISE NULL (per domain; preserves low-order stats, destroys higher-order/long-range):
+  protein = phylogeny/column-block permutation (the D2 null: marginals + tree preserved, coupling destroyed);
+  text    = order-k Markov surrogate (preserve order-k transition stats, destroy long-range), k pinned in smoke.
+
+READOUTS (LAYER 1, per domain -- the decisive gate).
+  (1) Spearman(w, b_blind) and the residual w_resid = OLS residual of w on the b_blind COMPONENT MATRIX.
+  (2) DECISIVE: |w_resid| and transfer/structure of w_resid on REAL vs the STRUCTURED-NOISE NULL. If real w_resid ~=
+      surrogate w_resid (no excess beyond the null) -> w carries NO structure beyond the blind base. If real >> surrogate
+      -> beyond-blind-base structure EXISTS (stationarity crack or genuine).
+
+PRE-COMMITTED FORK (Layer 1).
+  - w_resid ~= surrogate (absorbed) in BOTH domains -> DEFLATIONARY CLOSE SEALED ON REAL DATA: w reduces to its blind
+    statistical base even on real non-stationary disjoint substrates -> real-falsification PASSED, SMB empirically robust,
+    the central claim closes for good. (No Layer 2 needed.)
+  - w_resid >> surrogate in a domain -> beyond-blind-base structure is REAL -> pre-register LAYER 2 (does that residual
+    TRANSMIT cross-domain A<->B beyond a generic null = METACOHERENCE, which would REOPEN the close) -- a separate entry,
+    only after Layer 1 forces it.
+SANITY: report Spearman(w, b_sametime-only) alongside (the D-cal-w artifact baseline). Report stationarity diagnostics
+(per-domain entropy-rate drift across the stream) -- the SMB assumption made visible.
