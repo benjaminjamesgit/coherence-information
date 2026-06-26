@@ -2926,3 +2926,66 @@ structure REAL vs the order-k Markov-surrogate null (var, lag-1 autocorr).
   - REAL >> SURROGATE (beyond a fair, entropy-rate-MATCHED statistical estimator) in a domain -> a GENUINE non-ergodic
     crack on real data -> pre-register LAYER 2 (cross-domain transmission = metacoherence), only if Layer 1 forces it.
 Corpora (Moby Dick / human chr22), per-position unit, order-k Markov null: UNCHANGED.
+
+
+### 2026-06-26 -- D-cal-w-real RE-BASE SMOKE RESULT: FAIRNESS GATE FAILS both domains, OPPOSITE directions, pinned lever INERT -> the residual is NOT interpretable; HOLD for adjudication
+scripts/dcal_w_real.py (re-based). The strawman 13-dim ladder is REPLACED by a FROZEN universal PPM-C base: per-position
+-log2 P(x_t | context), max-order PPM_MAX_ORDER=24, escape method C (denom = total + distinct), FULL exclusions down the
+escape chain, order-(-1) uniform over A-|excluded|, two-lane rolling-hash context keys (collision-safe 62-bit). NO
+compressor in the base. PPM-C CORRECTNESS validated before the run: the hash implementation matches a from-scratch
+tuple-based brute force EXACTLY (max|diff| 0.0e+00 on a 1500-symbol A=5 stream), period-7 collapses to ~0.0003 bits/sym
+after learning, iid sits just above entropy (A=4: 2.48 vs 2.0; A=27: 5.42 vs 4.76 -- the PPM escape overhead on
+unstructured data, the fairness-gate risk the smoke then measures directly). Corpora / per-position unit / order-k Markov
+null UNCHANGED (TEXT Moby Dick first 100000 symbols A=27; DNA human chr22 first 250000 symbols A=4; smoke subsampled so
+the pure-Python PPM is tractable while powering order-4 sampling and preserving non-stationarity).
+
+SMOKE RESULT -- the FAIRNESS GATE (the make-or-break re-base check) FAILS in BOTH domains, and FAILS IN OPPOSITE
+DIRECTIONS:
+  - TEXT: mean(w LZ)=3.025  mean(base PPM)=2.630  |d|=0.395 (>>0.15 FAIL). The PPM base is STRONGER (lower codelength)
+    than the LZ w. Greedy-LZ77's per-position amortized codelength is LOOSE on text (short matches + literal cost
+    log2(27)=4.75 inflate it); a proper -log2 P PPM is the better entropy-rate estimator at this scale.
+  - DNA: mean(w LZ)=1.892  mean(base PPM)=2.250  |d|=0.358 (>>0.15 FAIL). The PPM base is WEAKER (higher codelength)
+    than the LZ w. LZ exploits long EXACT repeats (ALU/LINE, hundreds of bp) that give cheap amortized matches a
+    FROZEN finite-order PPM structurally cannot reach.
+The PRE-REGISTERED rescue lever (raise the order to the cap 32 when mean(base)>>mean(w)) is INERT in both: TEXT
+2.6304->2.6304 (diff 5e-5; text has no recurring contexts beyond order ~4 at 100k, so the cap is irrelevant -- and the
+direction is wrong anyway, the base is already stronger); DNA 2.2499->2.2515 (diff 1.6e-3, |d| 0.358->0.360, marginally
+WORSE; the LZ edge is repeats far longer than 32). So fairness is UNACHIEVABLE by the one pinned lever.
+
+MECHANISM. w (a REAL compressor's greedy-LZ77 per-position codelength) and ANY frozen statistical -log2 P base are NOT
+entropy-rate-class-matched at finite scale -- they diverge ~0.36-0.40 bits in a DOMAIN-DEPENDENT direction (LZ's
+amortized-match accounting loose on text, LZ's long exact repeats unbeatable on DNA). The strawman diagnosis is thus
+PARTLY borne out (on DNA the residual is indeed "LZ is a better long-range estimator than a finite model"; on text it is
+the reverse), but the clean re-base it prescribed does not resolve into a fair comparison: the fairness gate's failure IS
+the representational mismatch, in BOTH directions.
+
+LAYER-1 PREVIEW under the FAILED gate (recorded, NOT interpretable per the pre-reg). Even against the much richer PPM
+base, R^2(w on base) is LOW (TEXT 0.116, DNA 0.051) and var(w_resid) real >> surrogate (TEXT 0.971 vs 0.516, 1.88x; DNA
+0.059 vs 0.015, 3.85x). BUT the pre-reg HARD STOP gates interpretability on fairness, and fairness FAILS -> the residual
+is contaminated by the w-vs-base representational mismatch the failed gate measures, and CANNOT be read as
+coherence-beyond-information. The re-base did its diagnostic job: it shows the prior "beyond-base preview" cannot be
+cleanly attributed to a crack, because no frozen statistical base is mean-matched to the LZ w (and the pinned lever cannot
+make one).
+
+INDEPENDENT VERIFICATION (separate from-scratch code path -- own loaders, own greedy-LZ77, own PPM-C escape-C with full
+exclusions, own Markov surrogate, own OLS residual; only the raw corpora loaded; did NOT read scripts/dcal_w_real.py):
+CONFIRMED every load-bearing number -- TEXT mean(w) 3.0249, mean(base24) 2.6304, mean(base32) 2.6304 (inert 5e-5), |d|
+0.3946 base-stronger, R^2 0.1164, var(w_resid) 0.9707 vs 0.5155 (1.88x); DNA mean(w) 1.8917, mean(base24) 2.2499,
+mean(base32) 2.2515 (inert 1.6e-3), |d| 0.3582 base-weaker, R^2 0.0512, var(w_resid) 0.0590 vs 0.0153 (3.85x). No |diff|
+exceeds 0.02; no sign/direction flip; all three central claims (fairness fails both / opposite directions / order-raise
+inert) PASS.
+
+HOLD for Benjamin -- the FAIRNESS GATE fails and is UNACHIEVABLE by the pinned lever, so per the pre-reg the Layer-1
+residual is NOT yet interpretable; the official run is NOT launched. The construction options below are ADJUDICATION (the
+FORK and the frozen-estimator family are UNTOUCHED; NOT chosen here):
+  (a) ACCEPT the fairness failure as itself the finding: a real compressor's per-position codelength is structurally not
+      entropy-rate-class-matched to a statistical -log2 P base at finite scale, so the residual is not interpretable as
+      coherence-beyond-information -> CONSISTENT with the deflationary close (the apparent beyond-base preview = a
+      representational-mismatch artifact, exactly the re-base's intended diagnosis). The cleanest reading on the evidence.
+  (b) RE-MATCH the representations so both sides are the same class: make w itself a -log2 P quantity from a DIFFERENT
+      model family (a fair model-family comparison), OR define w from the LZ MATCH-LENGTH signal rather than the amortized
+      codelength, OR tighten the LZ codelength model to mean-match PPM. (Changes what w IS -- a design decision.)
+  (c) REPLACE the MEAN-fairness gate with a per-position STRUCTURE test invariant to the mean offset (rank/whitened),
+      since two consistent estimators of the same entropy rate can mean-match yet disagree per-position -- but the pre-reg
+      explicitly gated interpretability on MEAN fairness, so this needs a pre-reg amendment.
+NO lock past this. Real-domain data authorized; nothing in data/ committed.

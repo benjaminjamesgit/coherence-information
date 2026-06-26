@@ -10,10 +10,14 @@ and base_t (the LOCKED statistical ladder applied along the stream); the residua
 LOCKED blind ladder (NEVER tuned): lagged pointwise self-MI at LAG_LADDER + order-M predictive info at ORDER_SET, along
 the stream. Induced w = per-position greedy-LZ77 codelength (the LZ-family core of zstd; a real-compressor per-position
 relevance, NOT the base). Structured-noise null = order-k Markov surrogate (preserve order-k, destroy beyond). Base =
-statistical estimators ONLY. Real corpora FETCHED (data/*.txt, data/*.fasta -- gitignored; source URLs recorded below).
-ASCII. Usage: python scripts/dcal_w_real.py [smoke]
+statistical estimators ONLY. RE-BASE 2026-06-26 (pre_registration.md "D-cal-w-real RE-BASE"): the prior sparse 13-dim
+ladder was a STRAWMAN base (LZ relevance lives at off-ladder distances/lengths the ladder cannot represent -> residual
+guaranteed large). REPLACED by a FROZEN universal PPM-C base (max-order PPM_MAX_ORDER, full exclusions, order-(-1)
+uniform) -- of LZ's representational class -- gated by a FAIRNESS check (mean PPM codelength ~= mean LZ codelength = same
+entropy-rate class) so the per-position residual is an anti-strawman test. Real corpora FETCHED (data/*.txt, data/*.fasta
+-- gitignored; source URLs recorded below). ASCII. Usage: python scripts/dcal_w_real.py [smoke]
 """
-import sys, json, re
+import sys, json, re, math
 from collections import defaultdict
 import numpy as np
 
@@ -31,6 +35,15 @@ TEXT_URL = "https://www.gutenberg.org/files/2701/2701-0.txt"
 # DNA: human chr22 region (repeat-rich = strong long-range structure for the SMB crack; E. coli was compact/near-
 # stationary with little beyond-order-4 structure -> a low-power crack test, swapped out).
 DNA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=NC_000022.11&rettype=fasta&seq_start=23000000&seq_stop=24200000"
+
+# ---- FROZEN per-position universal statistical base: PPM-C (re-base 2026-06-26; replaces the strawman ladder) ----
+# Anti-tautology pin: ONE frozen estimator of the per-position information content -log2 P(x_t | context), max-order
+# pinned a priori. PPM-C escape (denom = total + distinct), FULL exclusions down the escape chain, order-(-1) uniform
+# over the A - |excluded| remaining symbols. Captures arbitrary-order/long-range structure (a long matching context =
+# a repeat -> confident low-codelength prediction, the statistical analog of LZ's match). NO compressor in the base.
+PPM_MAX_ORDER = 24                                          # pinned a priori (raise to PPM_ORDER_CAP only if fairness forces)
+PPM_ORDER_CAP = 32
+PPM_HASH = ((2147483647, 1000003), (1000000007, 998997))   # two (modulus, base) lanes -> 62-bit collision-safe context key
 
 
 # ================= corpora -> 1-D categorical streams =================
@@ -150,6 +163,77 @@ def lz77_codelength(s, A, window=8192):
     return cl
 
 
+# ================= FROZEN per-position statistical base: PPM-C (NO compressor) =================
+def ppm_codelength(s, A, max_order=PPM_MAX_ORDER):
+    """FROZEN PPM-C per-position codelength = -log2 P(x_t | context) in bits. Escape method C (denom = total + distinct
+    seen symbols), FULL exclusions accumulated down the escape chain, order-(-1) = uniform over A - |excluded| remaining
+    symbols. Two-lane rolling-hash context keys (collision-safe 62-bit). Explicit -log2 P model -- NOT a compressor."""
+    T = len(s)
+    out = np.empty(T)
+    model = [dict() for _ in range(max_order + 1)]              # model[d][ctx_key] = {symbol: count}
+    (P1, B1), (P2, B2) = PPM_HASH
+    Bpow1 = [pow(B1, d, P1) for d in range(max_order + 1)]
+    Bpow2 = [pow(B2, d, P2) for d in range(max_order + 1)]
+    h1 = [0] * (max_order + 1)                                  # h*[d] = rolling hash of the length-d suffix ending at t-1
+    h2 = [0] * (max_order + 1)
+    log2 = math.log2
+    sl = s.tolist()
+    for t in range(T):
+        x = sl[t]
+        dmax = t if t < max_order else max_order
+        bits = 0.0
+        excluded = None                                        # lazily-built exclusion set (None until first escape)
+        coded = False
+        for d in range(dmax, -1, -1):
+            counts = model[d].get(h1[d] * P2 + h2[d]) if d > 0 else model[0].get(0)
+            if not counts:
+                continue
+            if excluded is None:
+                tot = 0
+                for c in counts.values():
+                    tot += c
+                distinct = len(counts)
+                cx = counts.get(x, 0)
+            else:
+                tot = 0; distinct = 0; cx = 0
+                for sym, c in counts.items():
+                    if sym not in excluded:
+                        tot += c; distinct += 1
+                        if sym == x:
+                            cx = c
+                if distinct == 0:
+                    continue
+            denom = tot + distinct
+            if cx > 0:
+                bits += -log2(cx / denom)
+                coded = True
+                break
+            bits += -log2(distinct / denom)                    # PPM-C escape
+            if excluded is None:
+                excluded = set(counts.keys())
+            else:
+                excluded.update(counts.keys())
+        if not coded:
+            remaining = A - (len(excluded) if excluded is not None else 0)
+            bits += log2(remaining if remaining >= 1 else 1)   # order-(-1) uniform
+        out[t] = bits
+        # ---- update the contexts we predicted from (orders 0..dmax) with the observed x ----
+        for d in range(0, dmax + 1):
+            key = (h1[d] * P2 + h2[d]) if d > 0 else 0
+            m = model[d]
+            cc = m.get(key)
+            if cc is None:
+                m[key] = {x: 1}
+            else:
+                cc[x] = cc.get(x, 0) + 1
+        # ---- advance the rolling hashes to include x (length-d suffix now ends at t) ----
+        for d in range(1, max_order + 1):
+            drop = sl[t - d] if t - d >= 0 else 0
+            h1[d] = (h1[d] * B1 + x - drop * Bpow1[d]) % P1
+            h2[d] = (h2[d] * B2 + x - drop * Bpow2[d]) % P2
+    return out
+
+
 def w_residual(w, comps):
     X = np.column_stack([np.ones(len(w)), comps])
     coef, *_ = np.linalg.lstsq(X, w, rcond=None)
@@ -222,24 +306,29 @@ def run_domain(name, s, A, url, markov_k):
     print(f"  entropy-rate drift={drift:.4f}  composition(marginal) drift={cdrift:.4f}  (>0 = non-stationary; magnitude reported for review)", flush=True)
     gate_i = (drift > 0.002) or (cdrift > 0.002)   # detectable non-stationarity (the SMB-crack-relevant LONG-RANGE structure is gate iii's destroyed-gap)
 
-    # ---- gate (iv) base computable + sampling ----
-    print(f"--- gate (iv) base computable + per-order sampling ---", flush=True)
-    bf, comps = b_blind(s, A)
-    for M in ORDER_SET:
-        eff = len(s) / (A ** (M + 1))
-        print(f"    order-{M}: eff samples/cell = {eff:.1f} {'(ok)' if eff >= 5 else '(UNDERSAMPLED -- reported, NOT dropped)'}", flush=True)
-    gate_iv = bool(np.isfinite(bf).all())
-
-    # ---- gate (ii) UNITS POWERED ----
+    # ---- gate (iv) base computable (FROZEN PPM-C) ----
+    print(f"--- gate (iv) base computable (FROZEN PPM-C, max-order {PPM_MAX_ORDER}) ---", flush=True)
     w = lz77_codelength(s, A)
-    wr = w_residual(w, comps)
+    base = ppm_codelength(s, A)
+    gate_iv = bool(np.isfinite(base).all()) and bool(np.isfinite(w).all())
+    print(f"    base finite={gate_iv}  mean(base)={base.mean():.3f} bits  std(base)={base.std():.3f}", flush=True)
+
+    # ---- FAIRNESS GATE (re-base; make-or-break, both directions: same entropy-rate class) ----
+    mean_w, mean_base = float(w.mean()), float(base.mean())
+    fair_d = abs(mean_base - mean_w)
+    gate_fair = fair_d < 0.15
+    print(f"--- FAIRNESS GATE (mean PPM ~= mean LZ; if mean(base)>>mean(w) raise order to cap {PPM_ORDER_CAP}) ---", flush=True)
+    print(f"  mean(w LZ)={mean_w:.3f}  mean(base PPM)={mean_base:.3f}  |d|={fair_d:.3f} (<0.15?) -> {gate_fair}", flush=True)
+
+    # ---- gate (ii) UNITS POWERED (per-position w + base non-degenerate; residual not flat) ----
+    wr = w_residual(w, base[:, None])
     r2 = 1.0 - np.var(wr) / max(np.var(w), 1e-12)
-    sp_blind = spearman(w, bf)
+    sp_base = spearman(w, base)
     sp_same = spearman(w, b_sametime(s, A))
-    gate_ii = (np.std(w) > 1e-3) and (np.std(wr) > 1e-3)
-    print(f"--- gate (ii) UNITS POWERED (per-position w + base non-degenerate; residual not flat) ---", flush=True)
-    print(f"  std(w)={np.std(w):.4f} std(w_resid)={np.std(wr):.4f}  R^2(w on b_blind)={r2:.3f}  -> {gate_ii}", flush=True)
-    print(f"  Spearman(w,b_blind)={sp_blind:+.3f}  vs  Spearman(w,b_sametime)={sp_same:+.3f}", flush=True)
+    gate_ii = (np.std(w) > 1e-3) and (np.std(wr) > 1e-3) and (np.std(base) > 1e-3)
+    print(f"--- gate (ii) UNITS POWERED ---", flush=True)
+    print(f"  std(w)={np.std(w):.4f} std(base)={np.std(base):.4f} std(w_resid)={np.std(wr):.4f}  R^2(w on base)={r2:.3f}  -> {gate_ii}", flush=True)
+    print(f"  Spearman(w,base PPM)={sp_base:+.3f}  vs  Spearman(w,b_sametime order-1)={sp_same:+.3f}", flush=True)
 
     # ---- gate (iii) NULL VALIDITY ----
     snull = markov_surrogate(s, A, markov_k, seed=1)
@@ -255,15 +344,16 @@ def run_domain(name, s, A, url, markov_k):
     gate_iii = (marg_tv < 0.02) and (abs(ce_k_real - ce_k_null) < 0.1) and ((ce_hi_null - ce_hi_real) > 0.005 or (cl_null - cl_real) > 0.005)
 
     # ---- LAYER-1 PREVIEW (NOT the fork; official run decides) ----
-    _, cnull = b_blind(snull, A)
-    wr_null = w_residual(w_null, cnull)
+    base_null = ppm_codelength(snull, A)
+    wr_null = w_residual(w_null, base_null[:, None])
     print(f"--- LAYER-1 PREVIEW (residual structure; the FORK is the official run) ---", flush=True)
     print(f"  [residual autocorr lag-1] real={np.corrcoef(wr[:-1], wr[1:])[0,1]:+.3f}  surrogate={np.corrcoef(wr_null[:-1], wr_null[1:])[0,1]:+.3f}  (real>>surrogate = beyond-base structure?)", flush=True)
     print(f"  [var(w_resid)] real={np.var(wr):.3e}  surrogate={np.var(wr_null):.3e}", flush=True)
 
     return {"name": name, "url": url, "T": len(s), "A": A, "drift": drift, "composition_drift": cdrift, "markov_k": markov_k,
             "gate_i_nonstationary": gate_i, "gate_ii_powered": gate_ii, "gate_iii_null_valid": gate_iii, "gate_iv_base": gate_iv,
-            "r2_w_on_bblind": float(r2), "spearman_w_bblind": sp_blind, "spearman_w_bsametime": sp_same,
+            "gate_fair": gate_fair, "fair_d": float(fair_d), "mean_w": mean_w, "mean_base": mean_base,
+            "r2_w_on_base": float(r2), "spearman_w_base": sp_base, "spearman_w_bsametime": sp_same,
             "marg_tv": marg_tv, "ce_k_gap": float(ce_k_real - ce_k_null), "ce_hi_gap": float(ce_hi_null - ce_hi_real),
             "lz_gap": float(cl_null - cl_real),
             "resid_autocorr_real": float(np.corrcoef(wr[:-1], wr[1:])[0, 1]),
@@ -271,20 +361,24 @@ def run_domain(name, s, A, url, markov_k):
 
 
 def main(mode):
-    SUB_T = 60000 if mode == "smoke" else 300000
-    print(f"=== D-cal-w-real (PROPER) SMOKE [{mode}]  per-position unit; blind ladder LAGS={LAG_LADDER} ORDERS={ORDER_SET} ===", flush=True)
-    st, At = load_text(); st = st[:SUB_T]
-    sd, Ad = load_dna()                                   # DNA: use the FULL fetched region (more compositional drift)
+    # PPM-C is pure-Python per-position; smoke subsamples keep both domains tractable while powering order-4 sampling
+    # and preserving non-stationarity (DNA contiguous slice spans GC drift).
+    SUB_T_TEXT = 100000 if mode == "smoke" else 300000
+    SUB_T_DNA = 250000 if mode == "smoke" else 600000
+    print(f"=== D-cal-w-real RE-BASE SMOKE [{mode}]  per-position unit; FROZEN PPM-C base (max-order {PPM_MAX_ORDER}); null=order-k Markov ===", flush=True)
+    st, At = load_text(); st = st[:SUB_T_TEXT]
+    sd, Ad = load_dna(); sd = sd[:SUB_T_DNA]               # contiguous chr22 slice (still spans compositional drift)
     rt = run_domain("TEXT", st, At, TEXT_URL, MARKOV_K["TEXT"])
     rd = run_domain("DNA", sd, Ad, DNA_URL, MARKOV_K["DNA"])
 
     print("\n=== SMOKE GATE SUMMARY ===", flush=True)
     for r in (rt, rd):
-        allg = all([r["gate_i_nonstationary"], r["gate_ii_powered"], r["gate_iii_null_valid"], r["gate_iv_base"]])
+        allg = all([r["gate_i_nonstationary"], r["gate_ii_powered"], r["gate_iii_null_valid"], r["gate_iv_base"], r["gate_fair"]])
         print(f"  {r['name']:5s}: nonstationary={r['gate_i_nonstationary']} powered={r['gate_ii_powered']} "
-              f"null-valid={r['gate_iii_null_valid']} base={r['gate_iv_base']} -> ALL={allg}  | R^2(w,b_blind)={r['r2_w_on_bblind']:.3f} drift={r['drift']:.3f}", flush=True)
-    print("  -> HOLD for Benjamin (corpus quality + unit power + null validity reviewed first; the locked", flush=True)
-    print("     blind ladder is NEVER tuned; the Layer-1 fork is the OFFICIAL run).", flush=True)
+              f"null-valid={r['gate_iii_null_valid']} base={r['gate_iv_base']} FAIR={r['gate_fair']} -> ALL={allg}  | "
+              f"meanW={r['mean_w']:.3f} meanBase={r['mean_base']:.3f} |d|={r['fair_d']:.3f}  R^2(w,base)={r['r2_w_on_base']:.3f}", flush=True)
+    print("  -> HOLD for Benjamin (FAIRNESS gate is the make-or-break re-base check; the frozen PPM-C base + the", flush=True)
+    print("     blind-fork are NEVER tuned post-hoc; the Layer-1 residual fork is the OFFICIAL run).", flush=True)
     json.dump({"text": rt, "dna": rd}, open(f"data/dcal_w_real_{mode}.json", "w"), indent=2, default=float)
     print(f"\nsaved data/dcal_w_real_{mode}.json", flush=True)
 
