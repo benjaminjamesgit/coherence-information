@@ -2446,3 +2446,53 @@ instrument was tried and does not escape. Pre-reg + apparatus committed + pushed
 cascade recorded append-only; NO FORK THRESHOLD changed (>0.90 / <=0.65 untouched; the outcome is read off the data
 as INTERMEDIATE). Coordinate-free / numpy-only; across-latent ensemble null. NO real-domain data, NO metacoherence
 claim, NO lock. ASCII, append-only.
+
+
+### 2026-06-26 -- v0.7.3 CROSS-DOMAIN / D-cal-flow PRE-REGISTRATION (corpus-faithful flow object; STEP 1 = apparatus validation)
+WHAT THIS IS. The flow-object test (NEXT escape candidate per the circularity prior), built corpus-faithfully after
+the D-cal-3 flow PROBE was found CONFOUNDED (single-scale substrate, temporal-C on synchronic+iid data, anti-RG
+densifying merge -- uninterpretable, NOT a negative). Synthetic calibration only (internal validity, the D-cal-1
+analog), NO real-domain data, NO metacoherence claim.
+
+CORPUS GROUNDING (Formal Foundations of Adaptive Coherence). (1) §2.3 Nested System Closure: coarse-graining =
+nested-subsystem grouping + coherence composition C_S = Σ C_i w_i / [Σ C_i w_i + Σ (1−C_i) w_i] (bounded log-odds;
+cannot densify/saturate, unlike the probe's edge-averaging). §2.3 makes C form-invariant under coarse-graining
+("macro retains micro without renormalization") -> C does NOT flow; the flow is in the PARAMETERS. (2) §6.1-6.3 RG
+flow over a PROCESS scale ℓ (b=e^ℓ): β(ℓ)=β0·b^d (sensitivity, grows), λ(ℓ)=λ0·b^(−d/2) (dissipation, shrinks),
+g=βλ, dg/dℓ=(d/2)g; fixed points g=0 (noise, unstable) / g→∞ (coherence). §6.3 anomalous dimension η from
+"feedback among components": dβ/dℓ=(d−η)β. SPLIT: the d-scaling is GENERIC (universality); η is the only
+STRUCTURE-bearing part. Corpus η is SCALAR (governance toy model) -> the only non-generic escape is η-STRUCTURE
+(WHICH subsystem couplings produce the anomaly) = a corpus gap.
+
+CONSTRUCTION. Temporal nested-regime HSMM (genuine cross-scale temporal structure: super-regime sojourns contain
+sub-regime transitions; coarse-graining time -> super-regimes). Plant F features split into a NORMAL set (couplings
+scale with trivial d) and an ANOMALOUS set (couplings carry feedback -> anomalous scaling under temporal
+coarse-graining); the η-STRUCTURE = the anomalous-feature set + its coupling graph (the planted ground truth). Two
+disjoint-alphabet encoders (D-cal lineage; Step 2 uses both -- Step 1 uses one encoder + ground truth).
+
+APPARATUS (§2.3 + §6). Coarse-grain over time, scale ℓ, block b=2^ℓ. At each ℓ: coupling matrix W(ℓ) and coherence
+C(ℓ) composed by §2.3 (nested grouping per the planted tree for the ceiling). Flow: β(ℓ)=coupling-reinforcement
+(top-eigenvalue / participation ratio of W(ℓ)), λ(ℓ)=coupling-fluctuation decay; g=βλ. Fit log β(ℓ) vs ℓ -> slope=d;
+deviation from pure b^d (dβ/dℓ=(d−η)β) -> η. SCALAR η = aggregate; η-STRUCTURE = per-feature decomposition of the
+anomalous correction.
+
+STEP-1 GATES (locked; smoke-amend append-only if any fails, fork untouched).
+  (i)  RECOVERY: §2.3 coarse-graining of the fine rendered data recovers the planted coarse couplings, Spearman ≥ 0.7
+       (the project's coarse-grain-consistency convention).
+  (ii) FLOW: β grows, λ shrinks, g flows monotone toward the coherence fixed point; report fitted d.
+  (iii)η IDENTIFIABLE: η fit stable (bootstrap CI); ≈0 where planted normal, >0 where planted anomalous.
+  (iv) CEILING (the load-bearing Step-1 gate): the planted η-STRUCTURE (anomalous-feature set + coupling graph) is
+       recovered WITH correspondence (features aligned by known identity) -- AUROC ≥ 0.90 / precision ≥ planted.
+  (v)  NON-DEGENERACY: coarse-graining does not saturate; per-scale invariant stays informative; perm-invariance
+       of the coordinate-free pieces < 1e-9.
+
+STEP-1 FORK (pre-committed).
+  - Gates pass -> apparatus VALIDATED (necessary-not-sufficient): the corpus coarse-graining extracts the planted
+    η-structure with correspondence -> proceed to STEP 2 pre-reg (coordinate-free η-structure TRANSMISSION across the
+    two encoders vs a d-and-scalar-η-matched structured-noise null; escape if transmit AUROC > 0.90 & > null & >
+    static; FALSIFIED if ≈ matched null = universality/Horn 1).
+  - Gates FAIL (esp. ceiling) -> the corpus's own coarse-graining cannot even extract η-structure WITH correspondence
+    -> the flow object is dead before the transmission test -> a decisive early negative for option (c). Record.
+STEP 2 thresholds (escape bar, null match tol) are FLAGGED PENDING Step-1 -- NOT locked here.
+
+DISCIPLINE. Synthetic only; pre-reg committed BEFORE the run; smoke-amend gate; HOLD after Step 1.
