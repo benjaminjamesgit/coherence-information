@@ -334,8 +334,8 @@ A strict XPASS forces re-evaluation. **Do not "fix" silently.**
   (and this design doc keeps ASCII for consistency with `design/`).
 - **Parse at the bit level**, not byte level, where byte-level clips a metric to zero
   (the K2 joint-bigram and K5 byte-level amendments both stemmed from clip-to-zero).
-- **Commits:** two `-m` flags, dense paragraph body; version strings `"vX.Y.Z: subject"`;
-  end with `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`. Commit/push only when asked.
+- **Commits:** two `-m` flags, dense paragraph body; version strings `"vX.Y.Z: subject"`.
+  No `Co-Authored-By` trailer. Commit/push only when asked.
 - **Per-version release checklist** (do not miss any): bump `pyproject.toml` AND
   `CITATION.cff` (version + `date-released`); update README status row + counts; refresh
   CLAUDE.md; pre-reg amendment (if behavior); then commit + annotated tag `vX.Y.Z` +
